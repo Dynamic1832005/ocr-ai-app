@@ -22,24 +22,30 @@ app = Flask(__name__)
 # ==========================================
 # GOOGLE GEMINI API CONFIGURATION
 # ==========================================
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6LLS6G3gwqbnfdCWujBueJbW54HB1M36NxvYMZ58DLm_Q")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 # Direct Client Initialize
 ai_client = genai.Client(
     api_key=GEMINI_API_KEY
 )
 
-# နည်းလမ်း (၁) - အငြိမ်ဆုံးနှင့် Auto Update ဖြစ်မည့် Stable Model
 MODEL_NAME = "gemini-flash-latest"
 
 
 def preprocess_image_for_ocr(image_bytes):
-    """OpenCV Preprocessing Engine"""
+    """OpenCV Preprocessing Engine with RAM Optimization"""
     file_bytes = np.frombuffer(image_bytes, np.uint8)
     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
     if image is None:
         raise ValueError("Invalid image format or corrupted file.")
+
+    # Convert to PIL Image for Resizing (RAM ပြည့်ပြီး Server မလဲစေရန်)
+    pil_img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    pil_img.thumbnail((1200, 1200))  # Max dimensions: 1200x1200px
+    
+    # Convert back to OpenCV format
+    image = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     denoised = cv2.fastNlMeansDenoising(gray, h=10, templateWindowSize=7, searchWindowSize=21)
@@ -150,7 +156,7 @@ def ai_process():
         else:
             return jsonify({'success': False, 'error': 'Invalid AI action'}), 400
 
-        # API Call (Proxy မှတစ်ဆင့် သွားမည်)
+        # API Call
         response = ai_client.models.generate_content(
             model=MODEL_NAME,
             contents=prompt,
