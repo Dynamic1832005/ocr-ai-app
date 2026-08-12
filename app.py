@@ -22,7 +22,7 @@ app = Flask(__name__)
 # ==========================================
 # GOOGLE GEMINI API CONFIGURATION
 # ==========================================
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6LLS6G3gwqbnfdCWujBueJbW54HB1M36NxvYMZ58DLm_Q") # မိမိ API Key ထည့်ပါ
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6LLS6G3gwqbnfdCWujBueJbW54HB1M36NxvYMZ58DLm_Q")
 
 # Direct Client Initialize
 ai_client = genai.Client(
@@ -237,4 +237,5 @@ def export_pdf():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

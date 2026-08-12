@@ -6,3 +6,5 @@ Pillow
 pytesseract
 opencv-python-headless
 numpy
+python-docx
+reportlab
