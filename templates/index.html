@@ -1,378 +1,832 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <!-- ဖုန်းစခရင်အမျိုးမျိုးတွင် ကွက်တိဖြစ်စေမည့် Viewport Setting -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Scanner & AI Text Suite</title>
     
-    <!-- Bootstrap 5 CSS for Responsive Layout -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6.4.0 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
     <style>
+        :root {
+            --bg-primary: #0b1120;
+            --bg-surface: #1e293b;
+            --bg-secondary: #0f172a;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #3b82f6;
+            --accent-primary-hover: #2563eb;
+            --accent-danger: #ef4444;
+            --accent-success: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --font-main: 'Plus Jakarta Sans', 'Padauk', sans-serif;
+            --transition: all 0.25s ease;
+        }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            background-color: #f8f9fa;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        /* Top Navbar Layout */
-        .navbar {
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            padding: 12px 20px;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            color: #2563eb;
-            font-size: 1.1rem;
-        }
-
-        /* Main Responsive Container */
-        .main-container {
-            padding: 15px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Card Styles */
-        .card-custom {
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 16px;
-            margin-bottom: 15px;
-            height: 100%;
-        }
-
-        /* Image Input & Preview Box */
-        .upload-area {
-            border: 2px dashed #cbd5e1;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            background: #f8fafc;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .upload-area:hover {
-            border-color: #2563eb;
-            background: #eff6ff;
-        }
-
-        #imagePreview {
-            max-width: 100%;
-            max-height: 250px;
-            object-fit: contain;
-            border-radius: 6px;
-            display: none;
-            margin: 10px auto;
-        }
-
-        /* Responsive Textarea */
-        textarea.form-control {
-            resize: vertical;
-            min-height: 220px;
-            font-size: 0.95rem;
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             line-height: 1.6;
-            border-color: #e2e8f0;
         }
 
-        /* Action Buttons */
-        .btn-primary-custom {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
+        .navbar {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-icon {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
             font-weight: 600;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        .btn-primary-custom:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* Tab Buttons Responsive */
-        .nav-tabs .nav-link {
-            color: #64748b;
-            font-weight: 600;
-            padding: 8px 12px;
             font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            transition: var(--transition);
+            font-family: var(--font-main);
+            white-space: nowrap;
         }
 
-        .nav-tabs .nav-link.active {
-            color: #2563eb;
-            border-bottom: 2px solid #2563eb;
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+            width: 100%;
+            justify-content: center;
         }
 
-        /* Mobile Specific Media Queries */
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 10px;
+        .btn-primary:hover {
+            background-color: var(--accent-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .container {
+            max-width: 1450px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
             }
-            .navbar-brand {
-                font-size: 1rem;
-            }
-            .card-custom {
-                padding: 12px;
-            }
-            textarea.form-control {
-                min-height: 180px;
-            }
-            .btn-action-group {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 5px;
-            }
-            .btn-action-group .btn {
-                flex: 1 1 calc(50% - 5px);
-                font-size: 0.8rem;
-            }
+        }
+
+        .panel {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            min-width: 0;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .dropzone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 2.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .dropzone:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .dropzone i {
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+        }
+
+        .dropzone p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .dropzone span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: none;
+            background-color: #000;
+        }
+
+        .preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .workbench {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+            border-color: var(--accent-primary);
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            background-color: var(--bg-secondary);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 400px;
+            flex: 1;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: 'Padauk', var(--font-main);
+            font-size: 1rem;
+            line-height: 1.8;
+            resize: vertical;
+            outline: none;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* AI Section Controls */
+        .ai-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+        }
+
+        .modal {
+            background-color: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header, .modal-footer {
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+            border-bottom: none;
+            background-color: var(--bg-secondary);
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+            max-height: 450px;
+            overflow: auto;
+            background-color: #000;
+        }
+
+        .modal-body img {
+            max-width: 100%;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-primary);
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: 0.88rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navbar -->
     <nav class="navbar">
-        <div class="container-fluid p-0">
-            <a class="navbar-brand" href="#">
-                <i class="fa-solid fa-file-contract me-2"></i>OCR Scanner & AI Text Suite
-            </a>
+        <div class="brand">
+            <i class="fa-solid fa-file-invoice"></i>
+            <span>OCR Scanner & AI Text Suite</span>
+        </div>
+        <div class="nav-controls">
+            <button class="btn-icon" id="btn-theme" title="Settings">
+                <i class="fa-solid fa-gear"></i>
+            </button>
         </div>
     </nav>
 
-    <!-- Main Responsive Grid Layout -->
-    <div class="main-container">
-        <div class="row g-3">
-            
-            <!-- Left Side: Input & Controls (Column 1) -->
-            <div class="col-12 col-lg-5">
-                <div class="card-custom">
-                    <h6 class="fw-bold mb-3"><i class="fa-solid fa-camera me-2"></i>Document Input</h6>
-                    
-                    <form id="ocrForm" enctype="multipart/form-data">
-                        <!-- Image Upload Area -->
-                        <div class="upload-area mb-3" onclick="document.getElementById('fileInput').click();">
-                            <i class="fa-solid fa-cloud-arrow-up fa-2x text-primary mb-2"></i>
-                            <p class="mb-1 fw-bold text-dark" style="font-size: 0.9rem;">Tap to Upload or Take Photo</p>
-                            <small class="text-muted">Supports JPG, PNG, WEBP</small>
-                            <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;" onchange="previewFile()">
-                        </div>
+    <main class="container">
+        <!-- Left Panel: Document Input -->
+        <section class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-camera"></i> Document Input
+                </h2>
+            </div>
 
-                        <!-- Image Preview -->
-                        <img id="imagePreview" alt="Uploaded Document Preview">
+            <div class="dropzone" id="dropzone">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p>Drag & Drop scan image here<br>or Click to browse</p>
+                <span>Supported: PNG, JPG, JPEG</span>
+                <input type="file" id="file-input" accept="image/*" hidden>
+            </div>
 
-                        <!-- Language Selector -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-muted small">OCR Recognition Language</label>
-                            <select class="form-select form-select-sm" id="langSelect" name="lang">
-                                <option value="mya+eng" selected>Myanmar + English (Auto)</option>
-                                <option value="mya">Myanmar Only</option>
-                                <option value="eng">English Only</option>
-                            </select>
-                        </div>
-
-                        <!-- Extract Button -->
-                        <button type="submit" class="btn btn-primary-custom" id="extractBtn">
-                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Extract Text (OCR)
-                        </button>
-                    </form>
+            <div class="preview-container" id="preview-box">
+                <img id="image-preview" src="" alt="Preview">
+                <div class="preview-overlay">
+                    <button class="btn-icon" id="btn-crop-modal" title="Crop"><i class="fa-solid fa-crop-simple"></i></button>
+                    <button class="btn-icon" id="btn-remove-image" title="Remove"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- Right Side: Extracted Output & AI Actions (Column 2) -->
-            <div class="col-12 col-lg-7">
-                <div class="card-custom">
-                    
-                    <!-- Tabs -->
-                    <ul class="nav nav-tabs mb-3" id="resultTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#textTab" type="button"><i class="fa-solid fa-align-left me-1"></i> Extracted Text</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="ai-tab" data-bs-toggle="tab" data-bs-target="#aiTab" type="button"><i class="fa-solid fa-robot me-1"></i> AI Assistant</button>
-                        </li>
-                    </ul>
+            <div class="form-group">
+                <label class="form-label">OCR Recognition Language</label>
+                <select class="form-select" id="select-lang">
+                    <option value="mya+eng" selected>Myanmar + English (Auto)</option>
+                    <option value="mya">Myanmar Only</option>
+                    <option value="eng">English Only</option>
+                </select>
+            </div>
 
-                    <!-- Tab Contents -->
-                    <div class="tab-content" id="resultTabContent">
-                        
-                        <!-- Text Result Tab -->
-                        <div class="tab-pane fade show active" id="textTab" role="tabpanel">
-                            
-                            <!-- Action Buttons Row -->
-                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-secondary" onclick="copyText()"><i class="fa-regular fa-copy"></i> Copy</button>
-                                    <button class="btn btn-outline-secondary" onclick="clearText()"><i class="fa-solid fa-trash-can"></i> Clear</button>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" onclick="exportFile('docx')"><i class="fa-solid fa-file-word"></i> DOCX</button>
-                                    <button class="btn btn-outline-danger" onclick="exportFile('pdf')"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                                </div>
-                            </div>
+            <button class="btn btn-primary" id="btn-scan">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span id="scan-btn-text">Extract Text (OCR)</span>
+            </button>
+        </section>
 
-                            <textarea class="form-control" id="extractedResult" placeholder="Extracted text will appear here..."></textarea>
-                        </div>
+        <!-- Right Workbench -->
+        <section class="panel workbench">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab-text"><i class="fa-solid fa-align-left"></i> Extracted Text</button>
+                <button class="tab-btn" data-tab="tab-ai"><i class="fa-solid fa-robot"></i> AI Assistant</button>
+            </div>
 
-                        <!-- AI Assistant Tab -->
-                        <div class="tab-pane fade" id="aiTab" role="tabpanel">
-                            <div class="mb-2">
-                                <label class="form-label fw-bold small text-muted">AI Actions</label>
-                                <div class="btn-action-group mb-2">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="runAI('translate')"><i class="fa-solid fa-language me-1"></i> Translate</button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="runAI('summarize')"><i class="fa-solid fa-list-check me-1"></i> Summarize</button>
-                                    <button class="btn btn-sm btn-outline-info" onclick="runAI('explain')"><i class="fa-solid fa-lightbulb me-1"></i> Explain</button>
-                                </div>
-                            </div>
-                            <textarea class="form-control" id="aiResult" placeholder="AI Response will appear here..." readonly></textarea>
-                        </div>
-
+            <!-- Tab 1: Extracted Text Editor -->
+            <div class="tab-content active" id="tab-text">
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button class="btn-icon" id="btn-copy" title="Copy"><i class="fa-regular fa-copy"></i></button>
+                        <button class="btn-icon" id="btn-speak" title="Speak"><i class="fa-solid fa-volume-high"></i></button>
+                        <button class="btn-icon" id="btn-clear-text" title="Clear"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="btn btn-secondary" id="btn-export-docx"><i class="fa-regular fa-file-word"></i> DOCX</button>
+                        <button class="btn btn-secondary" id="btn-export-pdf"><i class="fa-regular fa-file-pdf"></i> PDF</button>
+                        <button class="btn btn-secondary" id="btn-export-txt"><i class="fa-regular fa-file-lines"></i> TXT</button>
                     </div>
                 </div>
+
+                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. You can edit, format, or process it using AI..."></textarea>
+
+                <div class="stats-bar">
+                    <span id="stat-words">Words: 0</span>
+                    <span id="stat-chars">Characters: 0</span>
+                    <span id="stat-mya-chars">Myanmar Chars: 0</span>
+                </div>
             </div>
 
+            <!-- Tab 2: AI Assistant (Connected to /ai/process endpoint) -->
+            <div class="tab-content" id="tab-ai">
+                <div class="ai-controls-grid">
+                    <button class="btn btn-secondary" data-action="summarize"><i class="fa-solid fa-compress"></i> Summarize</button>
+                    <button class="btn btn-secondary" data-action="translate_en"><i class="fa-solid fa-language"></i> Translate to EN</button>
+                    <button class="btn btn-secondary" data-action="translate_my"><i class="fa-solid fa-language"></i> Translate to MY</button>
+                    <button class="btn btn-secondary" data-action="explain"><i class="fa-solid fa-circle-question"></i> Explain</button>
+                </div>
+
+                <div class="form-group" style="margin-top: 0.5rem;">
+                    <label class="form-label">Ask Gemini AI / Custom Prompt</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" class="form-input" id="ai-prompt-input" placeholder="Ask anything about the text or provide custom prompt...">
+                        <button class="btn btn-primary" id="btn-ai-ask" style="width: auto;"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">AI Response Result</label>
+                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI Assistant outputs will appear here..." readonly></textarea>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Crop Modal -->
+    <div class="modal-backdrop" id="modal-crop">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Crop Image</h3>
+                <button class="btn-icon" id="btn-close-crop"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <img id="cropper-image" src="" alt="Crop">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-reset-crop">Reset</button>
+                <button class="btn btn-primary" id="btn-apply-crop" style="width: auto;">Apply Crop</button>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts: Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <script>
-        // Image Preview Function
-        function previewFile() {
-            const file = document.getElementById('fileInput').files[0];
-            const preview = document.getElementById('imagePreview');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
+        document.addEventListener('DOMContentLoaded', () => {
+            let state = {
+                imageBlob: null,
+                imageURL: null,
+                cropper: null
+            };
+
+            const el = {
+                dropzone: document.getElementById('dropzone'),
+                fileInput: document.getElementById('file-input'),
+                previewBox: document.getElementById('preview-box'),
+                imagePreview: document.getElementById('image-preview'),
+                btnRemoveImage: document.getElementById('btn-remove-image'),
+                btnScan: document.getElementById('btn-scan'),
+                scanBtnText: document.getElementById('scan-btn-text'),
+                selectLang: document.getElementById('select-lang'),
+                editorText: document.getElementById('editor-text'),
+                statWords: document.getElementById('stat-words'),
+                statChars: document.getElementById('stat-chars'),
+                statMyaChars: document.getElementById('stat-mya-chars'),
+                btnCopy: document.getElementById('btn-copy'),
+                btnSpeak: document.getElementById('btn-speak'),
+                btnClearText: document.getElementById('btn-clear-text'),
+                btnExportDocx: document.getElementById('btn-export-docx'),
+                btnExportPdf: document.getElementById('btn-export-pdf'),
+                btnExportTxt: document.getElementById('btn-export-txt'),
+                modalCrop: document.getElementById('modal-crop'),
+                btnCropModal: document.getElementById('btn-crop-modal'),
+                cropperImage: document.getElementById('cropper-image'),
+                btnCloseCrop: document.getElementById('btn-close-crop'),
+                btnResetCrop: document.getElementById('btn-reset-crop'),
+                btnApplyCrop: document.getElementById('btn-apply-crop'),
+                toastContainer: document.getElementById('toast-container'),
+                tabBtns: document.querySelectorAll('.tab-btn'),
+                tabContents: document.querySelectorAll('.tab-content'),
+                aiActionBtns: document.querySelectorAll('[data-action]'),
+                aiPromptInput: document.getElementById('ai-prompt-input'),
+                btnAiAsk: document.getElementById('btn-ai-ask'),
+                aiResultText: document.getElementById('ai-result-text')
+            };
+
+            function showToast(msg, type = 'info') {
+                const t = document.createElement('div');
+                t.className = `toast`;
+                t.textContent = msg;
+                el.toastContainer.appendChild(t);
+                setTimeout(() => t.remove(), 3000);
             }
-        }
 
-        // Form Submit Handler
-        document.getElementById('ocrForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('fileInput');
-            if (!fileInput.files[0]) {
-                alert('Please upload an image first!');
-                return;
-            }
-
-            const extractBtn = document.getElementById('extractBtn');
-            extractBtn.disabled = true;
-            extractBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing OCR...';
-
-            const formData = new FormData(this);
-
-            try {
-                const response = await fetch('/ocr', {
-                    method: 'POST',
-                    body: formData
+            // Tabs Handler
+            el.tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    el.tabBtns.forEach(b => b.classList.remove('active'));
+                    el.tabContents.forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
                 });
-                const data = await response.json();
-                
-                if (data.success) {
-                    document.getElementById('extractedResult').value = data.text;
-                } else {
-                    alert('OCR Error: ' + data.error);
-                }
-            } catch (err) {
-                alert('Server connection error!');
-            } finally {
-                extractBtn.disabled = false;
-                extractBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles me-2"></i>Extract Text (OCR)';
-            }
-        });
-
-        // Copy Function
-        function copyText() {
-            const text = document.getElementById('extractedResult').value;
-            if (text) {
-                navigator.clipboard.writeText(text);
-                alert('Copied to clipboard!');
-            }
-        }
-
-        // Clear Function
-        function clearText() {
-            document.getElementById('extractedResult').value = '';
-            document.getElementById('aiResult').value = '';
-        }
-
-        // Export Function
-        async function exportFile(type) {
-            const text = document.getElementById('extractedResult').value;
-            if (!text) {
-                alert('No text to export!');
-                return;
-            }
-
-            const response = await fetch(`/export/${type}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: text })
             });
 
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
+            // Upload Handling & Drag-Drop
+            el.dropzone.addEventListener('click', () => el.fileInput.click());
+            el.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
+            el.dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
+            });
+            el.fileInput.addEventListener('change', (e) => {
+                if (e.target.files?.[0]) handleFile(e.target.files[0]);
+            });
+
+            function handleFile(file) {
+                state.imageBlob = file;
+                state.imageURL = URL.createObjectURL(file);
+                el.imagePreview.src = state.imageURL;
+                el.previewBox.style.display = 'block';
+                el.dropzone.style.display = 'none';
+                showToast('ပုံ တင်ပြီးပါပြီ။', 'success');
+            }
+
+            el.btnRemoveImage.addEventListener('click', () => {
+                state.imageBlob = null;
+                state.imageURL = null;
+                el.imagePreview.src = '';
+                el.previewBox.style.display = 'none';
+                el.dropzone.style.display = 'flex';
+                el.fileInput.value = '';
+                showToast('ပုံကို ဖယ်ရှားပြီးပါပြီ။');
+            });
+
+            // Cropper Modal
+            el.btnCropModal.addEventListener('click', () => {
+                if (!state.imageURL) return;
+                el.cropperImage.src = state.imageURL;
+                el.modalCrop.classList.add('active');
+                if (state.cropper) state.cropper.destroy();
+                state.cropper = new Cropper(el.cropperImage, { viewMode: 1 });
+            });
+            el.btnCloseCrop.addEventListener('click', () => el.modalCrop.classList.remove('active'));
+            el.btnResetCrop.addEventListener('click', () => state.cropper?.reset());
+            el.btnApplyCrop.addEventListener('click', () => {
+                state.cropper.getCroppedCanvas().toBlob(blob => {
+                    state.imageBlob = blob;
+                    state.imageURL = URL.createObjectURL(blob);
+                    el.imagePreview.src = state.imageURL;
+                    el.modalCrop.classList.remove('active');
+                    showToast('ပုံကို အောင်မြင်စွာ ဖြတ်တောက်ပြီးပါပြီ။', 'success');
+                });
+            });
+
+            // OCR Extraction Backend Call (/ocr route)
+            el.btnScan.addEventListener('click', async () => {
+                if (!state.imageBlob) {
+                    showToast('ကျေးဇူးပြု၍ ပထမဦးစွာ ပုံတင်ပါ။', 'error');
+                    return;
+                }
+                el.btnScan.disabled = true;
+                el.scanBtnText.textContent = 'Scanning OCR...';
+                showToast('ဆာဗာမှ စာသားဖတ်ရှုနေပါပြီ...');
+
+                const formData = new FormData();
+                formData.append('file', state.imageBlob, 'image.jpg');
+                formData.append('lang', el.selectLang.value);
+
+                try {
+                    const response = await fetch('/ocr', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        el.editorText.value = data.text;
+                        updateStats();
+                        showToast('စာသားဖတ်ရှုမှု ပြီးမြောက်ပါပြီ။', 'success');
+                    } else {
+                        showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('ဆာဗာသို့ ချိတ်ဆက်၍မရပါ။', 'error');
+                } finally {
+                    el.btnScan.disabled = false;
+                    el.scanBtnText.textContent = 'Extract Text (OCR)';
+                }
+            });
+
+            // Text Stats & Toolbar actions
+            el.editorText.addEventListener('input', updateStats);
+            function updateStats() {
+                const text = el.editorText.value;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                const myaChars = (text.match(/[\u1000-\u109F]/g) || []).length;
+                el.statWords.textContent = `Words: ${words}`;
+                el.statChars.textContent = `Characters: ${chars}`;
+                el.statMyaChars.textContent = `Myanmar Chars: ${myaChars}`;
+            }
+
+            el.btnClearText.addEventListener('click', () => { el.editorText.value = ''; updateStats(); });
+            el.btnCopy.addEventListener('click', () => {
+                navigator.clipboard.writeText(el.editorText.value);
+                showToast('စာသားများကို ကူးယူပြီးပါပြီ။', 'success');
+            });
+            el.btnSpeak.addEventListener('click', () => {
+                if (!el.editorText.value) return;
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(el.editorText.value));
+            });
+
+            // AI Assistant Handler (/ai/process route)
+            async function callAI(action, targetLang = '', prompt = '') {
+                const text = el.editorText.value;
+                if (!text) {
+                    showToast('ပထမဦးစွာ စာသားများ ရှိရန်လိုအပ်ပါသည်။', 'error');
+                    return;
+                }
+                showToast('AI ဖြင့် လုပ်ဆောင်နေပါပြီ...');
+                el.aiResultText.value = 'Processing...';
+
+                try {
+                    const res = await fetch('/ai/process', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, action, target_lang: targetLang, prompt })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        el.aiResultText.value = data.result;
+                        showToast('AI လုပ်ဆောင်ချက် ပြီးမြောက်ပါပြီ။', 'success');
+                    } else {
+                        el.aiResultText.value = 'Error: ' + data.error;
+                        showToast(data.error, 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showToast('AI ဆာဗာ ချိတ်ဆက်မှု အမှားရှိသည်။', 'error');
+                }
+            }
+
+            el.aiActionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const actionType = btn.getAttribute('data-action');
+                    if (actionType === 'summarize') callAI('summarize');
+                    else if (actionType === 'translate_en') callAI('translate', 'en');
+                    else if (actionType === 'translate_my') callAI('translate', 'my');
+                    else if (actionType === 'explain') callAI('explain');
+                });
+            });
+
+            el.btnAiAsk.addEventListener('click', () => {
+                const prompt = el.aiPromptInput.value.trim();
+                if (!prompt) return showToast('မေးခွန်း သို့မဟုတ် Prompt ရေးပါ။', 'error');
+                callAI('ask', '', prompt);
+            });
+
+            // Export DOCX & PDF Backend Routes
+            el.btnExportTxt.addEventListener('click', () => {
+                const blob = new Blob([el.editorText.value], { type: 'text/plain;charset=utf-8' });
                 const a = document.createElement('a');
-                a.href = url;
-                a.download = `ocr_result.${type}`;
-                document.body.appendChild(a);
+                a.href = URL.createObjectURL(blob);
+                a.download = 'extracted-text.txt';
                 a.click();
-                a.remove();
-            }
-        }
+            });
 
-        // AI Process Handler
-        async function runAI(action) {
-            const text = document.getElementById('extractedResult').value;
-            if (!text) {
-                alert('Please extract text first before using AI!');
-                return;
-            }
-
-            const aiResult = document.getElementById('aiResult');
-            aiResult.value = 'AI is processing your request...';
-            
-            // Switch to AI tab
-            const aiTabTrigger = new bootstrap.Tab(document.getElementById('ai-tab'));
-            aiTabTrigger.show();
-
-            try {
-                const response = await fetch('/ai/process', {
+            el.btnExportDocx.addEventListener('click', async () => {
+                if (!el.editorText.value) return showToast('စာသားမရှိပါ။', 'error');
+                showToast('DOCX ဖိုင်ထုတ်ယူနေပါပြီ...');
+                const res = await fetch('/export/docx', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text, action: action })
+                    body: JSON.stringify({ text: el.editorText.value })
                 });
-                const data = await response.json();
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'ocr_result.docx';
+                a.click();
+            });
 
-                if (data.success) {
-                    aiResult.value = data.result;
-                } else {
-                    aiResult.value = 'AI Error: ' + data.error;
-                }
-            } catch (err) {
-                aiResult.value = 'Connection error with AI service!';
-            }
-        }
+            el.btnExportPdf.addEventListener('click', async () => {
+                if (!el.editorText.value) return showToast('စာသားမရှိပါ။', 'error');
+                showToast('PDF ဖိုင်ထုတ်ယူနေပါပြီ...');
+                const res = await fetch('/export/pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: el.editorText.value })
+                });
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'ocr_result.pdf';
+                a.click();
+            });
+        });
     </script>
 </body>
 </html>
