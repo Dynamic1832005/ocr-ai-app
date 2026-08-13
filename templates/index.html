@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Scanner & AI Text Suite</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Padauk for Myanmar Script & Plus Jakarta Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     
     <style>
+        /* ==========================================================================
+           CSS Custom Properties & Design System
+           ========================================================================== */
         :root {
             --bg-primary: #f8fafc;
             --bg-surface: #ffffff;
@@ -27,12 +30,14 @@
             --text-muted: #94a3b8;
             --accent-primary: #2563eb;
             --accent-primary-hover: #1d4ed8;
+            --accent-secondary: #0d9488;
             --accent-danger: #ef4444;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
             --font-main: 'Plus Jakarta Sans', 'Padauk', sans-serif;
@@ -49,9 +54,17 @@
             --text-muted: #64748b;
             --accent-primary: #3b82f6;
             --accent-primary-hover: #60a5fa;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Base Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: var(--font-main);
@@ -61,8 +74,10 @@
             display: flex;
             flex-direction: column;
             line-height: 1.6;
+            transition: var(--transition);
         }
 
+        /* Navbar Layout */
         .navbar {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
@@ -73,17 +88,29 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
 
+        .brand i {
+            font-size: 1.5rem;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Buttons & Controls */
         .btn-icon {
             background: transparent;
             border: 1px solid var(--border-color);
@@ -104,26 +131,49 @@
         }
 
         .btn {
-            padding: 0.65rem 1.25rem;
+            padding: 0.6rem 1.2rem;
             border-radius: var(--radius-md);
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 0.5rem;
             border: none;
             transition: var(--transition);
             font-family: var(--font-main);
         }
 
-        .btn-primary { background-color: var(--accent-primary); color: #fff; }
-        .btn-primary:hover { background-color: var(--accent-primary-hover); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-secondary { background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background-color: var(--border-color); }
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+        }
 
+        .btn-primary:hover {
+            background-color: var(--accent-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger {
+            background-color: var(--accent-danger);
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* Main Container Layout */
         .container {
             max-width: 1400px;
             margin: 1.5rem auto;
@@ -135,6 +185,7 @@
             flex: 1;
         }
 
+        /* Panels */
         .panel {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -160,8 +211,10 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: var(--text-primary);
         }
 
+        /* Dropzone Upload */
         .dropzone {
             border: 2px dashed var(--border-color);
             border-radius: var(--radius-md);
@@ -181,8 +234,22 @@
             background-color: rgba(37, 99, 235, 0.05);
         }
 
-        .dropzone i { font-size: 2.5rem; color: var(--accent-primary); }
+        .dropzone i {
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+        }
 
+        .dropzone p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .dropzone span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Image Preview Box */
         .preview-container {
             position: relative;
             width: 100%;
@@ -208,8 +275,18 @@
             gap: 6px;
         }
 
-        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .form-label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+        /* Form Controls */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
 
         .form-select, .form-input {
             width: 100%;
@@ -221,28 +298,57 @@
             font-family: var(--font-main);
             font-size: 0.9rem;
             outline: none;
+            transition: var(--transition);
         }
 
-        .workbench { display: flex; flex-direction: column; gap: 1rem; flex: 1; }
+        .form-select:focus, .form-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
 
-        .tabs { display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+        /* Workbench Editor */
+        .workbench {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
 
         .tab-btn {
             padding: 0.5rem 1rem;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: none;
             background: transparent;
             color: var(--text-secondary);
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
+            transition: var(--transition);
             font-family: var(--font-main);
         }
 
-        .tab-btn.active { background-color: var(--accent-primary); color: #fff; }
+        .tab-btn.active {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+        }
 
-        .tab-content { display: none; flex-direction: column; gap: 1rem; flex: 1; }
-        .tab-content.active { display: flex; }
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
 
         .editor-textarea {
             width: 100%;
@@ -258,8 +364,14 @@
             line-height: 1.8;
             resize: vertical;
             outline: none;
+            transition: var(--transition);
         }
 
+        .editor-textarea:focus {
+            border-color: var(--accent-primary);
+        }
+
+        /* Toolbar */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -272,16 +384,23 @@
             border: 1px solid var(--border-color);
         }
 
-        .toolbar-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
 
         .stats-bar {
             display: flex;
-            flex-wrap: wrap;
             gap: 1.25rem;
             font-size: 0.8rem;
             color: var(--text-muted);
+            padding: 0.25rem 0.5rem;
+            flex-wrap: wrap;
         }
 
+        /* AI Quick Action Cards */
         .ai-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -294,56 +413,156 @@
             padding: 0.9rem;
             border-radius: var(--radius-md);
             cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            transition: var(--transition);
         }
 
         .ai-card:hover {
             border-color: var(--accent-primary);
             background-color: var(--bg-surface);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
-        .ai-card i { font-size: 1.25rem; color: var(--accent-primary); }
+        .ai-card i {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+        }
 
-        /* Modal */
+        .ai-card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Modals */
         .modal-backdrop {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background-color: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 1rem;
         }
-        .modal-backdrop.active { display: flex; }
+
+        .modal-backdrop.active {
+            display: flex;
+        }
 
         .modal {
             background-color: var(--bg-surface);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            width: 100%;
-            max-width: 700px;
+            width: 90%;
+            max-width: 750px;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: modalIn 0.25s ease-out;
         }
 
-        .modal-header, .modal-footer { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
-        .modal-body { padding: 1.25rem; }
-        .crop-wrapper { max-height: 400px; width: 100%; background-color: #000; }
-        .crop-wrapper img { max-width: 100%; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-        /* Toasts */
+        .modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            background-color: var(--bg-secondary);
+            flex-wrap: wrap;
+        }
+
+        .crop-wrapper {
+            max-height: 450px;
+            width: 100%;
+            background-color: #000;
+        }
+
+        .crop-wrapper img {
+            max-width: 100%;
+        }
+
+        /* History Drawer List */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .history-item {
+            padding: 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            border-color: var(--accent-primary);
+            background-color: var(--bg-surface);
+        }
+
+        .history-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            overflow: hidden;
+        }
+
+        .history-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Toast Notifications */
         .toast-container {
             position: fixed;
-            bottom: 20px; right: 20px;
-            display: flex; flex-direction: column; gap: 10px;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             z-index: 2000;
         }
+
         .toast {
             background-color: var(--bg-surface);
             color: var(--text-primary);
@@ -352,61 +571,163 @@
             padding: 0.8rem 1.2rem;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
-            display: flex; align-items: center; gap: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             font-size: 0.88rem;
+            animation: slideIn 0.3s ease-out;
+            transition: opacity 0.3s ease;
         }
+
         .toast.success { border-left-color: var(--accent-success); }
         .toast.error { border-left-color: var(--accent-danger); }
         .toast.warning { border-left-color: var(--accent-warning); }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 1024px) {
-            .container { grid-template-columns: 1fr; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        @media (max-width: 600px) {
-            .navbar { padding: 0.75rem 1rem; }
-            .container { padding: 0 0.5rem; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-group { width: 100%; }
-            .toolbar-group .btn { flex: 1; }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==========================================================================
+           RESPONSIVE MEDIA QUERIES (ဖုန်းနှင့် Tablet သီးသန့် ပြင်ဆင်ချက်များ)
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+
+            .brand span {
+                font-size: 1.05rem;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .toolbar-group .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .editor-textarea {
+                min-height: 280px;
+            }
+
+            .ai-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .nav-controls {
+                gap: 0.5rem;
+            }
+
+            .modal {
+                width: 95%;
+                margin: 0.5rem;
+            }
+
+            .modal-footer {
+                justify-content: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .toolbar-group .btn-icon {
+                flex: none;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Top Navigation Bar -->
     <nav class="navbar">
         <div class="brand">
             <i class="fa-solid fa-file-invoice"></i>
             <span>OCR Scanner & AI Text Suite</span>
         </div>
-        <button class="btn-icon" id="btn-theme" title="Toggle Theme">
-            <i class="fa-solid fa-moon"></i>
-        </button>
+        <div class="nav-controls">
+            <button class="btn-icon" id="btn-history" title="Scan History">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </button>
+            <button class="btn-icon" id="btn-theme" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
     </nav>
 
+    <!-- Main Container Layout -->
     <main class="container">
         
-        <!-- Left Panel: Input -->
+        <!-- Left Sidebar: Document Input Panel -->
         <section class="panel">
             <div class="panel-header">
-                <h2 class="panel-title"><i class="fa-solid fa-camera"></i> Document Input</h2>
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-camera"></i>
+                    Document Input
+                </h2>
             </div>
 
+            <!-- Upload Drag & Drop Zone -->
             <div class="dropzone" id="dropzone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <p>Drag & Drop scan image here</p>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Supported: PNG, JPG, JPEG, WEBP</span>
+                <span>Supported: PNG, JPG, JPEG, WEBP</span>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
 
+            <!-- Image Preview Box -->
             <div class="preview-container" id="preview-box">
-                <img id="image-preview" src="" alt="Scan Preview">
+                <img id="image-preview" src="" alt="Scan Image Preview">
                 <div class="preview-overlay">
-                    <button class="btn-icon" id="btn-crop-modal" title="Crop & Edit"><i class="fa-solid fa-crop-simple"></i></button>
-                    <button class="btn-icon" id="btn-remove-image" title="Remove Image"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="btn-icon" id="btn-crop-modal" title="Crop & Edit">
+                        <i class="fa-solid fa-crop-simple"></i>
+                    </button>
+                    <button class="btn-icon" id="btn-remove-image" title="Remove Image">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
             </div>
 
+            <!-- Language Options Form -->
             <div class="form-group">
                 <label class="form-label" for="select-lang">OCR Recognition Language</label>
                 <select class="form-select" id="select-lang">
@@ -416,37 +737,58 @@
                 </select>
             </div>
 
-            <!-- OCR Extract Button -->
-            <button class="btn btn-primary" id="btn-scan" style="width: 100%;">
+            <!-- Extract Action Button -->
+            <button class="btn btn-primary" id="btn-scan" style="width: 100%; justify-content: center;">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span id="scan-btn-text">Extract Text (OCR)</span>
             </button>
         </section>
 
-        <!-- Right Panel: Workbench -->
+        <!-- Right Side: Workbench & AI Assistant -->
         <section class="panel workbench">
+            
+            <!-- Tab Controls -->
             <div class="tabs">
-                <button class="tab-btn active" data-tab="tab-text"><i class="fa-solid fa-align-left me-1"></i> Extracted Text</button>
-                <button class="tab-btn" data-tab="tab-ai"><i class="fa-solid fa-robot me-1"></i> AI Assistant</button>
+                <button class="tab-btn active" data-tab="tab-text">
+                    <i class="fa-solid fa-align-left me-1"></i> Extracted Text
+                </button>
+                <button class="tab-btn" data-tab="tab-ai">
+                    <i class="fa-solid fa-robot me-1"></i> AI Assistant
+                </button>
             </div>
 
-            <!-- Tab 1: Extracted Text -->
+            <!-- Tab 1: Text Editor -->
             <div class="tab-content active" id="tab-text">
                 <div class="toolbar">
                     <div class="toolbar-group">
-                        <button class="btn-icon" id="btn-copy" title="Copy Text"><i class="fa-regular fa-copy"></i></button>
-                        <button class="btn-icon" id="btn-speak" title="Read Aloud (TTS)"><i class="fa-solid fa-volume-high"></i></button>
-                        <button class="btn-icon" id="btn-clear-text" title="Clear Text"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="btn-icon" id="btn-copy" title="Copy Text">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <button class="btn-icon" id="btn-speak" title="Read Aloud (TTS)">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <button class="btn-icon" id="btn-clear-text" title="Clear Text">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </div>
+
                     <div class="toolbar-group">
-                        <button class="btn btn-secondary" id="btn-export-docx"><i class="fa-regular fa-file-word"></i> DOCX</button>
-                        <button class="btn btn-secondary" id="btn-export-pdf"><i class="fa-regular fa-file-pdf"></i> PDF</button>
-                        <button class="btn btn-secondary" id="btn-export-txt"><i class="fa-regular fa-file-lines"></i> TXT</button>
+                        <button class="btn btn-secondary" id="btn-export-docx">
+                            <i class="fa-regular fa-file-word"></i> DOCX
+                        </button>
+                        <button class="btn btn-secondary" id="btn-export-pdf">
+                            <i class="fa-regular fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-secondary" id="btn-export-txt">
+                            <i class="fa-regular fa-file-lines"></i> TXT
+                        </button>
                     </div>
                 </div>
 
-                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. Select an image and click 'Extract Text (OCR)'..."></textarea>
+                <!-- Text Area Input -->
+                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. You can edit, format, or process it using AI..."></textarea>
 
+                <!-- Statistics Bar -->
                 <div class="stats-bar">
                     <span id="stat-words">Words: 0</span>
                     <span id="stat-chars">Characters: 0</span>
@@ -460,54 +802,62 @@
                     <div class="ai-card" data-action="summarize">
                         <i class="fa-solid fa-compress"></i>
                         <div>
-                            <strong>Summarize</strong>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">Extract main points</div>
+                            <div class="ai-card-title">Summarize</div>
+                            <small class="text-muted">Extract main summary</small>
                         </div>
                     </div>
+
                     <div class="ai-card" data-action="translate_en">
                         <i class="fa-solid fa-language"></i>
                         <div>
-                            <strong>Translate EN</strong>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">To English</div>
+                            <div class="ai-card-title">Translate to EN</div>
+                            <small class="text-muted">Myanmar to English</small>
                         </div>
                     </div>
+
                     <div class="ai-card" data-action="translate_my">
                         <i class="fa-solid fa-language"></i>
                         <div>
-                            <strong>Translate MY</strong>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">To Myanmar</div>
+                            <div class="ai-card-title">Translate to MY</div>
+                            <small class="text-muted">English to Myanmar</small>
                         </div>
                     </div>
+
                     <div class="ai-card" data-action="grammar">
                         <i class="fa-solid fa-spell-check"></i>
                         <div>
-                            <strong>Fix Spelling</strong>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">Correct typos</div>
+                            <div class="ai-card-title">Fix Spelling</div>
+                            <small class="text-muted">Correct OCR typos</small>
                         </div>
                     </div>
                 </div>
 
+                <!-- Custom AI Prompt Input -->
                 <div class="form-group" style="margin-top: 1rem;">
                     <label class="form-label" for="ai-custom-prompt">Custom AI Prompt</label>
                     <div style="display: flex; gap: 0.5rem;">
                         <input type="text" class="form-input" id="ai-custom-prompt" placeholder="Ask AI anything about the extracted text...">
-                        <button class="btn btn-primary" id="btn-ai-submit"><i class="fa-solid fa-paper-plane"></i></button>
+                        <button class="btn btn-primary" id="btn-ai-submit">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
 
+                <!-- AI Output Result Field -->
                 <div class="form-group" style="flex: 1; margin-top: 0.5rem;">
                     <label class="form-label">AI Output Result</label>
-                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI output will appear here..." readonly></textarea>
+                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI generated results will be displayed here..." readonly></textarea>
                 </div>
             </div>
+
         </section>
     </main>
 
-    <!-- Crop Modal -->
+    <!-- Crop Image Modal Dialog -->
     <div class="modal-backdrop" id="modal-crop">
         <div class="modal">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop & Rotate Image</h3>
+                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop Image Before OCR</h3>
                 <button class="btn-icon" id="btn-close-crop"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
@@ -516,33 +866,54 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div style="display:flex; gap:0.5rem;">
-                    <button class="btn-icon" id="btn-rotate-left"><i class="fa-solid fa-rotate-left"></i></button>
-                    <button class="btn-icon" id="btn-rotate-right"><i class="fa-solid fa-rotate-right"></i></button>
-                </div>
-                <div style="display:flex; gap:0.5rem;">
-                    <button class="btn btn-secondary" id="btn-reset-crop">Reset</button>
-                    <button class="btn btn-primary" id="btn-apply-crop">Apply</button>
-                </div>
+                <button class="btn-icon" id="btn-rotate-left" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
+                <button class="btn-icon" id="btn-rotate-right" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
+                <button class="btn btn-secondary" id="btn-reset-crop">Reset</button>
+                <button class="btn btn-primary" id="btn-apply-crop">Apply Crop</button>
             </div>
         </div>
     </div>
 
+    <!-- History Drawer Modal Dialog -->
+    <div class="modal-backdrop" id="modal-history">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clock-rotate-left me-2"></i>Scan History</h3>
+                <button class="btn-icon" id="btn-close-history"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="history-list" id="history-container">
+                    <!-- Dynamic history items loaded by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="btn-clear-history">
+                    <i class="fa-solid fa-trash-can me-1"></i> Clear History
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- External JS Libraries -->
+    <!-- External Script Libraries (CropperJS + Tesseract Engine) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
+    <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Global State Management
             let state = {
-                imageSrc: null,
+                currentImageURL: null,
                 cropperInstance: null,
-                theme: localStorage.getItem('theme') || 'light',
-                isScanning: false
+                isScanning: false,
+                history: JSON.parse(localStorage.getItem('myanmar_ocr_history') || '[]'),
+                theme: localStorage.getItem('theme') || 'light'
             };
 
+            // DOM Element References
             const elements = {
                 html: document.documentElement,
                 btnTheme: document.getElementById('btn-theme'),
@@ -561,18 +932,10 @@
                 btnCopy: document.getElementById('btn-copy'),
                 btnSpeak: document.getElementById('btn-speak'),
                 btnClearText: document.getElementById('btn-clear-text'),
+                btnExportTxt: document.getElementById('btn-export-txt'),
                 btnExportDocx: document.getElementById('btn-export-docx'),
                 btnExportPdf: document.getElementById('btn-export-pdf'),
-                btnExportTxt: document.getElementById('btn-export-txt'),
-                tabBtns: document.querySelectorAll('.tab-btn'),
-                tabContents: document.querySelectorAll('.tab-content'),
-                toastContainer: document.getElementById('toast-container'),
-                // AI
-                aiCards: document.querySelectorAll('.ai-card'),
-                aiCustomPrompt: document.getElementById('ai-custom-prompt'),
-                btnAiSubmit: document.getElementById('btn-ai-submit'),
-                aiResultText: document.getElementById('ai-result-text'),
-                // Crop
+                // Cropper Modal
                 modalCrop: document.getElementById('modal-crop'),
                 btnCropModal: document.getElementById('btn-crop-modal'),
                 cropperImage: document.getElementById('cropper-image'),
@@ -580,121 +943,198 @@
                 btnRotateLeft: document.getElementById('btn-rotate-left'),
                 btnRotateRight: document.getElementById('btn-rotate-right'),
                 btnResetCrop: document.getElementById('btn-reset-crop'),
-                btnApplyCrop: document.getElementById('btn-apply-crop')
+                btnApplyCrop: document.getElementById('btn-apply-crop'),
+                // History Drawer
+                btnHistory: document.getElementById('btn-history'),
+                modalHistory: document.getElementById('modal-history'),
+                btnCloseHistory: document.getElementById('btn-close-history'),
+                historyContainer: document.getElementById('history-container'),
+                btnClearHistory: document.getElementById('btn-clear-history'),
+                // Navigation Tabs
+                tabBtns: document.querySelectorAll('.tab-btn'),
+                tabContents: document.querySelectorAll('.tab-content'),
+                // AI Actions
+                aiCards: document.querySelectorAll('.ai-card'),
+                aiCustomPrompt: document.getElementById('ai-custom-prompt'),
+                btnAiSubmit: document.getElementById('btn-ai-submit'),
+                aiResultText: document.getElementById('ai-result-text'),
+                // Toast Container
+                toastContainer: document.getElementById('toast-container')
             };
 
-            // 1. Theme Logic
+            // 1. Theme Switcher
             function initTheme() {
                 elements.html.setAttribute('data-theme', state.theme);
-                elements.btnTheme.querySelector('i').className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+                updateThemeIcon();
             }
-            elements.btnTheme.addEventListener('click', () => {
+
+            function toggleTheme() {
                 state.theme = state.theme === 'light' ? 'dark' : 'light';
                 localStorage.setItem('theme', state.theme);
-                initTheme();
-            });
+                elements.html.setAttribute('data-theme', state.theme);
+                updateThemeIcon();
+            }
+
+            function updateThemeIcon() {
+                const icon = elements.btnTheme.querySelector('i');
+                icon.className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+
+            elements.btnTheme.addEventListener('click', toggleTheme);
             initTheme();
 
-            // 2. Toast System
+            // 2. Toast Notification Helper
             function showToast(message, type = 'info') {
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                let icon = 'fa-circle-info';
-                if (type === 'success') icon = 'fa-circle-check';
-                if (type === 'error') icon = 'fa-circle-xmark';
-                if (type === 'warning') icon = 'fa-triangle-exclamation';
+                
+                let iconClass = 'fa-circle-info';
+                if(type === 'success') iconClass = 'fa-circle-check';
+                if(type === 'error') iconClass = 'fa-circle-exclamation';
+                if(type === 'warning') iconClass = 'fa-triangle-exclamation';
 
-                toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+                toast.innerHTML = `<i class="fa-solid ${iconClass}"></i><span>${message}</span>`;
                 elements.toastContainer.appendChild(toast);
 
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     setTimeout(() => toast.remove(), 300);
-                }, 3500);
+                }, 3000);
             }
 
-            // 3. File Input & Drag/Drop
-            elements.dropzone.addEventListener('click', () => elements.fileInput.click());
-
-            elements.fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
+            // 3. Tab Switching
+            elements.tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = btn.getAttribute('data-tab');
+                    elements.tabBtns.forEach(b => b.classList.remove('active'));
+                    elements.tabContents.forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(target).classList.add('active');
+                });
             });
+
+            // 4. File Drag & Drop + Upload
+            elements.dropzone.addEventListener('click', () => elements.fileInput.click());
 
             elements.dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 elements.dropzone.classList.add('dragover');
             });
 
-            elements.dropzone.addEventListener('dragleave', () => elements.dropzone.classList.remove('dragover'));
+            elements.dropzone.addEventListener('dragleave', () => {
+                elements.dropzone.classList.remove('dragover');
+            });
 
             elements.dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 elements.dropzone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files[0]);
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+
+            elements.fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelect(e.target.files[0]);
+                }
             });
 
             function handleFileSelect(file) {
                 if (!file.type.startsWith('image/')) {
-                    showToast('ကျေးဇူးပြု၍ Image ဖိုင်အမျိုးအစားသာ ရွေးချယ်ပေးပါ', 'error');
+                    showToast('ကျေးဇူးပြု၍ Image ဖိုင်များသာ တင်ပေးပါ', 'error');
                     return;
                 }
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    state.imageSrc = e.target.result;
-                    elements.imagePreview.src = state.imageSrc;
-                    elements.cropperImage.src = state.imageSrc;
+                    state.currentImageURL = e.target.result;
+                    elements.imagePreview.src = state.currentImageURL;
                     elements.dropzone.style.display = 'none';
                     elements.previewBox.style.display = 'block';
-                    showToast('ပုံရွေးချယ်မှု အောင်မြင်ပါသည်', 'success');
+                    showToast('ဓာတ်ပုံ အောင်မြင်စွာ တင်ပြီးပါပြီ', 'success');
                 };
                 reader.readAsDataURL(file);
             }
 
-            elements.btnRemoveImage.addEventListener('click', () => {
-                state.imageSrc = null;
+            // 5. Remove Image Action
+            elements.btnRemoveImage.addEventListener('click', (e) => {
+                e.stopPropagation();
+                state.currentImageURL = null;
                 elements.fileInput.value = '';
                 elements.imagePreview.src = '';
                 elements.previewBox.style.display = 'none';
                 elements.dropzone.style.display = 'flex';
+                showToast('ဓာတ်ပုံကို ဖျက်လိုက်ပါပြီ', 'info');
             });
 
-            // 4. OCR Extract Button Handler (Tesseract.js Engine)
+            // 6. Crop Modal Controls
+            elements.btnCropModal.addEventListener('click', () => {
+                if (!state.currentImageURL) return;
+                elements.cropperImage.src = state.currentImageURL;
+                elements.modalCrop.classList.add('active');
+                
+                if (state.cropperInstance) state.cropperInstance.destroy();
+                state.cropperInstance = new Cropper(elements.cropperImage, {
+                    viewMode: 1,
+                    responsive: true
+                });
+            });
+
+            elements.btnCloseCrop.addEventListener('click', () => {
+                elements.modalCrop.classList.remove('active');
+            });
+
+            elements.btnRotateLeft.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(-90));
+            elements.btnRotateRight.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(90));
+            elements.btnResetCrop.addEventListener('click', () => state.cropperInstance && state.cropperInstance.reset());
+
+            elements.btnApplyCrop.addEventListener('click', () => {
+                if (!state.cropperInstance) return;
+                const canvas = state.cropperInstance.getCroppedCanvas();
+                state.currentImageURL = canvas.toDataURL();
+                elements.imagePreview.src = state.currentImageURL;
+                elements.modalCrop.classList.remove('active');
+                showToast('Crop လုပ်ခြင်း အောင်မြင်ပါသည်', 'success');
+            });
+
+            // 7. OCR Scan Processing Engine
             elements.btnScan.addEventListener('click', async () => {
-                if (!state.imageSrc) {
-                    showToast('ကျေးဇူးပြု၍ စာထုတ်ယူရန် ပုံတစ်ပုံ ရွေးချယ်ပါ', 'warning');
+                if (!state.currentImageURL) {
+                    showToast('ကျေးဇူးပြု၍ ပထမဦးစွာ ဓာတ်ပုံတစ်ပုံ ရွေးချယ်ပါ', 'warning');
                     return;
                 }
 
                 if (state.isScanning) return;
                 state.isScanning = true;
-
-                const selectedLang = elements.selectLang.value;
                 elements.btnScan.disabled = true;
-                elements.scanBtnText.textContent = 'Processing OCR... (0%)';
+                elements.scanBtnText.textContent = 'Extracting Text (0%)...';
 
                 try {
-                    showToast('OCR စာသားများ စတင်ဖတ်ရှုနေပါသည်...', 'info');
-                    
+                    const lang = elements.selectLang.value;
                     const result = await Tesseract.recognize(
-                        state.imageSrc,
-                        selectedLang,
+                        state.currentImageURL,
+                        lang,
                         {
                             logger: m => {
                                 if (m.status === 'recognizing text') {
                                     const pct = Math.round(m.progress * 100);
-                                    elements.scanBtnText.textContent = `Extracting... (${pct}%)`;
+                                    elements.scanBtnText.textContent = `Extracting Text (${pct}%)...`;
                                 }
                             }
                         }
                     );
 
-                    elements.editorText.value = result.data.text;
-                    elements.editorText.dispatchEvent(new Event('input'));
-                    showToast('စာသားများ အောင်မြင်စွာ ထုတ်ယူပြီးပါပြီ!', 'success');
+                    const text = result.data.text;
+                    elements.editorText.value = text;
+                    updateTextStats();
+
+                    // Save to history
+                    saveHistory(text);
+
+                    showToast('စာသားများ အောင်မြင်စွာ ဖတ်ယူပြီးပါပြီ!', 'success');
 
                 } catch (err) {
                     console.error(err);
-                    showToast('OCR စာဖတ်ရာတွင် အမှားအယွင်းရှိပါသည်', 'error');
+                    showToast('OCR စာဖတ်ရာတွင် အမှားအယွင်း ရှိပါသည်', 'error');
                 } finally {
                     state.isScanning = false;
                     elements.btnScan.disabled = false;
@@ -702,134 +1142,112 @@
                 }
             });
 
-            // 5. Tabs
-            elements.tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    elements.tabBtns.forEach(b => b.classList.remove('active'));
-                    elements.tabContents.forEach(c => c.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(btn.dataset.tab).classList.add('active');
-                });
-            });
-
-            // 6. Stats Calculator
-            elements.editorText.addEventListener('input', () => {
+            // 8. Text Statistics Counter
+            function updateTextStats() {
                 const text = elements.editorText.value;
                 const words = text.trim() ? text.trim().split(/\s+/).length : 0;
                 const chars = text.length;
-                const myanmarRegex = /[\u1000-\u109F]/g;
-                const myaChars = (text.match(myanmarRegex) || []).length;
+                const myaChars = (text.match(/[\u1000-\u109F]/g) || []).length;
 
                 elements.statWords.textContent = `Words: ${words}`;
                 elements.statChars.textContent = `Characters: ${chars}`;
                 elements.statMyaChars.textContent = `Myanmar Chars: ${myaChars}`;
-            });
+            }
 
-            // 7. Actions (Copy, Clear, TTS)
+            elements.editorText.addEventListener('input', updateTextStats);
+
+            // 9. Copy, Speak & Clear Text Controls
             elements.btnCopy.addEventListener('click', () => {
-                if (!elements.editorText.value) return showToast('ကူးယူရန် စာသားမရှိပါ', 'warning');
+                if (!elements.editorText.value) return;
                 navigator.clipboard.writeText(elements.editorText.value);
                 showToast('စာသားများကို Copy ကူးပြီးပါပြီ', 'success');
             });
 
+            elements.btnSpeak.addEventListener('click', () => {
+                const text = elements.editorText.value;
+                if (!text) return;
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            });
+
             elements.btnClearText.addEventListener('click', () => {
                 elements.editorText.value = '';
-                elements.editorText.dispatchEvent(new Event('input'));
-                showToast('ရှင်းလင်းပြီးပါပြီ', 'info');
+                updateTextStats();
+                showToast('စာသားများကို ရှင်းလင်းလိုက်ပါပြီ', 'info');
             });
 
-            // TTS (Text to Speech)
-            let synth = window.speechSynthesis;
-            elements.btnSpeak.addEventListener('click', () => {
-                if (!elements.editorText.value) return showToast('ဖတ်ပြရန် စာသားမရှိပါ', 'warning');
-                if (synth.speaking) {
-                    synth.cancel();
-                    showToast('အသံထွက်ဖတ်ပြမှုကို ရပ်တန့်လိုက်ပါပြီ', 'info');
+            // Export Actions
+            elements.btnExportTxt.addEventListener('click', () => {
+                const text = elements.editorText.value;
+                if (!text) return;
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `ocr_export_${Date.now()}.txt`;
+                a.click();
+            });
+
+            // 10. Scan History Controls
+            function saveHistory(text) {
+                if (!text.trim()) return;
+                const item = {
+                    id: Date.now(),
+                    title: text.substring(0, 30) + '...',
+                    text: text,
+                    date: new Date().toLocaleDateString()
+                };
+                state.history.unshift(item);
+                if (state.history.length > 20) state.history.pop();
+                localStorage.setItem('myanmar_ocr_history', JSON.stringify(state.history));
+            }
+
+            function renderHistory() {
+                elements.historyContainer.innerHTML = '';
+                if (state.history.length === 0) {
+                    elements.historyContainer.innerHTML = '<p style="text-align:center; color:var(--text-muted);">မှတ်တမ်း မရှိသေးပါ</p>';
                     return;
                 }
-                const utterance = new SpeechSynthesisUtterance(elements.editorText.value);
-                synth.speak(utterance);
-                showToast('စာသားများကို ဖတ်ပြနေပါသည်...', 'info');
-            });
-
-            // Export Options
-            elements.btnExportTxt.addEventListener('click', () => {
-                if (!elements.editorText.value) return showToast('Export လုပ်ရန် စာသားမရှိပါ', 'warning');
-                const blob = new Blob([elements.editorText.value], { type: 'text/plain;charset=utf-8' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'extracted-text.txt';
-                a.click();
-                showToast('TXT ဖိုင်ဒေါင်းလုဒ်ဆွဲပြီးပါပြီ', 'success');
-            });
-
-            elements.btnExportDocx.addEventListener('click', () => {
-                if (!elements.editorText.value) return showToast('Export လုပ်ရန် စာသားမရှိပါ', 'warning');
-                const blob = new Blob([elements.editorText.value], { type: 'application/msword' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'extracted-document.doc';
-                a.click();
-                showToast('DOCX ဖိုင် ဒေါင်းလုဒ်ဆွဲပြီးပါပြီ', 'success');
-            });
-
-            elements.btnExportPdf.addEventListener('click', () => {
-                if (!elements.editorText.value) return showToast('Export လုပ်ရန် စာသားမရှိပါ', 'warning');
-                window.print();
-            });
-
-            // 8. AI Quick Tools & Custom Prompt
-            elements.aiCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const action = card.dataset.action;
-                    const text = elements.editorText.value;
-                    if (!text) return showToast('AI Process ပြုလုပ်ရန် Extracted Text မရှိပါ', 'warning');
-
-                    if (action === 'summarize') {
-                        elements.aiResultText.value = "AI Summary Result:\n-------------------\n" + text.slice(0, 200) + "... (Summary generated)";
-                    } else if (action === 'translate_en') {
-                        elements.aiResultText.value = "[Translated to English]:\n" + text;
-                    } else if (action === 'translate_my') {
-                        elements.aiResultText.value = "[Translated to Myanmar]:\n" + text;
-                    } else if (action === 'grammar') {
-                        elements.aiResultText.value = "[Corrected Text]:\n" + text;
-                    }
-                    showToast('AI Process ပြီးစီးပါပြီ', 'success');
+                state.history.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <div class="history-info">
+                            <div class="history-title">${item.title}</div>
+                            <div class="history-date">${item.date}</div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right" style="color:var(--text-muted)"></i>
+                    `;
+                    div.addEventListener('click', () => {
+                        elements.editorText.value = item.text;
+                        updateTextStats();
+                        elements.modalHistory.classList.remove('active');
+                        showToast('မှတ်တမ်းမှ စာသားကို ယူဆောင်ပြီးပါပြီ', 'success');
+                    });
+                    elements.historyContainer.appendChild(div);
                 });
-            });
+            }
 
-            elements.btnAiSubmit.addEventListener('click', () => {
-                const prompt = elements.aiCustomPrompt.value.trim();
-                if (!prompt) return showToast('ကျေးဇူးပြု၍ Prompt တစ်ခုခု ရေးပါ', 'warning');
-                elements.aiResultText.value = `AI Response for "${prompt}":\n\n` + (elements.editorText.value || "No input text provided.");
-                showToast('AI တုံ့ပြန်မှု ရရှိပါပြီ', 'success');
-            });
-
-            // 9. Crop Modal Handlers
-            elements.btnCropModal.addEventListener('click', () => {
-                if (!state.imageSrc) return showToast('Crop ရန် ပုံမရှိပါ', 'warning');
-                elements.modalCrop.classList.add('active');
-                if (state.cropperInstance) state.cropperInstance.destroy();
-                state.cropperInstance = new Cropper(elements.cropperImage, {
-                    viewMode: 1,
-                    autoCropArea: 0.9,
+            if(elements.btnHistory) {
+                elements.btnHistory.addEventListener('click', () => {
+                    renderHistory();
+                    elements.modalHistory.classList.add('active');
                 });
-            });
+            }
 
-            elements.btnCloseCrop.addEventListener('click', () => elements.modalCrop.classList.remove('active'));
-            elements.btnRotateLeft.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(-90));
-            elements.btnRotateRight.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(90));
-            elements.btnResetCrop.addEventListener('click', () => state.cropperInstance && state.cropperInstance.reset());
+            if(elements.btnCloseHistory) {
+                elements.btnCloseHistory.addEventListener('click', () => {
+                    elements.modalHistory.classList.remove('active');
+                });
+            }
 
-            elements.btnApplyCrop.addEventListener('click', () => {
-                if (state.cropperInstance) {
-                    const croppedUrl = state.cropperInstance.getCroppedCanvas().toDataURL();
-                    state.imageSrc = croppedUrl;
-                    elements.imagePreview.src = croppedUrl;
-                    elements.modalCrop.classList.remove('active');
-                    showToast('ပုံကို Crop / Rotate လုပ်ပြီးပါပြီ', 'success');
-                }
-            });
+            if(elements.btnClearHistory) {
+                elements.btnClearHistory.addEventListener('click', () => {
+                    state.history = [];
+                    localStorage.removeItem('myanmar_ocr_history');
+                    renderHistory();
+                    showToast('မှတ်တမ်းအားလုံးကို ဖျက်ပြီးပါပြီ', 'info');
+                });
+            }
         });
     </script>
 </body>
