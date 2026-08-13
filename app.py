@@ -33,19 +33,13 @@ MODEL_NAME = "gemini-flash-latest"
 
 
 def preprocess_image_for_ocr(image_bytes):
-    """OpenCV Preprocessing Engine with RAM Optimization (Optimized for Myanmar Script)"""
+
     file_bytes = np.frombuffer(image_bytes, np.uint8)
     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
     if image is None:
         raise ValueError("Invalid image format or corrupted file.")
 
-    # Convert to PIL Image for Resizing
-    pil_img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    pil_img.thumbnail((1800, 1800))  # Increased max dimensions for clearer script detection
-    
-    # Convert back to OpenCV format
-    image = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
     # Convert to Grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
