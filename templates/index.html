@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="my" data-theme="dark">
+<html lang="my" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Scanner & AI Text Suite</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts (Padauk for Myanmar Script & Plus Jakarta Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,26 +17,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     
     <style>
+        /* ==========================================================================
+           CSS Custom Properties & Design System
+           ========================================================================== */
         :root {
-            --bg-primary: #0b1120;
-            --bg-surface: #1e293b;
-            --bg-secondary: #0f172a;
-            --border-color: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --accent-primary: #3b82f6;
-            --accent-primary-hover: #2563eb;
+            --bg-primary: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-secondary: #f1f5f9;
+            --border-color: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent-primary: #2563eb;
+            --accent-primary-hover: #1d4ed8;
+            --accent-secondary: #0d9488;
             --accent-danger: #ef4444;
             --accent-success: #10b981;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --accent-warning: #f59e0b;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
             --font-main: 'Plus Jakarta Sans', 'Padauk', sans-serif;
-            --transition: all 0.25s ease;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-secondary: #334155;
+            --border-color: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-primary: #3b82f6;
+            --accent-primary-hover: #60a5fa;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+        }
+
+        /* Base Reset */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -51,8 +74,10 @@
             display: flex;
             flex-direction: column;
             line-height: 1.6;
+            transition: var(--transition);
         }
 
+        /* Navbar Layout */
         .navbar {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
@@ -63,6 +88,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
         .brand {
@@ -74,18 +100,23 @@
             color: var(--accent-primary);
         }
 
+        .brand i {
+            font-size: 1.5rem;
+        }
+
         .nav-controls {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
+        /* Buttons & Controls */
         .btn-icon {
-            background: var(--bg-secondary);
+            background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-secondary);
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
@@ -95,7 +126,7 @@
         }
 
         .btn-icon:hover {
-            background-color: var(--border-color);
+            background-color: var(--bg-secondary);
             color: var(--text-primary);
         }
 
@@ -111,39 +142,45 @@
             border: none;
             transition: var(--transition);
             font-family: var(--font-main);
-            white-space: nowrap;
         }
 
         .btn-primary {
             background-color: var(--accent-primary);
             color: #ffffff;
-            width: 100%;
-            justify-content: center;
         }
 
         .btn-primary:hover {
             background-color: var(--accent-primary-hover);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
             background-color: var(--bg-secondary);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            padding: 0.5rem 1rem;
         }
 
         .btn-secondary:hover {
             background-color: var(--border-color);
         }
 
+        .btn-danger {
+            background-color: var(--accent-danger);
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* Main Container Layout */
         .container {
-            max-width: 1450px;
+            max-width: 1400px;
             margin: 1.5rem auto;
             padding: 0 1.5rem;
             width: 100%;
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 360px 1fr;
             gap: 1.5rem;
             flex: 1;
         }
@@ -154,6 +191,7 @@
             }
         }
 
+        /* Panels */
         .panel {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -163,11 +201,11 @@
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
-            min-width: 0;
         }
 
         .panel-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.75rem;
@@ -182,10 +220,11 @@
             color: var(--text-primary);
         }
 
+        /* Dropzone Upload */
         .dropzone {
             border: 2px dashed var(--border-color);
             border-radius: var(--radius-md);
-            padding: 2.5rem 1rem;
+            padding: 2rem 1rem;
             text-align: center;
             cursor: pointer;
             transition: var(--transition);
@@ -196,8 +235,9 @@
             gap: 0.75rem;
         }
 
-        .dropzone:hover {
+        .dropzone:hover, .dropzone.dragover {
             border-color: var(--accent-primary);
+            background-color: rgba(37, 99, 235, 0.05);
         }
 
         .dropzone i {
@@ -215,10 +255,11 @@
             color: var(--text-muted);
         }
 
+        /* Image Preview Box */
         .preview-container {
             position: relative;
             width: 100%;
-            height: 280px;
+            max-height: 250px;
             border-radius: var(--radius-md);
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -228,19 +269,19 @@
 
         .preview-container img {
             width: 100%;
-            height: 100%;
+            height: 250px;
             object-fit: contain;
         }
 
         .preview-overlay {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             display: flex;
             gap: 6px;
-            z-index: 10;
         }
 
+        /* Form Controls */
         .form-group {
             display: flex;
             flex-direction: column;
@@ -255,51 +296,53 @@
 
         .form-select, .form-input {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.65rem 0.9rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-surface);
             color: var(--text-primary);
             font-family: var(--font-main);
             font-size: 0.9rem;
             outline: none;
-            cursor: pointer;
+            transition: var(--transition);
         }
 
+        .form-select:focus, .form-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Workbench Editor */
         .workbench {
             display: flex;
             flex-direction: column;
             gap: 1rem;
             flex: 1;
-            min-width: 0;
         }
 
         .tabs {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
         }
 
         .tab-btn {
-            padding: 0.5rem 1.25rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            background: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
             color: var(--text-secondary);
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
             transition: var(--transition);
+            font-family: var(--font-main);
         }
 
         .tab-btn.active {
             background-color: var(--accent-primary);
             color: #ffffff;
-            border-color: var(--accent-primary);
         }
 
         .tab-content {
@@ -313,14 +356,36 @@
             display: flex;
         }
 
+        .editor-textarea {
+            width: 100%;
+            min-height: 350px;
+            flex: 1;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            font-family: 'Padauk', var(--font-main);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            resize: vertical;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .editor-textarea:focus {
+            border-color: var(--accent-primary);
+        }
+
+        /* Toolbar */
         .toolbar {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             gap: 0.75rem;
             background-color: var(--bg-secondary);
-            padding: 0.75rem 1rem;
+            padding: 0.75rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
         }
@@ -331,50 +396,63 @@
             gap: 0.5rem;
         }
 
-        .editor-textarea {
-            width: 100%;
-            min-height: 400px;
-            flex: 1;
-            padding: 1rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: 'Padauk', var(--font-main);
-            font-size: 1rem;
-            line-height: 1.8;
-            resize: vertical;
-            outline: none;
-        }
-
         .stats-bar {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.25rem;
             font-size: 0.8rem;
             color: var(--text-muted);
             padding: 0.25rem 0.5rem;
         }
 
-        /* AI Section Controls */
-        .ai-controls-grid {
+        /* AI Quick Action Cards */
+        .ai-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 0.75rem;
         }
 
+        .ai-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            padding: 0.9rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .ai-card:hover {
+            border-color: var(--accent-primary);
+            background-color: var(--bg-surface);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ai-card i {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+        }
+
+        .ai-card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Modals */
         .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 1rem;
         }
 
         .modal-backdrop.active {
@@ -385,41 +463,99 @@
             background-color: var(--bg-surface);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            width: 100%;
-            max-width: 700px;
+            width: 90%;
+            max-width: 750px;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            animation: modalIn 0.25s ease-out;
         }
 
-        .modal-header, .modal-footer {
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
             padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-footer {
-            border-top: 1px solid var(--border-color);
-            border-bottom: none;
-            background-color: var(--bg-secondary);
-            justify-content: flex-end;
-            gap: 0.75rem;
         }
 
         .modal-body {
             padding: 1.25rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            background-color: var(--bg-secondary);
+        }
+
+        .crop-wrapper {
             max-height: 450px;
-            overflow: auto;
+            width: 100%;
             background-color: #000;
         }
 
-        .modal-body img {
+        .crop-wrapper img {
             max-width: 100%;
         }
 
+        /* History Drawer List */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .history-item {
+            padding: 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            border-color: var(--accent-primary);
+            background-color: var(--bg-surface);
+        }
+
+        .history-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            overflow: hidden;
+        }
+
+        .history-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Toast Notifications */
         .toast-container {
             position: fixed;
             bottom: 20px;
@@ -438,87 +574,149 @@
             padding: 0.8rem 1.2rem;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             font-size: 0.88rem;
+            animation: slideIn 0.3s ease-out;
+            transition: opacity 0.3s ease;
+        }
+
+        .toast.success { border-left-color: var(--accent-success); }
+        .toast.error { border-left-color: var(--accent-danger); }
+        .toast.warning { border-left-color: var(--accent-warning); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
+    <!-- Top Navigation Bar -->
     <nav class="navbar">
         <div class="brand">
-            <i class="fa-solid fa-file-invoice"></i>
+            <i class="fa-solid fa-file-invoice me-2"></i>
             <span>OCR Scanner & AI Text Suite</span>
         </div>
         <div class="nav-controls">
-            <button class="btn-icon" id="btn-theme" title="Settings">
-                <i class="fa-solid fa-gear"></i>
+            
+            <button class="btn-icon" id="btn-theme" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
             </button>
         </div>
     </nav>
 
+    <!-- Main Container Layout -->
     <main class="container">
-        <!-- Left Panel: Document Input -->
+        
+        <!-- Left Sidebar: Document Input Panel -->
         <section class="panel">
             <div class="panel-header">
                 <h2 class="panel-title">
-                    <i class="fa-solid fa-camera"></i> Document Input
+                    <i class="fa-solid fa-camera"></i>
+                    Document Input
                 </h2>
             </div>
 
+            <!-- Upload Drag & Drop Zone -->
             <div class="dropzone" id="dropzone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                <p>Drag & Drop scan image here<br>or Click to browse</p>
-                <span>Supported: PNG, JPG, JPEG</span>
+                <p>Drag & Drop scan image here</p>
+                <span>Supported: PNG, JPG, JPEG, WEBP</span>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
 
+            <!-- Image Preview Box -->
             <div class="preview-container" id="preview-box">
-                <img id="image-preview" src="" alt="Preview">
+                <img id="image-preview" src="" alt="Scan Image Preview">
                 <div class="preview-overlay">
-                    <button class="btn-icon" id="btn-crop-modal" title="Crop"><i class="fa-solid fa-crop-simple"></i></button>
-                    <button class="btn-icon" id="btn-remove-image" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="btn-icon" id="btn-crop-modal" title="Crop & Edit">
+                        <i class="fa-solid fa-crop-simple"></i>
+                    </button>
+                    <button class="btn-icon" id="btn-remove-image" title="Remove Image">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
             </div>
 
+            <!-- Language Options Form -->
             <div class="form-group">
-                <label class="form-label">OCR Recognition Language</label>
+                <label class="form-label" for="select-lang">OCR Recognition Language</label>
                 <select class="form-select" id="select-lang">
                     <option value="mya+eng" selected>Myanmar + English (Auto)</option>
-                    <option value="mya">Myanmar Only</option>
+                    <option value="mya">Myanmar Only (မြန်မာ)</option>
                     <option value="eng">English Only</option>
                 </select>
             </div>
 
-            <button class="btn btn-primary" id="btn-scan">
+            <!-- Extract Action Button -->
+            <button class="btn btn-primary" id="btn-scan" style="width: 100%; justify-content: center;">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span id="scan-btn-text">Extract Text (OCR)</span>
             </button>
         </section>
 
-        <!-- Right Workbench -->
+        <!-- Right Side: Workbench & AI Assistant -->
         <section class="panel workbench">
+            
+            <!-- Tab Controls -->
             <div class="tabs">
-                <button class="tab-btn active" data-tab="tab-text"><i class="fa-solid fa-align-left"></i> Extracted Text</button>
-                <button class="tab-btn" data-tab="tab-ai"><i class="fa-solid fa-robot"></i> AI Assistant</button>
+                <button class="tab-btn active" data-tab="tab-text">
+                    <i class="fa-solid fa-align-left me-1"></i> Extracted Text
+                </button>
+                <button class="tab-btn" data-tab="tab-ai">
+                    <i class="fa-solid fa-robot me-1"></i> AI Assistant
+                </button>
             </div>
 
-            <!-- Tab 1: Extracted Text Editor -->
+            <!-- Tab 1: Text Editor -->
             <div class="tab-content active" id="tab-text">
                 <div class="toolbar">
                     <div class="toolbar-group">
-                        <button class="btn-icon" id="btn-copy" title="Copy"><i class="fa-regular fa-copy"></i></button>
-                        <button class="btn-icon" id="btn-speak" title="Speak"><i class="fa-solid fa-volume-high"></i></button>
-                        <button class="btn-icon" id="btn-clear-text" title="Clear"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="btn-icon" id="btn-copy" title="Copy Text">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <button class="btn-icon" id="btn-speak" title="Read Aloud (TTS)">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <button class="btn-icon" id="btn-clear-text" title="Clear Text">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </div>
+
                     <div class="toolbar-group">
-                        <button class="btn btn-secondary" id="btn-export-docx"><i class="fa-regular fa-file-word"></i> DOCX</button>
-                        <button class="btn btn-secondary" id="btn-export-pdf"><i class="fa-regular fa-file-pdf"></i> PDF</button>
-                        <button class="btn btn-secondary" id="btn-export-txt"><i class="fa-regular fa-file-lines"></i> TXT</button>
+                        <button class="btn btn-secondary" id="btn-export-docx">
+                            <i class="fa-regular fa-file-word"></i> DOCX
+                        </button>
+                        <button class="btn btn-secondary" id="btn-export-pdf">
+                            <i class="fa-regular fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-secondary" id="btn-export-txt">
+                            <i class="fa-regular fa-file-lines"></i> TXT
+                        </button>
                     </div>
                 </div>
 
+                <!-- Text Area Input -->
                 <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. You can edit, format, or process it using AI..."></textarea>
 
+                <!-- Statistics Bar -->
                 <div class="stats-bar">
                     <span id="stat-words">Words: 0</span>
                     <span id="stat-chars">Characters: 0</span>
@@ -526,62 +724,126 @@
                 </div>
             </div>
 
-            <!-- Tab 2: AI Assistant (Connected to /ai/process endpoint) -->
+            <!-- Tab 2: AI Actions -->
             <div class="tab-content" id="tab-ai">
-                <div class="ai-controls-grid">
-                    <button class="btn btn-secondary" data-action="summarize"><i class="fa-solid fa-compress"></i> Summarize</button>
-                    <button class="btn btn-secondary" data-action="translate_en"><i class="fa-solid fa-language"></i> Translate to EN</button>
-                    <button class="btn btn-secondary" data-action="translate_my"><i class="fa-solid fa-language"></i> Translate to MY</button>
-                    <button class="btn btn-secondary" data-action="explain"><i class="fa-solid fa-circle-question"></i> Explain</button>
-                </div>
+                <div class="ai-grid">
+                    <div class="ai-card" data-action="summarize">
+                        <i class="fa-solid fa-compress"></i>
+                        <div>
+                            <div class="ai-card-title">Summarize</div>
+                            <small class="text-muted">Extract main summary</small>
+                        </div>
+                    </div>
 
-                <div class="form-group" style="margin-top: 0.5rem;">
-                    <label class="form-label">Ask Gemini AI / Custom Prompt</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" class="form-input" id="ai-prompt-input" placeholder="Ask anything about the text or provide custom prompt...">
-                        <button class="btn btn-primary" id="btn-ai-ask" style="width: auto;"><i class="fa-solid fa-paper-plane"></i></button>
+                    <div class="ai-card" data-action="translate_en">
+                        <i class="fa-solid fa-language"></i>
+                        <div>
+                            <div class="ai-card-title">Translate to EN</div>
+                            <small class="text-muted">Myanmar to English</small>
+                        </div>
+                    </div>
+
+                    <div class="ai-card" data-action="translate_my">
+                        <i class="fa-solid fa-language"></i>
+                        <div>
+                            <div class="ai-card-title">Translate to MY</div>
+                            <small class="text-muted">English to Myanmar</small>
+                        </div>
+                    </div>
+
+                    <div class="ai-card" data-action="grammar">
+                        <i class="fa-solid fa-spell-check"></i>
+                        <div>
+                            <div class="ai-card-title">Fix Spelling</div>
+                            <small class="text-muted">Correct OCR typos</small>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group" style="flex: 1;">
-                    <label class="form-label">AI Response Result</label>
-                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI Assistant outputs will appear here..." readonly></textarea>
+                <!-- Custom AI Prompt Input -->
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label" for="ai-custom-prompt">Custom AI Prompt</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" class="form-input" id="ai-custom-prompt" placeholder="Ask AI anything about the extracted text...">
+                        <button class="btn btn-primary" id="btn-ai-submit">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Output Result Field -->
+                <div class="form-group" style="flex: 1; margin-top: 0.5rem;">
+                    <label class="form-label">AI Output Result</label>
+                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI generated results will be displayed here..." readonly></textarea>
                 </div>
             </div>
+
         </section>
     </main>
 
-    <!-- Crop Modal -->
+    <!-- Crop Image Modal Dialog -->
     <div class="modal-backdrop" id="modal-crop">
         <div class="modal">
             <div class="modal-header">
-                <h3>Crop Image</h3>
+                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop Image Before OCR</h3>
                 <button class="btn-icon" id="btn-close-crop"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
-                <img id="cropper-image" src="" alt="Crop">
+                <div class="crop-wrapper">
+                    <img id="cropper-image" src="" alt="Image to crop">
+                </div>
             </div>
             <div class="modal-footer">
+                <button class="btn-icon" id="btn-rotate-left" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
+                <button class="btn-icon" id="btn-rotate-right" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
                 <button class="btn btn-secondary" id="btn-reset-crop">Reset</button>
-                <button class="btn btn-primary" id="btn-apply-crop" style="width: auto;">Apply Crop</button>
+                <button class="btn btn-primary" id="btn-apply-crop">Apply Crop</button>
             </div>
         </div>
     </div>
 
+    <!-- History Drawer Modal Dialog -->
+    <div class="modal-backdrop" id="modal-history">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clock-rotate-left me-2"></i>Scan History</h3>
+                <button class="btn-icon" id="btn-close-history"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="history-list" id="history-container">
+                    <!-- Dynamic history items loaded by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="btn-clear-history">
+                    <i class="fa-solid fa-trash-can me-1"></i> Clear History
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Scripts: Cropper.js -->
+    <!-- External Script Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
+    <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Global State Management
             let state = {
-                imageBlob: null,
-                imageURL: null,
-                cropper: null
+                currentImageBlob: null,
+                currentImageURL: null,
+                cropperInstance: null,
+                history: JSON.parse(localStorage.getItem('myanmar_ocr_history') || '[]'),
+                theme: localStorage.getItem('theme') || 'light'
             };
 
-            const el = {
+            // DOM Element References
+            const elements = {
+                html: document.documentElement,
+                btnTheme: document.getElementById('btn-theme'),
                 dropzone: document.getElementById('dropzone'),
                 fileInput: document.getElementById('file-input'),
                 previewBox: document.getElementById('preview-box'),
@@ -597,235 +859,438 @@
                 btnCopy: document.getElementById('btn-copy'),
                 btnSpeak: document.getElementById('btn-speak'),
                 btnClearText: document.getElementById('btn-clear-text'),
+                btnExportTxt: document.getElementById('btn-export-txt'),
                 btnExportDocx: document.getElementById('btn-export-docx'),
                 btnExportPdf: document.getElementById('btn-export-pdf'),
-                btnExportTxt: document.getElementById('btn-export-txt'),
+                // Cropper Modal
                 modalCrop: document.getElementById('modal-crop'),
                 btnCropModal: document.getElementById('btn-crop-modal'),
                 cropperImage: document.getElementById('cropper-image'),
                 btnCloseCrop: document.getElementById('btn-close-crop'),
+                btnRotateLeft: document.getElementById('btn-rotate-left'),
+                btnRotateRight: document.getElementById('btn-rotate-right'),
                 btnResetCrop: document.getElementById('btn-reset-crop'),
                 btnApplyCrop: document.getElementById('btn-apply-crop'),
-                toastContainer: document.getElementById('toast-container'),
+                // History Drawer
+                btnHistory: document.getElementById('btn-history'),
+                modalHistory: document.getElementById('modal-history'),
+                btnCloseHistory: document.getElementById('btn-close-history'),
+                historyContainer: document.getElementById('history-container'),
+                btnClearHistory: document.getElementById('btn-clear-history'),
+                // Navigation Tabs
                 tabBtns: document.querySelectorAll('.tab-btn'),
                 tabContents: document.querySelectorAll('.tab-content'),
-                aiActionBtns: document.querySelectorAll('[data-action]'),
-                aiPromptInput: document.getElementById('ai-prompt-input'),
-                btnAiAsk: document.getElementById('btn-ai-ask'),
-                aiResultText: document.getElementById('ai-result-text')
+                // AI Actions
+                aiCards: document.querySelectorAll('.ai-card'),
+                aiCustomPrompt: document.getElementById('ai-custom-prompt'),
+                btnAiSubmit: document.getElementById('btn-ai-submit'),
+                aiResultText: document.getElementById('ai-result-text'),
+                // Toast Container
+                toastContainer: document.getElementById('toast-container')
             };
 
-            function showToast(msg, type = 'info') {
-                const t = document.createElement('div');
-                t.className = `toast`;
-                t.textContent = msg;
-                el.toastContainer.appendChild(t);
-                setTimeout(() => t.remove(), 3000);
+            // 1. Theme Switcher Logic
+            function initTheme() {
+                elements.html.setAttribute('data-theme', state.theme);
+                updateThemeIcon();
             }
 
-            // Tabs Handler
-            el.tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    el.tabBtns.forEach(b => b.classList.remove('active'));
-                    el.tabContents.forEach(c => c.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(btn.getAttribute('data-tab')).classList.add('active');
-                });
-            });
+            function toggleTheme() {
+                state.theme = state.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', state.theme);
+                elements.html.setAttribute('data-theme', state.theme);
+                updateThemeIcon();
+            }
 
-            // Upload Handling & Drag-Drop
-            el.dropzone.addEventListener('click', () => el.fileInput.click());
-            el.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
-            el.dropzone.addEventListener('drop', (e) => {
+            function updateThemeIcon() {
+                const icon = elements.btnTheme.querySelector('i');
+                icon.className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+
+            elements.btnTheme.addEventListener('click', toggleTheme);
+            initTheme();
+
+            // 2. Toast Notification Helper
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                let icon = 'fa-circle-info';
+                if (type === 'success') icon = 'fa-circle-check';
+                if (type === 'error') icon = 'fa-circle-exclamation';
+                if (type === 'warning') icon = 'fa-triangle-exclamation';
+                
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+                elements.toastContainer.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // 3. File Input & Drag & Drop Logic
+            elements.dropzone.addEventListener('click', () => elements.fileInput.click());
+
+            elements.dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
-            });
-            el.fileInput.addEventListener('change', (e) => {
-                if (e.target.files?.[0]) handleFile(e.target.files[0]);
+                elements.dropzone.classList.add('dragover');
             });
 
-            function handleFile(file) {
-                state.imageBlob = file;
-                state.imageURL = URL.createObjectURL(file);
-                el.imagePreview.src = state.imageURL;
-                el.previewBox.style.display = 'block';
-                el.dropzone.style.display = 'none';
-                showToast('ပုံ တင်ပြီးပါပြီ။', 'success');
-            }
-
-            el.btnRemoveImage.addEventListener('click', () => {
-                state.imageBlob = null;
-                state.imageURL = null;
-                el.imagePreview.src = '';
-                el.previewBox.style.display = 'none';
-                el.dropzone.style.display = 'flex';
-                el.fileInput.value = '';
-                showToast('ပုံကို ဖယ်ရှားပြီးပါပြီ။');
+            elements.dropzone.addEventListener('dragleave', () => {
+                elements.dropzone.classList.remove('dragover');
             });
 
-            // Cropper Modal
-            el.btnCropModal.addEventListener('click', () => {
-                if (!state.imageURL) return;
-                el.cropperImage.src = state.imageURL;
-                el.modalCrop.classList.add('active');
-                if (state.cropper) state.cropper.destroy();
-                state.cropper = new Cropper(el.cropperImage, { viewMode: 1 });
-            });
-            el.btnCloseCrop.addEventListener('click', () => el.modalCrop.classList.remove('active'));
-            el.btnResetCrop.addEventListener('click', () => state.cropper?.reset());
-            el.btnApplyCrop.addEventListener('click', () => {
-                state.cropper.getCroppedCanvas().toBlob(blob => {
-                    state.imageBlob = blob;
-                    state.imageURL = URL.createObjectURL(blob);
-                    el.imagePreview.src = state.imageURL;
-                    el.modalCrop.classList.remove('active');
-                    showToast('ပုံကို အောင်မြင်စွာ ဖြတ်တောက်ပြီးပါပြီ။', 'success');
-                });
+            elements.dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                elements.dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleImageUpload(e.dataTransfer.files[0]);
+                }
             });
 
-            // OCR Extraction Backend Call (/ocr route)
-            el.btnScan.addEventListener('click', async () => {
-                if (!state.imageBlob) {
-                    showToast('ကျေးဇူးပြု၍ ပထမဦးစွာ ပုံတင်ပါ။', 'error');
+            elements.fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleImageUpload(e.target.files[0]);
+                }
+            });
+
+            function handleImageUpload(file) {
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please upload a valid image file!', 'error');
                     return;
                 }
-                el.btnScan.disabled = true;
-                el.scanBtnText.textContent = 'Scanning OCR...';
-                showToast('ဆာဗာမှ စာသားဖတ်ရှုနေပါပြီ...');
+
+                state.currentImageBlob = file;
+                if (state.currentImageURL) URL.revokeObjectURL(state.currentImageURL);
+                state.currentImageURL = URL.createObjectURL(file);
+
+                elements.imagePreview.src = state.currentImageURL;
+                elements.dropzone.style.display = 'none';
+                elements.previewBox.style.display = 'block';
+                showToast('Image uploaded successfully', 'success');
+            }
+
+            elements.btnRemoveImage.addEventListener('click', () => {
+                state.currentImageBlob = null;
+                if (state.currentImageURL) URL.revokeObjectURL(state.currentImageURL);
+                state.currentImageURL = null;
+                elements.imagePreview.src = '';
+                elements.previewBox.style.display = 'none';
+                elements.dropzone.style.display = 'flex';
+                elements.fileInput.value = '';
+            });
+
+            // 4. Cropper Modal Logic
+            elements.btnCropModal.addEventListener('click', () => {
+                if (!state.currentImageURL) return;
+                elements.cropperImage.src = state.currentImageURL;
+                elements.modalCrop.classList.add('active');
+
+                if (state.cropperInstance) state.cropperInstance.destroy();
+                state.cropperInstance = new Cropper(elements.cropperImage, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    autoCropArea: 0.9
+                });
+            });
+
+            elements.btnCloseCrop.addEventListener('click', closeCropper);
+
+            function closeCropper() {
+                elements.modalCrop.classList.remove('active');
+                if (state.cropperInstance) {
+                    state.cropperInstance.destroy();
+                    state.cropperInstance = null;
+                }
+            }
+
+            elements.btnRotateLeft.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(-90));
+            elements.btnRotateRight.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(90));
+            elements.btnResetCrop.addEventListener('click', () => state.cropperInstance && state.cropperInstance.reset());
+
+            elements.btnApplyCrop.addEventListener('click', () => {
+                if (!state.cropperInstance) return;
+                state.cropperInstance.getCroppedCanvas().toBlob((blob) => {
+                    state.currentImageBlob = blob;
+                    if (state.currentImageURL) URL.revokeObjectURL(state.currentImageURL);
+                    state.currentImageURL = URL.createObjectURL(blob);
+                    elements.imagePreview.src = state.currentImageURL;
+                    closeCropper();
+                    showToast('Cropped image applied', 'success');
+                });
+            });
+
+            // 5. OCR Process
+            elements.btnScan.addEventListener('click', async () => {
+                if (!state.currentImageBlob) {
+                    showToast('Please upload an image first!', 'warning');
+                    return;
+                }
+
+                setLoading(elements.btnScan, elements.scanBtnText, true, 'Processing OCR...');
 
                 const formData = new FormData();
-                formData.append('file', state.imageBlob, 'image.jpg');
-                formData.append('lang', el.selectLang.value);
+                formData.append('file', state.currentImageBlob);
+                formData.append('lang', elements.selectLang.value);
 
                 try {
                     const response = await fetch('/ocr', {
                         method: 'POST',
                         body: formData
                     });
+
                     const data = await response.json();
-                    
-                    if (data.success) {
-                        el.editorText.value = data.text;
+
+                    if (response.ok && data.text !== undefined) {
+                        elements.editorText.value = data.text;
                         updateStats();
-                        showToast('စာသားဖတ်ရှုမှု ပြီးမြောက်ပါပြီ။', 'success');
+                        saveToHistory(data.text);
+                        showToast('Text extracted successfully!', 'success');
                     } else {
-                        showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+                        showToast(data.error || 'Failed to extract text.', 'error');
                     }
                 } catch (err) {
                     console.error(err);
-                    showToast('ဆာဗာသို့ ချိတ်ဆက်၍မရပါ။', 'error');
+                    showToast('Connection error with server', 'error');
                 } finally {
-                    el.btnScan.disabled = false;
-                    el.scanBtnText.textContent = 'Extract Text (OCR)';
+                    setLoading(elements.btnScan, elements.scanBtnText, false, 'Extract Text (OCR)');
                 }
             });
 
-            // Text Stats & Toolbar actions
-            el.editorText.addEventListener('input', updateStats);
+            // 6. Text Editor Statistics & Helper Actions
+            elements.editorText.addEventListener('input', updateStats);
+
             function updateStats() {
-                const text = el.editorText.value;
+                const text = elements.editorText.value || '';
                 const words = text.trim() ? text.trim().split(/\s+/).length : 0;
                 const chars = text.length;
                 const myaChars = (text.match(/[\u1000-\u109F]/g) || []).length;
-                el.statWords.textContent = `Words: ${words}`;
-                el.statChars.textContent = `Characters: ${chars}`;
-                el.statMyaChars.textContent = `Myanmar Chars: ${myaChars}`;
+
+                elements.statWords.textContent = `Words: ${words}`;
+                elements.statChars.textContent = `Characters: ${chars}`;
+                elements.statMyaChars.textContent = `Myanmar Chars: ${myaChars}`;
             }
 
-            el.btnClearText.addEventListener('click', () => { el.editorText.value = ''; updateStats(); });
-            el.btnCopy.addEventListener('click', () => {
-                navigator.clipboard.writeText(el.editorText.value);
-                showToast('စာသားများကို ကူးယူပြီးပါပြီ။', 'success');
-            });
-            el.btnSpeak.addEventListener('click', () => {
-                if (!el.editorText.value) return;
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(el.editorText.value));
+            elements.btnCopy.addEventListener('click', () => {
+                if (!elements.editorText.value) return;
+                navigator.clipboard.writeText(elements.editorText.value);
+                showToast('Copied to clipboard!', 'success');
             });
 
-            // AI Assistant Handler (/ai/process route)
-            async function callAI(action, targetLang = '', prompt = '') {
-                const text = el.editorText.value;
-                if (!text) {
-                    showToast('ပထမဦးစွာ စာသားများ ရှိရန်လိုအပ်ပါသည်။', 'error');
-                    return;
+            elements.btnSpeak.addEventListener('click', () => {
+                const text = elements.editorText.value;
+                if (!text) return;
+                
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    window.speechSynthesis.speak(utterance);
+                    showToast('Reading aloud...', 'info');
+                } else {
+                    showToast('Text-To-Speech is not supported in this browser.', 'warning');
                 }
-                showToast('AI ဖြင့် လုပ်ဆောင်နေပါပြီ...');
-                el.aiResultText.value = 'Processing...';
+            });
+
+            elements.btnClearText.addEventListener('click', () => {
+                elements.editorText.value = '';
+                updateStats();
+                showToast('Text cleared', 'info');
+            });
+
+            // Exports
+            elements.btnExportTxt.addEventListener('click', () => {
+                const text = elements.editorText.value;
+                if (!text) return showToast('No text to export', 'warning');
+                
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `OCR_Export_${Date.now()}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+
+            elements.btnExportDocx.addEventListener('click', () => exportFile('/export/docx', 'docx'));
+            elements.btnExportPdf.addEventListener('click', () => exportFile('/export/pdf', 'pdf'));
+
+            async function exportFile(endpoint, ext) {
+                const text = elements.editorText.value;
+                if (!text) return showToast('No text to export', 'warning');
 
                 try {
-                    const res = await fetch('/ai/process', {
+                    const res = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text, action, target_lang: targetLang, prompt })
+                        body: JSON.stringify({ text })
                     });
-                    const data = await res.json();
-                    if (data.success) {
-                        el.aiResultText.value = data.result;
-                        showToast('AI လုပ်ဆောင်ချက် ပြီးမြောက်ပါပြီ။', 'success');
-                    } else {
-                        el.aiResultText.value = 'Error: ' + data.error;
-                        showToast(data.error, 'error');
-                    }
-                } catch (e) {
-                    console.error(e);
-                    showToast('AI ဆာဗာ ချိတ်ဆက်မှု အမှားရှိသည်။', 'error');
+
+                    if (!res.ok) throw new Error('Export failed');
+
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Document_${Date.now()}.${ext}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast(`Exported as ${ext.toUpperCase()}`, 'success');
+                } catch (err) {
+                    showToast(`Failed to export ${ext.toUpperCase()}`, 'error');
                 }
             }
 
-            el.aiActionBtns.forEach(btn => {
+            // 7. Navigation Tabs
+            elements.tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const actionType = btn.getAttribute('data-action');
-                    if (actionType === 'summarize') callAI('summarize');
-                    else if (actionType === 'translate_en') callAI('translate', 'en');
-                    else if (actionType === 'translate_my') callAI('translate', 'my');
-                    else if (actionType === 'explain') callAI('explain');
+                    const targetTab = btn.getAttribute('data-tab');
+                    
+                    elements.tabBtns.forEach(b => b.classList.remove('active'));
+                    elements.tabContents.forEach(c => c.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
                 });
             });
 
-            el.btnAiAsk.addEventListener('click', () => {
-                const prompt = el.aiPromptInput.value.trim();
-                if (!prompt) return showToast('မေးခွန်း သို့မဟုတ် Prompt ရေးပါ။', 'error');
-                callAI('ask', '', prompt);
-            });
-
-            // Export DOCX & PDF Backend Routes
-            el.btnExportTxt.addEventListener('click', () => {
-                const blob = new Blob([el.editorText.value], { type: 'text/plain;charset=utf-8' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'extracted-text.txt';
-                a.click();
-            });
-
-            el.btnExportDocx.addEventListener('click', async () => {
-                if (!el.editorText.value) return showToast('စာသားမရှိပါ။', 'error');
-                showToast('DOCX ဖိုင်ထုတ်ယူနေပါပြီ...');
-                const res = await fetch('/export/docx', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: el.editorText.value })
+            // 8. AI Actions Logic
+            elements.aiCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const actionType = card.getAttribute('data-action');
+                    triggerAIAction(actionType);
                 });
-                const blob = await res.blob();
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'ocr_result.docx';
-                a.click();
             });
 
-            el.btnExportPdf.addEventListener('click', async () => {
-                if (!el.editorText.value) return showToast('စာသားမရှိပါ။', 'error');
-                showToast('PDF ဖိုင်ထုတ်ယူနေပါပြီ...');
-                const res = await fetch('/export/pdf', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: el.editorText.value })
-                });
-                const blob = await res.blob();
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'ocr_result.pdf';
-                a.click();
+            elements.btnAiSubmit.addEventListener('click', () => {
+                const customPrompt = elements.aiCustomPrompt.value.trim();
+                if (!customPrompt) return showToast('Please enter a prompt!', 'warning');
+                triggerAIAction('ask', customPrompt);
             });
+
+            async function triggerAIAction(action, customPrompt = '') {
+                const text = elements.editorText.value.trim();
+                if (!text) return showToast('Please extract or type some text first!', 'warning');
+
+                elements.aiResultText.value = 'AI Processing... Please wait.';
+
+                let payloadAction = action;
+                let payloadTargetLang = '';
+                let promptText = customPrompt;
+
+                if (action === 'translate_en') {
+                    payloadAction = 'translate';
+                    payloadTargetLang = 'en';
+                } else if (action === 'translate_my') {
+                    payloadAction = 'translate';
+                    payloadTargetLang = 'my';
+                } else if (action === 'grammar') {
+                    payloadAction = 'explain';
+                    promptText = 'Fix spelling, punctuation, and typos in the text while preserving its original meaning.';
+                }
+
+                try {
+                    const response = await fetch('/ai/process', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: payloadAction,
+                            text: text,
+                            target_lang: payloadTargetLang,
+                            prompt: promptText
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok && data.result) {
+                        elements.aiResultText.value = data.result;
+                        showToast('AI Process completed!', 'success');
+                    } else {
+                        elements.aiResultText.value = '';
+                        showToast(data.error || 'AI Processing failed.', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    elements.aiResultText.value = '';
+                    showToast('Connection error with AI service', 'error');
+                }
+            }
+
+            // 9. History Logic
+            elements.btnHistory.addEventListener('click', () => {
+                renderHistory();
+                elements.modalHistory.classList.add('active');
+            });
+
+            elements.btnCloseHistory.addEventListener('click', () => {
+                elements.modalHistory.classList.remove('active');
+            });
+
+            function saveToHistory(text) {
+                if (!text.trim()) return;
+                const newItem = {
+                    id: Date.now(),
+                    text: text,
+                    date: new Date().toLocaleString()
+                };
+                state.history.unshift(newItem);
+                if (state.history.length > 20) state.history.pop();
+                localStorage.setItem('myanmar_ocr_history', JSON.stringify(state.history));
+            }
+
+            function renderHistory() {
+                elements.historyContainer.innerHTML = '';
+                if (state.history.length === 0) {
+                    elements.historyContainer.innerHTML = '<p class="text-muted" style="text-align: center; padding: 1rem;">No history records found.</p>';
+                    return;
+                }
+
+                state.history.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <div class="history-info">
+                            <div class="history-title">${escapeHtml(item.text.substring(0, 50))}...</div>
+                            <div class="history-date">${item.date}</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted"></i>
+                    `;
+                    div.addEventListener('click', () => {
+                        elements.editorText.value = item.text;
+                        updateStats();
+                        elements.modalHistory.classList.remove('active');
+                        showToast('History item loaded', 'info');
+                    });
+                    elements.historyContainer.appendChild(div);
+                });
+            }
+
+            elements.btnClearHistory.addEventListener('click', () => {
+                state.history = [];
+                localStorage.removeItem('myanmar_ocr_history');
+                renderHistory();
+                showToast('History cleared', 'info');
+            });
+
+            // Helper Utility Functions
+            function setLoading(btn, labelSpan, isLoading, text) {
+                if (isLoading) {
+                    btn.disabled = true;
+                    btn.dataset.origText = labelSpan.textContent;
+                    labelSpan.textContent = text;
+                    const spinner = document.createElement('div');
+                    spinner.className = 'spinner';
+                    btn.prepend(spinner);
+                } else {
+                    btn.disabled = false;
+                    labelSpan.textContent = text || btn.dataset.origText;
+                    const spinner = btn.querySelector('.spinner');
+                    if (spinner) spinner.remove();
+                }
+            }
+
+            function escapeHtml(str) {
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            }
         });
     </script>
 </body>
