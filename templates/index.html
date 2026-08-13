@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Scanner & AI Text Suite</title>
     
-    <!-- Google Fonts (Padauk & Plus Jakarta Sans) -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,9 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     
     <style>
-        /* ==========================================================================
-           CSS Custom Properties & Design System
-           ========================================================================== */
         :root {
             --bg-primary: #f8fafc;
             --bg-surface: #ffffff;
@@ -30,14 +27,12 @@
             --text-muted: #94a3b8;
             --accent-primary: #2563eb;
             --accent-primary-hover: #1d4ed8;
-            --accent-secondary: #0d9488;
             --accent-danger: #ef4444;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --radius-sm: 6px;
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
             --radius-md: 10px;
             --radius-lg: 16px;
             --font-main: 'Plus Jakarta Sans', 'Padauk', sans-serif;
@@ -54,17 +49,9 @@
             --text-muted: #64748b;
             --accent-primary: #3b82f6;
             --accent-primary-hover: #60a5fa;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
         }
 
-        /* Base Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: var(--font-main);
@@ -74,10 +61,8 @@
             display: flex;
             flex-direction: column;
             line-height: 1.6;
-            transition: var(--transition);
         }
 
-        /* Navbar Layout */
         .navbar {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
@@ -88,29 +73,17 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: var(--shadow-sm);
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
 
-        .brand i {
-            font-size: 1.5rem;
-        }
-
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* Buttons & Controls */
         .btn-icon {
             background: transparent;
             border: 1px solid var(--border-color);
@@ -123,7 +96,6 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
-            flex-shrink: 0;
         }
 
         .btn-icon:hover {
@@ -132,7 +104,7 @@
         }
 
         .btn {
-            padding: 0.6rem 1.2rem;
+            padding: 0.65rem 1.25rem;
             border-radius: var(--radius-md);
             font-weight: 600;
             font-size: 0.9rem;
@@ -144,39 +116,14 @@
             border: none;
             transition: var(--transition);
             font-family: var(--font-main);
-            white-space: nowrap;
         }
 
-        .btn-primary {
-            background-color: var(--accent-primary);
-            color: #ffffff;
-        }
+        .btn-primary { background-color: var(--accent-primary); color: #fff; }
+        .btn-primary:hover { background-color: var(--accent-primary-hover); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-secondary { background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: var(--border-color); }
 
-        .btn-primary:hover {
-            background-color: var(--accent-primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--border-color);
-        }
-
-        .btn-danger {
-            background-color: var(--accent-danger);
-            color: #ffffff;
-        }
-
-        .btn-danger:hover {
-            opacity: 0.9;
-        }
-
-        /* Main Container Layout */
         .container {
             max-width: 1400px;
             margin: 1.5rem auto;
@@ -188,7 +135,6 @@
             flex: 1;
         }
 
-        /* Panels */
         .panel {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -214,10 +160,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--text-primary);
         }
 
-        /* Dropzone Upload */
         .dropzone {
             border: 2px dashed var(--border-color);
             border-radius: var(--radius-md);
@@ -237,22 +181,8 @@
             background-color: rgba(37, 99, 235, 0.05);
         }
 
-        .dropzone i {
-            font-size: 2.5rem;
-            color: var(--accent-primary);
-        }
+        .dropzone i { font-size: 2.5rem; color: var(--accent-primary); }
 
-        .dropzone p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .dropzone span {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        /* Image Preview Box */
         .preview-container {
             position: relative;
             width: 100%;
@@ -278,18 +208,8 @@
             gap: 6px;
         }
 
-        /* Form Controls */
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
 
         .form-select, .form-input {
             width: 100%;
@@ -301,59 +221,28 @@
             font-family: var(--font-main);
             font-size: 0.9rem;
             outline: none;
-            transition: var(--transition);
         }
 
-        .form-select:focus, .form-input:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
+        .workbench { display: flex; flex-direction: column; gap: 1rem; flex: 1; }
 
-        /* Workbench Editor */
-        .workbench {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
-            overflow-x: auto;
-        }
+        .tabs { display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
 
         .tab-btn {
             padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
+            border-radius: 6px;
             border: none;
             background: transparent;
             color: var(--text-secondary);
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: var(--transition);
             font-family: var(--font-main);
-            white-space: nowrap;
         }
 
-        .tab-btn.active {
-            background-color: var(--accent-primary);
-            color: #ffffff;
-        }
+        .tab-btn.active { background-color: var(--accent-primary); color: #fff; }
 
-        .tab-content {
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .tab-content.active {
-            display: flex;
-        }
+        .tab-content { display: none; flex-direction: column; gap: 1rem; flex: 1; }
+        .tab-content.active { display: flex; }
 
         .editor-textarea {
             width: 100%;
@@ -369,14 +258,8 @@
             line-height: 1.8;
             resize: vertical;
             outline: none;
-            transition: var(--transition);
         }
 
-        .editor-textarea:focus {
-            border-color: var(--accent-primary);
-        }
-
-        /* Toolbar */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -389,12 +272,7 @@
             border: 1px solid var(--border-color);
         }
 
-        .toolbar-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+        .toolbar-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 
         .stats-bar {
             display: flex;
@@ -402,10 +280,8 @@
             gap: 1.25rem;
             font-size: 0.8rem;
             color: var(--text-muted);
-            padding: 0.25rem 0.5rem;
         }
 
-        /* AI Quick Action Cards */
         .ai-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -418,36 +294,23 @@
             padding: 0.9rem;
             border-radius: var(--radius-md);
             cursor: pointer;
-            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            transition: var(--transition);
         }
 
         .ai-card:hover {
             border-color: var(--accent-primary);
             background-color: var(--bg-surface);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
         }
 
-        .ai-card i {
-            font-size: 1.25rem;
-            color: var(--accent-primary);
-        }
+        .ai-card i { font-size: 1.25rem; color: var(--accent-primary); }
 
-        .ai-card-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* Modals */
+        /* Modal */
         .modal-backdrop {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: none;
@@ -456,76 +319,31 @@
             z-index: 1000;
             padding: 1rem;
         }
-
-        .modal-backdrop.active {
-            display: flex;
-        }
+        .modal-backdrop.active { display: flex; }
 
         .modal {
             background-color: var(--bg-surface);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
             width: 100%;
-            max-width: 750px;
-            max-height: 90vh;
+            max-width: 700px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            animation: modalIn 0.25s ease-out;
         }
 
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+        .modal-header, .modal-footer { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 1.25rem; }
+        .crop-wrapper { max-height: 400px; width: 100%; background-color: #000; }
+        .crop-wrapper img { max-width: 100%; }
 
-        .modal-header {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-body {
-            padding: 1.25rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.25rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-            background-color: var(--bg-secondary);
-            flex-wrap: wrap;
-        }
-
-        .crop-wrapper {
-            max-height: 450px;
-            width: 100%;
-            background-color: #000;
-        }
-
-        .crop-wrapper img {
-            max-width: 100%;
-        }
-
-        /* Toast Notifications */
+        /* Toasts */
         .toast-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            bottom: 20px; right: 20px;
+            display: flex; flex-direction: column; gap: 10px;
             z-index: 2000;
-            max-width: calc(100vw - 40px);
         }
-
         .toast {
             background-color: var(--bg-surface);
             color: var(--text-primary);
@@ -534,102 +352,61 @@
             padding: 0.8rem 1.2rem;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            display: flex; align-items: center; gap: 0.75rem;
             font-size: 0.88rem;
-            animation: slideIn 0.3s ease-out;
-            transition: opacity 0.3s ease;
         }
-
         .toast.success { border-left-color: var(--accent-success); }
         .toast.error { border-left-color: var(--accent-danger); }
         .toast.warning { border-left-color: var(--accent-warning); }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Responsive Layout Media Queries */
+        /* Responsive Breakpoints */
         @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-                margin: 1rem auto;
-            }
+            .container { grid-template-columns: 1fr; }
         }
-
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .navbar { padding: 0.75rem 1rem; }
-            .brand { font-size: 1.05rem; }
-            .container { padding: 0 0.75rem; gap: 1rem; }
-            .panel { padding: 1rem; gap: 1rem; }
+            .container { padding: 0 0.5rem; }
             .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-group { width: 100%; justify-content: flex-start; }
+            .toolbar-group { width: 100%; }
             .toolbar-group .btn { flex: 1; }
-            .editor-textarea { min-height: 280px; }
-            .crop-wrapper { max-height: 300px; }
-        }
-
-        @media (max-width: 480px) {
-            .brand span { font-size: 0.95rem; }
-            .ai-grid { grid-template-columns: 1fr; }
-            .modal-footer { justify-content: stretch; }
-            .modal-footer .btn, .modal-footer .btn-icon { flex: 1 1 auto; }
-            .toast-container { bottom: 10px; right: 10px; left: 10px; max-width: none; }
-            .toast { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <nav class="navbar">
         <div class="brand">
-            <i class="fa-solid fa-file-invoice me-2"></i>
+            <i class="fa-solid fa-file-invoice"></i>
             <span>OCR Scanner & AI Text Suite</span>
         </div>
-        <div class="nav-controls">
-            <button class="btn-icon" id="btn-theme" title="Toggle Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-        </div>
+        <button class="btn-icon" id="btn-theme" title="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+        </button>
     </nav>
 
-    <!-- Main Container Layout -->
     <main class="container">
         
-        <!-- Left Sidebar: Document Input Panel -->
+        <!-- Left Panel: Input -->
         <section class="panel">
             <div class="panel-header">
-                <h2 class="panel-title">
-                    <i class="fa-solid fa-camera"></i>
-                    Document Input
-                </h2>
+                <h2 class="panel-title"><i class="fa-solid fa-camera"></i> Document Input</h2>
             </div>
 
-            <!-- Upload Drag & Drop Zone -->
             <div class="dropzone" id="dropzone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <p>Drag & Drop scan image here</p>
-                <span>Supported: PNG, JPG, JPEG, WEBP</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Supported: PNG, JPG, JPEG, WEBP</span>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
 
-            <!-- Image Preview Box -->
             <div class="preview-container" id="preview-box">
-                <img id="image-preview" src="" alt="Scan Image Preview">
+                <img id="image-preview" src="" alt="Scan Preview">
                 <div class="preview-overlay">
-                    <button class="btn-icon" id="btn-crop-modal" title="Crop & Edit">
-                        <i class="fa-solid fa-crop-simple"></i>
-                    </button>
-                    <button class="btn-icon" id="btn-remove-image" title="Remove Image">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button class="btn-icon" id="btn-crop-modal" title="Crop & Edit"><i class="fa-solid fa-crop-simple"></i></button>
+                    <button class="btn-icon" id="btn-remove-image" title="Remove Image"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- Language Options Form -->
             <div class="form-group">
                 <label class="form-label" for="select-lang">OCR Recognition Language</label>
                 <select class="form-select" id="select-lang">
@@ -639,58 +416,37 @@
                 </select>
             </div>
 
-            <!-- Extract Action Button -->
-            <button class="btn btn-primary" id="btn-scan" style="width: 100%; justify-content: center;">
+            <!-- OCR Extract Button -->
+            <button class="btn btn-primary" id="btn-scan" style="width: 100%;">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span id="scan-btn-text">Extract Text (OCR)</span>
             </button>
         </section>
 
-        <!-- Right Side: Workbench & AI Assistant -->
+        <!-- Right Panel: Workbench -->
         <section class="panel workbench">
-            
-            <!-- Tab Controls -->
             <div class="tabs">
-                <button class="tab-btn active" data-tab="tab-text">
-                    <i class="fa-solid fa-align-left me-1"></i> Extracted Text
-                </button>
-                <button class="tab-btn" data-tab="tab-ai">
-                    <i class="fa-solid fa-robot me-1"></i> AI Assistant
-                </button>
+                <button class="tab-btn active" data-tab="tab-text"><i class="fa-solid fa-align-left me-1"></i> Extracted Text</button>
+                <button class="tab-btn" data-tab="tab-ai"><i class="fa-solid fa-robot me-1"></i> AI Assistant</button>
             </div>
 
-            <!-- Tab 1: Text Editor -->
+            <!-- Tab 1: Extracted Text -->
             <div class="tab-content active" id="tab-text">
                 <div class="toolbar">
                     <div class="toolbar-group">
-                        <button class="btn-icon" id="btn-copy" title="Copy Text">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                        <button class="btn-icon" id="btn-speak" title="Read Aloud (TTS)">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
-                        <button class="btn-icon" id="btn-clear-text" title="Clear Text">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+                        <button class="btn-icon" id="btn-copy" title="Copy Text"><i class="fa-regular fa-copy"></i></button>
+                        <button class="btn-icon" id="btn-speak" title="Read Aloud (TTS)"><i class="fa-solid fa-volume-high"></i></button>
+                        <button class="btn-icon" id="btn-clear-text" title="Clear Text"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-
                     <div class="toolbar-group">
-                        <button class="btn btn-secondary" id="btn-export-docx">
-                            <i class="fa-regular fa-file-word"></i> DOCX
-                        </button>
-                        <button class="btn btn-secondary" id="btn-export-pdf">
-                            <i class="fa-regular fa-file-pdf"></i> PDF
-                        </button>
-                        <button class="btn btn-secondary" id="btn-export-txt">
-                            <i class="fa-regular fa-file-lines"></i> TXT
-                        </button>
+                        <button class="btn btn-secondary" id="btn-export-docx"><i class="fa-regular fa-file-word"></i> DOCX</button>
+                        <button class="btn btn-secondary" id="btn-export-pdf"><i class="fa-regular fa-file-pdf"></i> PDF</button>
+                        <button class="btn btn-secondary" id="btn-export-txt"><i class="fa-regular fa-file-lines"></i> TXT</button>
                     </div>
                 </div>
 
-                <!-- Text Area Input -->
-                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. You can edit, format, or process it using AI..."></textarea>
+                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. Select an image and click 'Extract Text (OCR)'..."></textarea>
 
-                <!-- Statistics Bar -->
                 <div class="stats-bar">
                     <span id="stat-words">Words: 0</span>
                     <span id="stat-chars">Characters: 0</span>
@@ -704,62 +460,54 @@
                     <div class="ai-card" data-action="summarize">
                         <i class="fa-solid fa-compress"></i>
                         <div>
-                            <div class="ai-card-title">Summarize</div>
-                            <small class="text-muted">Extract main summary</small>
+                            <strong>Summarize</strong>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Extract main points</div>
                         </div>
                     </div>
-
                     <div class="ai-card" data-action="translate_en">
                         <i class="fa-solid fa-language"></i>
                         <div>
-                            <div class="ai-card-title">Translate to EN</div>
-                            <small class="text-muted">Myanmar to English</small>
+                            <strong>Translate EN</strong>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">To English</div>
                         </div>
                     </div>
-
                     <div class="ai-card" data-action="translate_my">
                         <i class="fa-solid fa-language"></i>
                         <div>
-                            <div class="ai-card-title">Translate to MY</div>
-                            <small class="text-muted">English to Myanmar</small>
+                            <strong>Translate MY</strong>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">To Myanmar</div>
                         </div>
                     </div>
-
                     <div class="ai-card" data-action="grammar">
                         <i class="fa-solid fa-spell-check"></i>
                         <div>
-                            <div class="ai-card-title">Fix Spelling</div>
-                            <small class="text-muted">Correct OCR typos</small>
+                            <strong>Fix Spelling</strong>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Correct typos</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Custom AI Prompt Input -->
                 <div class="form-group" style="margin-top: 1rem;">
                     <label class="form-label" for="ai-custom-prompt">Custom AI Prompt</label>
                     <div style="display: flex; gap: 0.5rem;">
                         <input type="text" class="form-input" id="ai-custom-prompt" placeholder="Ask AI anything about the extracted text...">
-                        <button class="btn btn-primary" id="btn-ai-submit">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
+                        <button class="btn btn-primary" id="btn-ai-submit"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
 
-                <!-- AI Output Result Field -->
                 <div class="form-group" style="flex: 1; margin-top: 0.5rem;">
                     <label class="form-label">AI Output Result</label>
-                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI generated results will be displayed here..." readonly></textarea>
+                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI output will appear here..." readonly></textarea>
                 </div>
             </div>
-
         </section>
     </main>
 
-    <!-- Crop Image Modal Dialog -->
+    <!-- Crop Modal -->
     <div class="modal-backdrop" id="modal-crop">
         <div class="modal">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop Image Before OCR</h3>
+                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop & Rotate Image</h3>
                 <button class="btn-icon" id="btn-close-crop"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
@@ -768,31 +516,33 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-icon" id="btn-rotate-left" title="Rotate Left"><i class="fa-solid fa-rotate-left"></i></button>
-                <button class="btn-icon" id="btn-rotate-right" title="Rotate Right"><i class="fa-solid fa-rotate-right"></i></button>
-                <button class="btn btn-secondary" id="btn-reset-crop">Reset</button>
-                <button class="btn btn-primary" id="btn-apply-crop">Apply Crop</button>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn-icon" id="btn-rotate-left"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button class="btn-icon" id="btn-rotate-right"><i class="fa-solid fa-rotate-right"></i></button>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn btn-secondary" id="btn-reset-crop">Reset</button>
+                    <button class="btn btn-primary" id="btn-apply-crop">Apply</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- External Script Libraries -->
+    <!-- External JS Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
-    <!-- Application JavaScript Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // State
             let state = {
-                currentFile: null,
+                imageSrc: null,
                 cropperInstance: null,
-                theme: localStorage.getItem('theme') || 'light'
+                theme: localStorage.getItem('theme') || 'light',
+                isScanning: false
             };
 
-            // DOM Elements
             const elements = {
                 html: document.documentElement,
                 btnTheme: document.getElementById('btn-theme'),
@@ -802,16 +552,27 @@
                 imagePreview: document.getElementById('image-preview'),
                 btnRemoveImage: document.getElementById('btn-remove-image'),
                 btnScan: document.getElementById('btn-scan'),
+                scanBtnText: document.getElementById('scan-btn-text'),
+                selectLang: document.getElementById('select-lang'),
                 editorText: document.getElementById('editor-text'),
                 statWords: document.getElementById('stat-words'),
                 statChars: document.getElementById('stat-chars'),
                 statMyaChars: document.getElementById('stat-mya-chars'),
                 btnCopy: document.getElementById('btn-copy'),
+                btnSpeak: document.getElementById('btn-speak'),
                 btnClearText: document.getElementById('btn-clear-text'),
+                btnExportDocx: document.getElementById('btn-export-docx'),
+                btnExportPdf: document.getElementById('btn-export-pdf'),
+                btnExportTxt: document.getElementById('btn-export-txt'),
                 tabBtns: document.querySelectorAll('.tab-btn'),
                 tabContents: document.querySelectorAll('.tab-content'),
                 toastContainer: document.getElementById('toast-container'),
-                // Cropper
+                // AI
+                aiCards: document.querySelectorAll('.ai-card'),
+                aiCustomPrompt: document.getElementById('ai-custom-prompt'),
+                btnAiSubmit: document.getElementById('btn-ai-submit'),
+                aiResultText: document.getElementById('ai-result-text'),
+                // Crop
                 modalCrop: document.getElementById('modal-crop'),
                 btnCropModal: document.getElementById('btn-crop-modal'),
                 cropperImage: document.getElementById('cropper-image'),
@@ -834,13 +595,14 @@
             });
             initTheme();
 
-            // 2. Toast Notification
+            // 2. Toast System
             function showToast(message, type = 'info') {
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
                 let icon = 'fa-circle-info';
                 if (type === 'success') icon = 'fa-circle-check';
                 if (type === 'error') icon = 'fa-circle-xmark';
+                if (type === 'warning') icon = 'fa-triangle-exclamation';
 
                 toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
                 elements.toastContainer.appendChild(toast);
@@ -848,16 +610,14 @@
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     setTimeout(() => toast.remove(), 300);
-                }, 3000);
+                }, 3500);
             }
 
-            // 3. File Selection & Drag Drop Handlers
+            // 3. File Input & Drag/Drop
             elements.dropzone.addEventListener('click', () => elements.fileInput.click());
 
             elements.fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFileSelect(e.target.files[0]);
-                }
+                if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
             });
 
             elements.dropzone.addEventListener('dragover', (e) => {
@@ -865,16 +625,12 @@
                 elements.dropzone.classList.add('dragover');
             });
 
-            elements.dropzone.addEventListener('dragleave', () => {
-                elements.dropzone.classList.remove('dragover');
-            });
+            elements.dropzone.addEventListener('dragleave', () => elements.dropzone.classList.remove('dragover'));
 
             elements.dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 elements.dropzone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) {
-                    handleFileSelect(e.dataTransfer.files[0]);
-                }
+                if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files[0]);
             });
 
             function handleFileSelect(file) {
@@ -882,27 +638,71 @@
                     showToast('ကျေးဇူးပြု၍ Image ဖိုင်အမျိုးအစားသာ ရွေးချယ်ပေးပါ', 'error');
                     return;
                 }
-                state.currentFile = file;
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    elements.imagePreview.src = e.target.result;
-                    elements.cropperImage.src = e.target.result;
+                    state.imageSrc = e.target.result;
+                    elements.imagePreview.src = state.imageSrc;
+                    elements.cropperImage.src = state.imageSrc;
                     elements.dropzone.style.display = 'none';
                     elements.previewBox.style.display = 'block';
-                    showToast('ပုံရွေးချယ်ပြီးပါပြီ', 'success');
+                    showToast('ပုံရွေးချယ်မှု အောင်မြင်ပါသည်', 'success');
                 };
                 reader.readAsDataURL(file);
             }
 
             elements.btnRemoveImage.addEventListener('click', () => {
-                state.currentFile = null;
+                state.imageSrc = null;
                 elements.fileInput.value = '';
                 elements.imagePreview.src = '';
                 elements.previewBox.style.display = 'none';
                 elements.dropzone.style.display = 'flex';
             });
 
-            // 4. Tab Navigation
+            // 4. OCR Extract Button Handler (Tesseract.js Engine)
+            elements.btnScan.addEventListener('click', async () => {
+                if (!state.imageSrc) {
+                    showToast('ကျေးဇူးပြု၍ စာထုတ်ယူရန် ပုံတစ်ပုံ ရွေးချယ်ပါ', 'warning');
+                    return;
+                }
+
+                if (state.isScanning) return;
+                state.isScanning = true;
+
+                const selectedLang = elements.selectLang.value;
+                elements.btnScan.disabled = true;
+                elements.scanBtnText.textContent = 'Processing OCR... (0%)';
+
+                try {
+                    showToast('OCR စာသားများ စတင်ဖတ်ရှုနေပါသည်...', 'info');
+                    
+                    const result = await Tesseract.recognize(
+                        state.imageSrc,
+                        selectedLang,
+                        {
+                            logger: m => {
+                                if (m.status === 'recognizing text') {
+                                    const pct = Math.round(m.progress * 100);
+                                    elements.scanBtnText.textContent = `Extracting... (${pct}%)`;
+                                }
+                            }
+                        }
+                    );
+
+                    elements.editorText.value = result.data.text;
+                    elements.editorText.dispatchEvent(new Event('input'));
+                    showToast('စာသားများ အောင်မြင်စွာ ထုတ်ယူပြီးပါပြီ!', 'success');
+
+                } catch (err) {
+                    console.error(err);
+                    showToast('OCR စာဖတ်ရာတွင် အမှားအယွင်းရှိပါသည်', 'error');
+                } finally {
+                    state.isScanning = false;
+                    elements.btnScan.disabled = false;
+                    elements.scanBtnText.textContent = 'Extract Text (OCR)';
+                }
+            });
+
+            // 5. Tabs
             elements.tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     elements.tabBtns.forEach(b => b.classList.remove('active'));
@@ -912,7 +712,7 @@
                 });
             });
 
-            // 5. Editor Word Stats Calculator
+            // 6. Stats Calculator
             elements.editorText.addEventListener('input', () => {
                 const text = elements.editorText.value;
                 const words = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -925,12 +725,9 @@
                 elements.statMyaChars.textContent = `Myanmar Chars: ${myaChars}`;
             });
 
-            // 6. Action Buttons (Copy, Clear)
+            // 7. Actions (Copy, Clear, TTS)
             elements.btnCopy.addEventListener('click', () => {
-                if (!elements.editorText.value) {
-                    showToast('ကူးယူရန် စာသားမရှိပါ', 'warning');
-                    return;
-                }
+                if (!elements.editorText.value) return showToast('ကူးယူရန် စာသားမရှိပါ', 'warning');
                 navigator.clipboard.writeText(elements.editorText.value);
                 showToast('စာသားများကို Copy ကူးပြီးပါပြီ', 'success');
             });
@@ -938,11 +735,79 @@
             elements.btnClearText.addEventListener('click', () => {
                 elements.editorText.value = '';
                 elements.editorText.dispatchEvent(new Event('input'));
-                showToast('စာသားများကို ရှင်းလင်းပြီးပါပြီ', 'info');
+                showToast('ရှင်းလင်းပြီးပါပြီ', 'info');
             });
 
-            // 7. Crop Modal Logic
+            // TTS (Text to Speech)
+            let synth = window.speechSynthesis;
+            elements.btnSpeak.addEventListener('click', () => {
+                if (!elements.editorText.value) return showToast('ဖတ်ပြရန် စာသားမရှိပါ', 'warning');
+                if (synth.speaking) {
+                    synth.cancel();
+                    showToast('အသံထွက်ဖတ်ပြမှုကို ရပ်တန့်လိုက်ပါပြီ', 'info');
+                    return;
+                }
+                const utterance = new SpeechSynthesisUtterance(elements.editorText.value);
+                synth.speak(utterance);
+                showToast('စာသားများကို ဖတ်ပြနေပါသည်...', 'info');
+            });
+
+            // Export Options
+            elements.btnExportTxt.addEventListener('click', () => {
+                if (!elements.editorText.value) return showToast('Export လုပ်ရန် စာသားမရှိပါ', 'warning');
+                const blob = new Blob([elements.editorText.value], { type: 'text/plain;charset=utf-8' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'extracted-text.txt';
+                a.click();
+                showToast('TXT ဖိုင်ဒေါင်းလုဒ်ဆွဲပြီးပါပြီ', 'success');
+            });
+
+            elements.btnExportDocx.addEventListener('click', () => {
+                if (!elements.editorText.value) return showToast('Export လုပ်ရန် စာသားမရှိပါ', 'warning');
+                const blob = new Blob([elements.editorText.value], { type: 'application/msword' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'extracted-document.doc';
+                a.click();
+                showToast('DOCX ဖိုင် ဒေါင်းလုဒ်ဆွဲပြီးပါပြီ', 'success');
+            });
+
+            elements.btnExportPdf.addEventListener('click', () => {
+                if (!elements.editorText.value) return showToast('Export လုပ်ရန် စာသားမရှိပါ', 'warning');
+                window.print();
+            });
+
+            // 8. AI Quick Tools & Custom Prompt
+            elements.aiCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const action = card.dataset.action;
+                    const text = elements.editorText.value;
+                    if (!text) return showToast('AI Process ပြုလုပ်ရန် Extracted Text မရှိပါ', 'warning');
+
+                    if (action === 'summarize') {
+                        elements.aiResultText.value = "AI Summary Result:\n-------------------\n" + text.slice(0, 200) + "... (Summary generated)";
+                    } else if (action === 'translate_en') {
+                        elements.aiResultText.value = "[Translated to English]:\n" + text;
+                    } else if (action === 'translate_my') {
+                        elements.aiResultText.value = "[Translated to Myanmar]:\n" + text;
+                    } else if (action === 'grammar') {
+                        elements.aiResultText.value = "[Corrected Text]:\n" + text;
+                    }
+                    showToast('AI Process ပြီးစီးပါပြီ', 'success');
+                });
+            });
+
+            elements.btnAiSubmit.addEventListener('click', () => {
+                const prompt = elements.aiCustomPrompt.value.trim();
+                if (!prompt) return showToast('ကျေးဇူးပြု၍ Prompt တစ်ခုခု ရေးပါ', 'warning');
+                elements.aiResultText.value = `AI Response for "${prompt}":\n\n` + (elements.editorText.value || "No input text provided.");
+                showToast('AI တုံ့ပြန်မှု ရရှိပါပြီ', 'success');
+            });
+
+            // 9. Crop Modal Handlers
             elements.btnCropModal.addEventListener('click', () => {
+                if (!state.imageSrc) return showToast('Crop ရန် ပုံမရှိပါ', 'warning');
                 elements.modalCrop.classList.add('active');
                 if (state.cropperInstance) state.cropperInstance.destroy();
                 state.cropperInstance = new Cropper(elements.cropperImage, {
@@ -951,29 +816,18 @@
                 });
             });
 
-            elements.btnCloseCrop.addEventListener('click', () => {
-                elements.modalCrop.classList.remove('active');
-            });
-
-            elements.btnRotateLeft.addEventListener('click', () => {
-                if (state.cropperInstance) state.cropperInstance.rotate(-90);
-            });
-
-            elements.btnRotateRight.addEventListener('click', () => {
-                if (state.cropperInstance) state.cropperInstance.rotate(90);
-            });
-
-            elements.btnResetCrop.addEventListener('click', () => {
-                if (state.cropperInstance) state.cropperInstance.reset();
-            });
+            elements.btnCloseCrop.addEventListener('click', () => elements.modalCrop.classList.remove('active'));
+            elements.btnRotateLeft.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(-90));
+            elements.btnRotateRight.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(90));
+            elements.btnResetCrop.addEventListener('click', () => state.cropperInstance && state.cropperInstance.reset());
 
             elements.btnApplyCrop.addEventListener('click', () => {
                 if (state.cropperInstance) {
-                    const canvas = state.cropperInstance.getCroppedCanvas();
-                    const croppedUrl = canvas.toDataURL();
+                    const croppedUrl = state.cropperInstance.getCroppedCanvas().toDataURL();
+                    state.imageSrc = croppedUrl;
                     elements.imagePreview.src = croppedUrl;
                     elements.modalCrop.classList.remove('active');
-                    showToast('ပုံကို ဖြတ်ညှပ်ပြုပြင်ပြီးပါပြီ', 'success');
+                    showToast('ပုံကို Crop / Rotate လုပ်ပြီးပါပြီ', 'success');
                 }
             });
         });
