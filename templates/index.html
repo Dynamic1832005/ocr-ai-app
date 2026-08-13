@@ -30,12 +30,13 @@
             --text-muted: #94a3b8;
             --accent-primary: #2563eb;
             --accent-primary-hover: #1d4ed8;
+            --accent-secondary: #0d9488;
             --accent-danger: #ef4444;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
@@ -60,7 +61,6 @@
 
         /* Base Reset */
         * {
-            box-sizing: border-color;
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -77,11 +77,11 @@
             transition: var(--transition);
         }
 
-        /* Responsive Navbar Layout */
+        /* Navbar Layout */
         .navbar {
             background-color: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.85rem 1.25rem;
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -94,35 +94,36 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            font-size: 1.15rem;
+            gap: 0.75rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--accent-primary);
         }
 
         .brand i {
-            font-size: 1.35rem;
+            font-size: 1.5rem;
         }
 
         .nav-controls {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
-        /* Buttons & Icon Buttons */
+        /* Buttons & Controls */
         .btn-icon {
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-secondary);
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: var(--radius-md);
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .btn-icon:hover {
@@ -131,15 +132,15 @@
         }
 
         .btn {
-            padding: 0.55rem 1rem;
+            padding: 0.6rem 1.2rem;
             border-radius: var(--radius-md);
             font-weight: 600;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
             border: none;
             transition: var(--transition);
             font-family: var(--font-main);
@@ -153,6 +154,7 @@
 
         .btn-primary:hover {
             background-color: var(--accent-primary-hover);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
@@ -170,19 +172,23 @@
             color: #ffffff;
         }
 
-        /* Responsive Main Container Layout */
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* Main Container Layout */
         .container {
             max-width: 1400px;
-            margin: 1.25rem auto;
-            padding: 0 1rem;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
             width: 100%;
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 1.25rem;
+            grid-template-columns: 360px 1fr;
+            gap: 1.5rem;
             flex: 1;
         }
 
-        /* Panels Structure */
+        /* Panels */
         .panel {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
@@ -191,7 +197,7 @@
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
         .panel-header {
@@ -199,11 +205,11 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.65rem;
+            padding-bottom: 0.75rem;
         }
 
         .panel-title {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -215,7 +221,7 @@
         .dropzone {
             border: 2px dashed var(--border-color);
             border-radius: var(--radius-md);
-            padding: 1.75rem 1rem;
+            padding: 2rem 1rem;
             text-align: center;
             cursor: pointer;
             transition: var(--transition);
@@ -223,7 +229,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .dropzone:hover, .dropzone.dragover {
@@ -232,12 +238,12 @@
         }
 
         .dropzone i {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             color: var(--accent-primary);
         }
 
         .dropzone p {
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
         }
 
@@ -250,7 +256,7 @@
         .preview-container {
             position: relative;
             width: 100%;
-            max-height: 230px;
+            max-height: 250px;
             border-radius: var(--radius-md);
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -260,7 +266,7 @@
 
         .preview-container img {
             width: 100%;
-            height: 230px;
+            height: 250px;
             object-fit: contain;
         }
 
@@ -276,24 +282,24 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         .form-label {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-secondary);
         }
 
         .form-select, .form-input {
             width: 100%;
-            padding: 0.6rem 0.8rem;
+            padding: 0.65rem 0.9rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             background-color: var(--bg-surface);
             color: var(--text-primary);
             font-family: var(--font-main);
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             outline: none;
             transition: var(--transition);
         }
@@ -320,13 +326,13 @@
         }
 
         .tab-btn {
-            padding: 0.45rem 0.9rem;
+            padding: 0.5rem 1rem;
             border-radius: var(--radius-sm);
             border: none;
             background: transparent;
             color: var(--text-secondary);
             font-weight: 600;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: var(--transition);
             font-family: var(--font-main);
@@ -341,7 +347,7 @@
         .tab-content {
             display: none;
             flex-direction: column;
-            gap: 0.85rem;
+            gap: 1rem;
             flex: 1;
         }
 
@@ -351,15 +357,15 @@
 
         .editor-textarea {
             width: 100%;
-            min-height: 300px;
+            min-height: 350px;
             flex: 1;
-            padding: 0.9rem;
+            padding: 1rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             background-color: var(--bg-surface);
             color: var(--text-primary);
             font-family: 'Padauk', var(--font-main);
-            font-size: 1rem;
+            font-size: 1.05rem;
             line-height: 1.8;
             resize: vertical;
             outline: none;
@@ -370,15 +376,15 @@
             border-color: var(--accent-primary);
         }
 
-        /* Responsive Editor Toolbar */
+        /* Toolbar */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.75rem;
             background-color: var(--bg-secondary);
-            padding: 0.6rem;
+            padding: 0.75rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
         }
@@ -386,36 +392,36 @@
         .toolbar-group {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
         }
 
         .stats-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            font-size: 0.78rem;
+            gap: 1.25rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            padding: 0.2rem 0.4rem;
+            padding: 0.25rem 0.5rem;
         }
 
-        /* Responsive AI Action Grid */
+        /* AI Quick Action Cards */
         .ai-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 0.75rem;
         }
 
         .ai-card {
             border: 1px solid var(--border-color);
             background-color: var(--bg-secondary);
-            padding: 0.75rem;
+            padding: 0.9rem;
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.75rem;
         }
 
         .ai-card:hover {
@@ -426,16 +432,16 @@
         }
 
         .ai-card i {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: var(--accent-primary);
         }
 
         .ai-card-title {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
 
-        /* Responsive Modals */
+        /* Modals */
         .modal-backdrop {
             position: fixed;
             top: 0;
@@ -460,16 +466,22 @@
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
             width: 100%;
-            max-width: 700px;
+            max-width: 750px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            animation: modalIn 0.25s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .modal-header {
-            padding: 0.85rem 1.1rem;
+            padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
@@ -477,23 +489,23 @@
         }
 
         .modal-body {
-            padding: 1rem;
+            padding: 1.25rem;
             overflow-y: auto;
             flex: 1;
         }
 
         .modal-footer {
-            padding: 0.85rem 1.1rem;
+            padding: 1rem 1.25rem;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: flex-end;
-            gap: 0.5rem;
+            gap: 0.75rem;
             background-color: var(--bg-secondary);
             flex-wrap: wrap;
         }
 
         .crop-wrapper {
-            max-height: 400px;
+            max-height: 450px;
             width: 100%;
             background-color: #000;
         }
@@ -502,15 +514,15 @@
             max-width: 100%;
         }
 
-        /* History List */
+        /* History Drawer List */
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.75rem;
         }
 
         .history-item {
-            padding: 0.75rem;
+            padding: 0.9rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             background-color: var(--bg-secondary);
@@ -529,11 +541,12 @@
         .history-info {
             display: flex;
             flex-direction: column;
+            gap: 0.2rem;
             overflow: hidden;
         }
 
         .history-title {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -541,20 +554,20 @@
         }
 
         .history-date {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
         /* Toast Notifications */
         .toast-container {
             position: fixed;
-            bottom: 15px;
-            right: 15px;
+            bottom: 20px;
+            right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             z-index: 2000;
-            max-width: 90vw;
+            max-width: calc(100vw - 40px);
         }
 
         .toast {
@@ -562,13 +575,14 @@
             color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-left: 4px solid var(--accent-primary);
-            padding: 0.7rem 1rem;
+            padding: 0.8rem 1.2rem;
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            font-size: 0.82rem;
+            gap: 0.75rem;
+            font-size: 0.88rem;
+            animation: slideIn 0.3s ease-out;
             transition: opacity 0.3s ease;
         }
 
@@ -576,9 +590,15 @@
         .toast.error { border-left-color: var(--accent-danger); }
         .toast.warning { border-left-color: var(--accent-warning); }
 
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Loading Spinner */
         .spinner {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: #fff;
@@ -590,12 +610,36 @@
         }
 
         /* ==========================================================================
-           Media Queries for Mobile & Tablet Responsiveness
+           Responsive Layout Media Queries
            ========================================================================== */
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
-                margin: 0.85rem auto;
+                margin: 1rem auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+
+            .brand {
+                font-size: 1.05rem;
+            }
+
+            .brand i {
+                font-size: 1.25rem;
+            }
+
+            .container {
+                padding: 0 0.75rem;
+                gap: 1rem;
+            }
+
+            .panel {
+                padding: 1rem;
+                gap: 1rem;
             }
 
             .toolbar {
@@ -604,45 +648,60 @@
             }
 
             .toolbar-group {
-                justify-content: space-between;
                 width: 100%;
+                justify-content: flex-start;
             }
 
-            .toolbar-group .btn-secondary {
+            .toolbar-group .btn {
                 flex: 1;
+            }
+
+            .editor-textarea {
+                min-height: 280px;
+            }
+
+            .crop-wrapper {
+                max-height: 300px;
             }
         }
 
         @media (max-width: 480px) {
-            .navbar {
-                padding: 0.75rem 0.85rem;
-            }
-
             .brand span {
-                font-size: 1rem;
-            }
-
-            .panel {
-                padding: 0.9rem;
+                font-size: 0.95rem;
             }
 
             .ai-grid {
                 grid-template-columns: 1fr;
             }
 
-            .stats-bar {
-                font-size: 0.72rem;
-                gap: 0.6rem;
+            .modal-footer {
+                justify-content: stretch;
+            }
+
+            .modal-footer .btn,
+            .modal-footer .btn-icon {
+                flex: 1 1 auto;
+            }
+
+            .toast-container {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .toast {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Responsive Navigation Header -->
+    <!-- Top Navigation Bar -->
     <nav class="navbar">
         <div class="brand">
-            <i class="fa-solid fa-file-invoice"></i>
+            <i class="fa-solid fa-file-invoice me-2"></i>
             <span>OCR Scanner & AI Text Suite</span>
         </div>
         <div class="nav-controls">
@@ -652,10 +711,10 @@
         </div>
     </nav>
 
-    <!-- Main Responsive Layout -->
+    <!-- Main Container Layout -->
     <main class="container">
         
-        <!-- Left Panel: Upload & Control -->
+        <!-- Left Sidebar: Document Input Panel -->
         <section class="panel">
             <div class="panel-header">
                 <h2 class="panel-title">
@@ -664,15 +723,17 @@
                 </h2>
             </div>
 
+            <!-- Upload Drag & Drop Zone -->
             <div class="dropzone" id="dropzone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                <p>Drag & Drop image here</p>
+                <p>Drag & Drop scan image here</p>
                 <span>Supported: PNG, JPG, JPEG, WEBP</span>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
 
+            <!-- Image Preview Box -->
             <div class="preview-container" id="preview-box">
-                <img id="image-preview" src="" alt="Preview">
+                <img id="image-preview" src="" alt="Scan Image Preview">
                 <div class="preview-overlay">
                     <button class="btn-icon" id="btn-crop-modal" title="Crop & Edit">
                         <i class="fa-solid fa-crop-simple"></i>
@@ -683,8 +744,9 @@
                 </div>
             </div>
 
+            <!-- Language Options Form -->
             <div class="form-group">
-                <label class="form-label" for="select-lang">OCR Language</label>
+                <label class="form-label" for="select-lang">OCR Recognition Language</label>
                 <select class="form-select" id="select-lang">
                     <option value="mya+eng" selected>Myanmar + English (Auto)</option>
                     <option value="mya">Myanmar Only (မြန်မာ)</option>
@@ -692,15 +754,17 @@
                 </select>
             </div>
 
-            <button class="btn btn-primary" id="btn-scan" style="width: 100%;">
+            <!-- Extract Action Button -->
+            <button class="btn btn-primary" id="btn-scan" style="width: 100%; justify-content: center;">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span id="scan-btn-text">Extract Text (OCR)</span>
             </button>
         </section>
 
-        <!-- Right Panel: Responsive Workbench -->
+        <!-- Right Side: Workbench & AI Assistant -->
         <section class="panel workbench">
             
+            <!-- Tab Controls -->
             <div class="tabs">
                 <button class="tab-btn active" data-tab="tab-text">
                     <i class="fa-solid fa-align-left me-1"></i> Extracted Text
@@ -714,20 +778,34 @@
             <div class="tab-content active" id="tab-text">
                 <div class="toolbar">
                     <div class="toolbar-group">
-                        <button class="btn-icon" id="btn-copy" title="Copy Text"><i class="fa-regular fa-copy"></i></button>
-                        <button class="btn-icon" id="btn-speak" title="Read Aloud"><i class="fa-solid fa-volume-high"></i></button>
-                        <button class="btn-icon" id="btn-clear-text" title="Clear Text"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="btn-icon" id="btn-copy" title="Copy Text">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                        <button class="btn-icon" id="btn-speak" title="Read Aloud (TTS)">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <button class="btn-icon" id="btn-clear-text" title="Clear Text">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </div>
 
                     <div class="toolbar-group">
-                        <button class="btn btn-secondary" id="btn-export-docx"><i class="fa-regular fa-file-word"></i> DOCX</button>
-                        <button class="btn btn-secondary" id="btn-export-pdf"><i class="fa-regular fa-file-pdf"></i> PDF</button>
-                        <button class="btn btn-secondary" id="btn-export-txt"><i class="fa-regular fa-file-lines"></i> TXT</button>
+                        <button class="btn btn-secondary" id="btn-export-docx">
+                            <i class="fa-regular fa-file-word"></i> DOCX
+                        </button>
+                        <button class="btn btn-secondary" id="btn-export-pdf">
+                            <i class="fa-regular fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-secondary" id="btn-export-txt">
+                            <i class="fa-regular fa-file-lines"></i> TXT
+                        </button>
                     </div>
                 </div>
 
-                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here..."></textarea>
+                <!-- Text Area Input -->
+                <textarea class="editor-textarea" id="editor-text" placeholder="Extracted text will appear here. You can edit, format, or process it using AI..."></textarea>
 
+                <!-- Statistics Bar -->
                 <div class="stats-bar">
                     <span id="stat-words">Words: 0</span>
                     <span id="stat-chars">Characters: 0</span>
@@ -742,7 +820,7 @@
                         <i class="fa-solid fa-compress"></i>
                         <div>
                             <div class="ai-card-title">Summarize</div>
-                            <small class="text-muted">Extract main points</small>
+                            <small class="text-muted">Extract main summary</small>
                         </div>
                     </div>
 
@@ -765,13 +843,14 @@
                     <div class="ai-card" data-action="grammar">
                         <i class="fa-solid fa-spell-check"></i>
                         <div>
-                            <div class="ai-card-title">Fix Typos</div>
-                            <small class="text-muted">Correct OCR errors</small>
+                            <div class="ai-card-title">Fix Spelling</div>
+                            <small class="text-muted">Correct OCR typos</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top: 0.5rem;">
+                <!-- Custom AI Prompt Input -->
+                <div class="form-group" style="margin-top: 1rem;">
                     <label class="form-label" for="ai-custom-prompt">Custom AI Prompt</label>
                     <div style="display: flex; gap: 0.5rem;">
                         <input type="text" class="form-input" id="ai-custom-prompt" placeholder="Ask AI anything about the extracted text...">
@@ -781,25 +860,26 @@
                     </div>
                 </div>
 
+                <!-- AI Output Result Field -->
                 <div class="form-group" style="flex: 1; margin-top: 0.5rem;">
                     <label class="form-label">AI Output Result</label>
-                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI results will be displayed here..." readonly></textarea>
+                    <textarea class="editor-textarea" id="ai-result-text" placeholder="AI generated results will be displayed here..." readonly></textarea>
                 </div>
             </div>
 
         </section>
     </main>
 
-    <!-- Crop Image Modal -->
+    <!-- Crop Image Modal Dialog -->
     <div class="modal-backdrop" id="modal-crop">
         <div class="modal">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop Image</h3>
+                <h3><i class="fa-solid fa-crop-simple me-2"></i>Crop Image Before OCR</h3>
                 <button class="btn-icon" id="btn-close-crop"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="crop-wrapper">
-                    <img id="cropper-image" src="" alt="Crop image">
+                    <img id="cropper-image" src="" alt="Image to crop">
                 </div>
             </div>
             <div class="modal-footer">
@@ -811,7 +891,7 @@
         </div>
     </div>
 
-    <!-- History Modal Drawer -->
+    <!-- History Drawer Modal Dialog -->
     <div class="modal-backdrop" id="modal-history">
         <div class="modal">
             <div class="modal-header">
@@ -819,7 +899,9 @@
                 <button class="btn-icon" id="btn-close-history"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
-                <div class="history-list" id="history-container"></div>
+                <div class="history-list" id="history-container">
+                    <!-- Dynamic history items loaded by JavaScript -->
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-danger" id="btn-clear-history">
@@ -829,16 +911,17 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
+    <!-- Toast Notification Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Cropper.js Script -->
+    <!-- External Script Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-    <!-- Main Logic Script -->
+    <!-- Application Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const state = {
+            // Global State Management
+            let state = {
                 currentImageBlob: null,
                 currentImageURL: null,
                 cropperInstance: null,
@@ -846,6 +929,7 @@
                 theme: localStorage.getItem('theme') || 'light'
             };
 
+            // DOM Element References
             const elements = {
                 html: document.documentElement,
                 btnTheme: document.getElementById('btn-theme'),
@@ -856,6 +940,7 @@
                 btnRemoveImage: document.getElementById('btn-remove-image'),
                 btnScan: document.getElementById('btn-scan'),
                 scanBtnText: document.getElementById('scan-btn-text'),
+                selectLang: document.getElementById('select-lang'),
                 editorText: document.getElementById('editor-text'),
                 statWords: document.getElementById('stat-words'),
                 statChars: document.getElementById('stat-chars'),
@@ -866,6 +951,7 @@
                 btnExportTxt: document.getElementById('btn-export-txt'),
                 btnExportDocx: document.getElementById('btn-export-docx'),
                 btnExportPdf: document.getElementById('btn-export-pdf'),
+                // Cropper Modal
                 modalCrop: document.getElementById('modal-crop'),
                 btnCropModal: document.getElementById('btn-crop-modal'),
                 cropperImage: document.getElementById('cropper-image'),
@@ -874,234 +960,62 @@
                 btnRotateRight: document.getElementById('btn-rotate-right'),
                 btnResetCrop: document.getElementById('btn-reset-crop'),
                 btnApplyCrop: document.getElementById('btn-apply-crop'),
+                // History Drawer
                 btnHistory: document.getElementById('btn-history'),
                 modalHistory: document.getElementById('modal-history'),
                 btnCloseHistory: document.getElementById('btn-close-history'),
                 historyContainer: document.getElementById('history-container'),
                 btnClearHistory: document.getElementById('btn-clear-history'),
+                // Navigation Tabs
                 tabBtns: document.querySelectorAll('.tab-btn'),
                 tabContents: document.querySelectorAll('.tab-content'),
+                // AI Actions
                 aiCards: document.querySelectorAll('.ai-card'),
                 aiCustomPrompt: document.getElementById('ai-custom-prompt'),
                 btnAiSubmit: document.getElementById('btn-ai-submit'),
                 aiResultText: document.getElementById('ai-result-text'),
+                // Toast Container
                 toastContainer: document.getElementById('toast-container')
             };
 
-            // Theme Management
+            // 1. Theme Switcher Logic
             function initTheme() {
                 elements.html.setAttribute('data-theme', state.theme);
-                elements.btnTheme.querySelector('i').className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+                updateThemeIcon();
             }
-            elements.btnTheme.addEventListener('click', () => {
+
+            function toggleTheme() {
                 state.theme = state.theme === 'light' ? 'dark' : 'light';
                 localStorage.setItem('theme', state.theme);
-                initTheme();
-            });
+                elements.html.setAttribute('data-theme', state.theme);
+                updateThemeIcon();
+            }
+
+            function updateThemeIcon() {
+                const icon = elements.btnTheme.querySelector('i');
+                icon.className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            }
+
+            elements.btnTheme.addEventListener('click', toggleTheme);
             initTheme();
 
-            // Toast Notifications
+            // 2. Toast Notification Helper
             function showToast(message, type = 'info') {
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                let icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info';
-                toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+                let icon = 'fa-circle-info';
+                if (type === 'success') icon = 'fa-circle-check';
+                if (type === 'error') icon = 'fa-circle-xmark';
+                if (type === 'warning') icon = 'fa-triangle-exclamation';
+
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
                 elements.toastContainer.appendChild(toast);
+
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     setTimeout(() => toast.remove(), 300);
                 }, 3000);
             }
-
-            // Image Upload Logic
-            elements.dropzone.addEventListener('click', () => elements.fileInput.click());
-            elements.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); elements.dropzone.classList.add('dragover'); });
-            ['dragleave', 'dragend'].forEach(ev => elements.dropzone.addEventListener(ev, () => elements.dropzone.classList.remove('dragover')));
-            elements.dropzone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                elements.dropzone.classList.remove('dragover');
-                if (e.dataTransfer.files.length) handleImageFile(e.dataTransfer.files[0]);
-            });
-            elements.fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) handleImageFile(e.target.files[0]);
-            });
-
-            function handleImageFile(file) {
-                if (!file.type.startsWith('image/')) return showToast('Please select a valid image file', 'error');
-                state.currentImageBlob = file;
-                if (state.currentImageURL) URL.revokeObjectURL(state.currentImageURL);
-                state.currentImageURL = URL.createObjectURL(file);
-                elements.imagePreview.src = state.currentImageURL;
-                elements.previewBox.style.display = 'block';
-                elements.dropzone.style.display = 'none';
-                showToast('Image loaded successfully', 'success');
-            }
-
-            elements.btnRemoveImage.addEventListener('click', () => {
-                state.currentImageBlob = null;
-                elements.previewBox.style.display = 'none';
-                elements.dropzone.style.display = 'flex';
-                elements.fileInput.value = '';
-            });
-
-            // Cropper Logic
-            elements.btnCropModal.addEventListener('click', () => {
-                if (!state.currentImageURL) return;
-                elements.cropperImage.src = state.currentImageURL;
-                elements.modalCrop.classList.add('active');
-                if (state.cropperInstance) state.cropperInstance.destroy();
-                state.cropperInstance = new Cropper(elements.cropperImage, { viewMode: 1, responsive: true });
-            });
-
-            function closeCropModal() {
-                elements.modalCrop.classList.remove('active');
-                if (state.cropperInstance) { state.cropperInstance.destroy(); state.cropperInstance = null; }
-            }
-            elements.btnCloseCrop.addEventListener('click', closeCropModal);
-            elements.btnRotateLeft.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(-90));
-            elements.btnRotateRight.addEventListener('click', () => state.cropperInstance && state.cropperInstance.rotate(90));
-            elements.btnResetCrop.addEventListener('click', () => state.cropperInstance && state.cropperInstance.reset());
-            elements.btnApplyCrop.addEventListener('click', () => {
-                if (!state.cropperInstance) return;
-                state.cropperInstance.getCroppedCanvas().toBlob((blob) => {
-                    state.currentImageBlob = blob;
-                    state.currentImageURL = URL.createObjectURL(blob);
-                    elements.imagePreview.src = state.currentImageURL;
-                    closeCropModal();
-                    showToast('Cropped image applied', 'success');
-                });
-            });
-
-            // OCR Demo Execution
-            elements.btnScan.addEventListener('click', async () => {
-                if (!state.currentImageBlob) return showToast('Please upload an image first', 'warning');
-                
-                elements.btnScan.disabled = true;
-                elements.scanBtnText.innerText = 'Scanning...';
-                const originalIcon = elements.btnScan.querySelector('i').className;
-                elements.btnScan.querySelector('i').className = 'spinner';
-
-                setTimeout(() => {
-                    const sampleText = "မင်္ဂလာပါရှင်။ Myanmar OCR Scanner မှ ကြိုဆိုပါသည်...\nThis text was successfully extracted from your document.\n\nဖုန်း သို့မဟုတ် ကွန်ပျူတာ အလွယ်တကူ responsive အသုံးပြုနိုင်ပါသည်။";
-                    elements.editorText.value = sampleText;
-                    updateTextStats();
-                    saveHistory(sampleText);
-
-                    elements.btnScan.disabled = false;
-                    elements.scanBtnText.innerText = 'Extract Text (OCR)';
-                    elements.btnScan.querySelector('i').className = originalIcon;
-                    showToast('OCR Text Extracted!', 'success');
-                }, 1500);
-            });
-
-            // Text Stats Counter
-            function updateTextStats() {
-                const text = elements.editorText.value || '';
-                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-                const chars = text.length;
-                const myanmarChars = (text.match(/[\u1000-\u109F\uAA60-\uAA7F]/g) || []).length;
-
-                elements.statWords.innerText = `Words: ${words}`;
-                elements.statChars.innerText = `Characters: ${chars}`;
-                elements.statMyaChars.innerText = `Myanmar Chars: ${myanmarChars}`;
-            }
-            elements.editorText.addEventListener('input', updateTextStats);
-
-            // Editor Actions
-            elements.btnCopy.addEventListener('click', () => {
-                navigator.clipboard.writeText(elements.editorText.value);
-                showToast('Text copied to clipboard', 'info');
-            });
-
-            elements.btnClearText.addEventListener('click', () => {
-                elements.editorText.value = '';
-                updateTextStats();
-            });
-
-            elements.btnSpeak.addEventListener('click', () => {
-                if (!elements.editorText.value) return;
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(elements.editorText.value);
-                window.speechSynthesis.speak(utterance);
-            });
-
-            // Export Actions
-            elements.btnExportTxt.addEventListener('click', () => {
-                const blob = new Blob([elements.editorText.value], { type: 'text/plain' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'extracted-text.txt';
-                a.click();
-            });
-
-            // Tab Switching
-            elements.tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    elements.tabBtns.forEach(b => b.classList.remove('active'));
-                    elements.tabContents.forEach(c => c.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(btn.dataset.tab).classList.add('active');
-                });
-            });
-
-            // AI Actions Logic
-            elements.aiCards.forEach(card => card.addEventListener('click', () => runAI(card.dataset.action)));
-            elements.btnAiSubmit.addEventListener('click', () => runAI('custom', elements.aiCustomPrompt.value));
-
-            function runAI(action, customText = '') {
-                if (!elements.editorText.value) return showToast('No text available for AI processing', 'warning');
-                elements.aiResultText.value = 'AI processing...';
-                setTimeout(() => {
-                    if (action === 'summarize') elements.aiResultText.value = 'Summary:\n- Document successfully processed.\n- Multi-lingual capability verified.';
-                    else if (action === 'translate_en') elements.aiResultText.value = 'English Translation:\nHello! Welcome to Myanmar OCR Scanner...';
-                    else elements.aiResultText.value = `AI Response for (${action}):\n` + elements.editorText.value;
-                    showToast('AI Task Completed', 'success');
-                }, 1000);
-            }
-
-            // History Drawer Logic
-            elements.btnHistory.addEventListener('click', () => {
-                renderHistory();
-                elements.modalHistory.classList.add('active');
-            });
-            elements.btnCloseHistory.addEventListener('click', () => elements.modalHistory.classList.remove('active'));
-
-            function saveHistory(text) {
-                state.history.unshift({ text, date: new Date().toLocaleString() });
-                if (state.history.length > 15) state.history.pop();
-                localStorage.setItem('myanmar_ocr_history', JSON.stringify(state.history));
-            }
-
-            function renderHistory() {
-                elements.historyContainer.innerHTML = '';
-                if (!state.history.length) {
-                    elements.historyContainer.innerHTML = '<p style="text-align:center; color: var(--text-muted);">No scan history found.</p>';
-                    return;
-                }
-                state.history.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'history-item';
-                    div.innerHTML = `
-                        <div class="history-info">
-                            <div class="history-title">${item.text.slice(0, 40)}...</div>
-                            <div class="history-date">${item.date}</div>
-                        </div>
-                        <button class="btn-icon"><i class="fa-solid fa-arrow-right"></i></button>
-                    `;
-                    div.addEventListener('click', () => {
-                        elements.editorText.value = item.text;
-                        updateTextStats();
-                        elements.modalHistory.classList.remove('active');
-                    });
-                    elements.historyContainer.appendChild(div);
-                });
-            }
-
-            elements.btnClearHistory.addEventListener('click', () => {
-                state.history = [];
-                localStorage.removeItem('myanmar_ocr_history');
-                renderHistory();
-            });
         });
     </script>
 </body>
