@@ -33,29 +33,27 @@ MODEL_NAME = "gemini-flash-latest"
 
 
 def preprocess_image_for_ocr(image_bytes):
-    """OpenCV Preprocessing Engine with RAM Optimization"""
+    """OpenCV Preprocessing Engine with RAM Optimization (Optimized for Myanmar Script)"""
     file_bytes = np.frombuffer(image_bytes, np.uint8)
     image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
     if image is None:
         raise ValueError("Invalid image format or corrupted file.")
 
-    # Convert to PIL Image for Resizing (RAM ပြည့်ပြီး Server မလဲစေရန်)
+    # Convert to PIL Image for Resizing
     pil_img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    pil_img.thumbnail((1200, 1200))  # Max dimensions: 1200x1200px
+    pil_img.thumbnail((1800, 1800))  # Increased max dimensions for clearer script detection
     
     # Convert back to OpenCV format
     image = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
+    # Convert to Grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    denoised = cv2.fastNlMeansDenoising(gray, h=10, templateWindowSize=7, searchWindowSize=21)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    enhanced = clahe.apply(denoised)
-    binary = cv2.adaptiveThreshold(
-        enhanced, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-    )
+    
+    # Denoise gently without destroying Myanmar script loops & diacritics
+    denoised = cv2.fastNlMeansDenoising(gray, h=5, templateWindowSize=7, searchWindowSize=21)
 
-    return Image.fromarray(binary)
+    return Image.fromarray(denoised)
 
 
 @app.route('/')
@@ -80,7 +78,8 @@ def scan_ocr():
         image_bytes = file.read()
         processed_img = preprocess_image_for_ocr(image_bytes)
 
-        custom_config = r'--oem 3 --psm 6'
+        # --psm 3 runs automatic page segmentation (better for Myanmar blocks)
+        custom_config = r'--oem 3 --psm 3'
         extracted_text = pytesseract.image_to_string(
             processed_img,
             lang=lang,
