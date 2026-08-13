@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OCR Scanner & AI Text Suite</title>
     
-    <!-- Google Fonts (Padauk for Myanmar Script & Plus Jakarta Sans) -->
+    <!-- Google Fonts (Padauk & Plus Jakarta Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -514,50 +514,6 @@
             max-width: 100%;
         }
 
-        /* History Drawer List */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .history-item {
-            padding: 0.9rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .history-item:hover {
-            border-color: var(--accent-primary);
-            background-color: var(--bg-surface);
-        }
-
-        .history-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-            overflow: hidden;
-        }
-
-        .history-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .history-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
         /* Toast Notifications */
         .toast-container {
             position: fixed;
@@ -595,23 +551,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Loading Spinner */
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ==========================================================================
-           Responsive Layout Media Queries
-           ========================================================================== */
+        /* Responsive Layout Media Queries */
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
@@ -620,79 +560,24 @@
         }
 
         @media (max-width: 768px) {
-            .navbar {
-                padding: 0.75rem 1rem;
-            }
-
-            .brand {
-                font-size: 1.05rem;
-            }
-
-            .brand i {
-                font-size: 1.25rem;
-            }
-
-            .container {
-                padding: 0 0.75rem;
-                gap: 1rem;
-            }
-
-            .panel {
-                padding: 1rem;
-                gap: 1rem;
-            }
-
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .toolbar-group {
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .toolbar-group .btn {
-                flex: 1;
-            }
-
-            .editor-textarea {
-                min-height: 280px;
-            }
-
-            .crop-wrapper {
-                max-height: 300px;
-            }
+            .navbar { padding: 0.75rem 1rem; }
+            .brand { font-size: 1.05rem; }
+            .container { padding: 0 0.75rem; gap: 1rem; }
+            .panel { padding: 1rem; gap: 1rem; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-group { width: 100%; justify-content: flex-start; }
+            .toolbar-group .btn { flex: 1; }
+            .editor-textarea { min-height: 280px; }
+            .crop-wrapper { max-height: 300px; }
         }
 
         @media (max-width: 480px) {
-            .brand span {
-                font-size: 0.95rem;
-            }
-
-            .ai-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-footer {
-                justify-content: stretch;
-            }
-
-            .modal-footer .btn,
-            .modal-footer .btn-icon {
-                flex: 1 1 auto;
-            }
-
-            .toast-container {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-
-            .toast {
-                width: 100%;
-            }
+            .brand span { font-size: 0.95rem; }
+            .ai-grid { grid-template-columns: 1fr; }
+            .modal-footer { justify-content: stretch; }
+            .modal-footer .btn, .modal-footer .btn-icon { flex: 1 1 auto; }
+            .toast-container { bottom: 10px; right: 10px; left: 10px; max-width: none; }
+            .toast { width: 100%; }
         }
     </style>
 </head>
@@ -891,45 +776,23 @@
         </div>
     </div>
 
-    <!-- History Drawer Modal Dialog -->
-    <div class="modal-backdrop" id="modal-history">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-clock-rotate-left me-2"></i>Scan History</h3>
-                <button class="btn-icon" id="btn-close-history"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="history-list" id="history-container">
-                    <!-- Dynamic history items loaded by JavaScript -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" id="btn-clear-history">
-                    <i class="fa-solid fa-trash-can me-1"></i> Clear History
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification Container -->
+    <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
     <!-- External Script Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-    <!-- Application Script -->
+    <!-- Application JavaScript Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Global State Management
+            // State
             let state = {
-                currentImageBlob: null,
-                currentImageURL: null,
+                currentFile: null,
                 cropperInstance: null,
-                history: JSON.parse(localStorage.getItem('myanmar_ocr_history') || '[]'),
                 theme: localStorage.getItem('theme') || 'light'
             };
 
-            // DOM Element References
+            // DOM Elements
             const elements = {
                 html: document.documentElement,
                 btnTheme: document.getElementById('btn-theme'),
@@ -939,19 +802,16 @@
                 imagePreview: document.getElementById('image-preview'),
                 btnRemoveImage: document.getElementById('btn-remove-image'),
                 btnScan: document.getElementById('btn-scan'),
-                scanBtnText: document.getElementById('scan-btn-text'),
-                selectLang: document.getElementById('select-lang'),
                 editorText: document.getElementById('editor-text'),
                 statWords: document.getElementById('stat-words'),
                 statChars: document.getElementById('stat-chars'),
                 statMyaChars: document.getElementById('stat-mya-chars'),
                 btnCopy: document.getElementById('btn-copy'),
-                btnSpeak: document.getElementById('btn-speak'),
                 btnClearText: document.getElementById('btn-clear-text'),
-                btnExportTxt: document.getElementById('btn-export-txt'),
-                btnExportDocx: document.getElementById('btn-export-docx'),
-                btnExportPdf: document.getElementById('btn-export-pdf'),
-                // Cropper Modal
+                tabBtns: document.querySelectorAll('.tab-btn'),
+                tabContents: document.querySelectorAll('.tab-content'),
+                toastContainer: document.getElementById('toast-container'),
+                // Cropper
                 modalCrop: document.getElementById('modal-crop'),
                 btnCropModal: document.getElementById('btn-crop-modal'),
                 cropperImage: document.getElementById('cropper-image'),
@@ -959,54 +819,28 @@
                 btnRotateLeft: document.getElementById('btn-rotate-left'),
                 btnRotateRight: document.getElementById('btn-rotate-right'),
                 btnResetCrop: document.getElementById('btn-reset-crop'),
-                btnApplyCrop: document.getElementById('btn-apply-crop'),
-                // History Drawer
-                btnHistory: document.getElementById('btn-history'),
-                modalHistory: document.getElementById('modal-history'),
-                btnCloseHistory: document.getElementById('btn-close-history'),
-                historyContainer: document.getElementById('history-container'),
-                btnClearHistory: document.getElementById('btn-clear-history'),
-                // Navigation Tabs
-                tabBtns: document.querySelectorAll('.tab-btn'),
-                tabContents: document.querySelectorAll('.tab-content'),
-                // AI Actions
-                aiCards: document.querySelectorAll('.ai-card'),
-                aiCustomPrompt: document.getElementById('ai-custom-prompt'),
-                btnAiSubmit: document.getElementById('btn-ai-submit'),
-                aiResultText: document.getElementById('ai-result-text'),
-                // Toast Container
-                toastContainer: document.getElementById('toast-container')
+                btnApplyCrop: document.getElementById('btn-apply-crop')
             };
 
-            // 1. Theme Switcher Logic
+            // 1. Theme Logic
             function initTheme() {
                 elements.html.setAttribute('data-theme', state.theme);
-                updateThemeIcon();
+                elements.btnTheme.querySelector('i').className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
             }
-
-            function toggleTheme() {
+            elements.btnTheme.addEventListener('click', () => {
                 state.theme = state.theme === 'light' ? 'dark' : 'light';
                 localStorage.setItem('theme', state.theme);
-                elements.html.setAttribute('data-theme', state.theme);
-                updateThemeIcon();
-            }
-
-            function updateThemeIcon() {
-                const icon = elements.btnTheme.querySelector('i');
-                icon.className = state.theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-            }
-
-            elements.btnTheme.addEventListener('click', toggleTheme);
+                initTheme();
+            });
             initTheme();
 
-            // 2. Toast Notification Helper
+            // 2. Toast Notification
             function showToast(message, type = 'info') {
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
                 let icon = 'fa-circle-info';
                 if (type === 'success') icon = 'fa-circle-check';
                 if (type === 'error') icon = 'fa-circle-xmark';
-                if (type === 'warning') icon = 'fa-triangle-exclamation';
 
                 toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
                 elements.toastContainer.appendChild(toast);
@@ -1016,6 +850,132 @@
                     setTimeout(() => toast.remove(), 300);
                 }, 3000);
             }
+
+            // 3. File Selection & Drag Drop Handlers
+            elements.dropzone.addEventListener('click', () => elements.fileInput.click());
+
+            elements.fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
+
+            elements.dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                elements.dropzone.classList.add('dragover');
+            });
+
+            elements.dropzone.addEventListener('dragleave', () => {
+                elements.dropzone.classList.remove('dragover');
+            });
+
+            elements.dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                elements.dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+
+            function handleFileSelect(file) {
+                if (!file.type.startsWith('image/')) {
+                    showToast('ကျေးဇူးပြု၍ Image ဖိုင်အမျိုးအစားသာ ရွေးချယ်ပေးပါ', 'error');
+                    return;
+                }
+                state.currentFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    elements.imagePreview.src = e.target.result;
+                    elements.cropperImage.src = e.target.result;
+                    elements.dropzone.style.display = 'none';
+                    elements.previewBox.style.display = 'block';
+                    showToast('ပုံရွေးချယ်ပြီးပါပြီ', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            elements.btnRemoveImage.addEventListener('click', () => {
+                state.currentFile = null;
+                elements.fileInput.value = '';
+                elements.imagePreview.src = '';
+                elements.previewBox.style.display = 'none';
+                elements.dropzone.style.display = 'flex';
+            });
+
+            // 4. Tab Navigation
+            elements.tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    elements.tabBtns.forEach(b => b.classList.remove('active'));
+                    elements.tabContents.forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(btn.dataset.tab).classList.add('active');
+                });
+            });
+
+            // 5. Editor Word Stats Calculator
+            elements.editorText.addEventListener('input', () => {
+                const text = elements.editorText.value;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                const myanmarRegex = /[\u1000-\u109F]/g;
+                const myaChars = (text.match(myanmarRegex) || []).length;
+
+                elements.statWords.textContent = `Words: ${words}`;
+                elements.statChars.textContent = `Characters: ${chars}`;
+                elements.statMyaChars.textContent = `Myanmar Chars: ${myaChars}`;
+            });
+
+            // 6. Action Buttons (Copy, Clear)
+            elements.btnCopy.addEventListener('click', () => {
+                if (!elements.editorText.value) {
+                    showToast('ကူးယူရန် စာသားမရှိပါ', 'warning');
+                    return;
+                }
+                navigator.clipboard.writeText(elements.editorText.value);
+                showToast('စာသားများကို Copy ကူးပြီးပါပြီ', 'success');
+            });
+
+            elements.btnClearText.addEventListener('click', () => {
+                elements.editorText.value = '';
+                elements.editorText.dispatchEvent(new Event('input'));
+                showToast('စာသားများကို ရှင်းလင်းပြီးပါပြီ', 'info');
+            });
+
+            // 7. Crop Modal Logic
+            elements.btnCropModal.addEventListener('click', () => {
+                elements.modalCrop.classList.add('active');
+                if (state.cropperInstance) state.cropperInstance.destroy();
+                state.cropperInstance = new Cropper(elements.cropperImage, {
+                    viewMode: 1,
+                    autoCropArea: 0.9,
+                });
+            });
+
+            elements.btnCloseCrop.addEventListener('click', () => {
+                elements.modalCrop.classList.remove('active');
+            });
+
+            elements.btnRotateLeft.addEventListener('click', () => {
+                if (state.cropperInstance) state.cropperInstance.rotate(-90);
+            });
+
+            elements.btnRotateRight.addEventListener('click', () => {
+                if (state.cropperInstance) state.cropperInstance.rotate(90);
+            });
+
+            elements.btnResetCrop.addEventListener('click', () => {
+                if (state.cropperInstance) state.cropperInstance.reset();
+            });
+
+            elements.btnApplyCrop.addEventListener('click', () => {
+                if (state.cropperInstance) {
+                    const canvas = state.cropperInstance.getCroppedCanvas();
+                    const croppedUrl = canvas.toDataURL();
+                    elements.imagePreview.src = croppedUrl;
+                    elements.modalCrop.classList.remove('active');
+                    showToast('ပုံကို ဖြတ်ညှပ်ပြုပြင်ပြီးပါပြီ', 'success');
+                }
+            });
         });
     </script>
 </body>
