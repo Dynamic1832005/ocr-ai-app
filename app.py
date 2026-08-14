@@ -7,6 +7,10 @@ import pytesseract
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, send_file
 
+# .env ဖိုင်မှ API Key များကို ဖတ်ရန်
+from dotenv import load_dotenv
+load_dotenv()
+
 # Google Gemini Official New SDK
 from google import genai
 from google.genai import types
