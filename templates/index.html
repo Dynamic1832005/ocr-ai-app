@@ -587,7 +587,7 @@
                     <button id="btn-export-ocr-txt" class="btn">.TXT</button>
                     <button id="btn-export-ocr-docx" class="btn">.DOCX</button>
                     <button id="btn-export-ocr-pdf" class="btn">.PDF</button>
-                    <button id="btn-clear-ocr" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+                  
                 </div>
             </div>
 
@@ -613,7 +613,7 @@
                     <button id="btn-export-ai-txt" class="btn">.TXT</button>
                     <button id="btn-export-ai-docx" class="btn">.DOCX</button>
                     <button id="btn-export-ai-pdf" class="btn">.PDF</button>
-                    <button id="btn-clear-ai" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+                
                 </div>
             </div>
         </div>
@@ -875,8 +875,8 @@
                         const hasMyanmar = /[\u1000-\u109F]/.test(text);
                         const hasEnglish = /[a-zA-Z]/.test(text);
 
-                        if (selectedLang === 'eng' && hasMyanmar && !hasEnglish) {
-                            showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ ပါဝင်နေပါသည်', 'error');
+                        if (selectedLang === 'eng' && !hasEnglish && hasMyanmar) {
+                            showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် အင်္ဂလိပ်စာ မတွေ့ရှိပါ', 'error');
                             el.ocrText.value = '';
                             updateStats();
                             return;
