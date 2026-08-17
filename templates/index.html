@@ -15,8 +15,8 @@
         :root {
             --bg-grad-1: #090d16;
             --bg-grad-2: #111827;
-            --surface: rgba(30, 41, 59, 0.75);
-            --surface-hover: rgba(51, 65, 85, 0.85);
+            --surface: rgba(30, 41, 59, 0.8);
+            --surface-hover: rgba(51, 65, 85, 0.9);
             --border: rgba(255, 255, 255, 0.08);
             --border-focus: rgba(99, 102, 241, 0.5);
             --text-main: #f8fafc;
@@ -27,16 +27,16 @@
             --accent-glow: rgba(99, 102, 241, 0.25);
             --danger: #f43f5e;
             --success: #10b981;
-            --radius-card: 18px;
-            --radius-element: 10px;
-            --shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.5);
+            --radius-card: 20px;
+            --radius-element: 12px;
+            --shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6);
         }
 
         [data-theme="light"] {
             --bg-grad-1: #f8fafc;
             --bg-grad-2: #e2e8f0;
-            --surface: rgba(255, 255, 255, 0.85);
-            --surface-hover: rgba(255, 255, 255, 0.98);
+            --surface: rgba(255, 255, 255, 0.9);
+            --surface-hover: rgba(241, 245, 249, 0.98);
             --border: rgba(0, 0, 0, 0.08);
             --border-focus: rgba(79, 70, 229, 0.4);
             --text-main: #0f172a;
@@ -66,7 +66,6 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* Glass Header */
         header {
             position: sticky;
             top: 0;
@@ -75,7 +74,7 @@
             -webkit-backdrop-filter: blur(20px);
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -84,31 +83,30 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             background: var(--primary-grad);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .logo-icon {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             background: var(--primary-grad);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Compact Buttons for Mobile */
         button, .btn {
             background: var(--surface);
             color: var(--text-main);
             border: 1px solid var(--border);
-            padding: 0.5rem 0.85rem;
+            padding: 0.6rem 1rem;
             border-radius: var(--radius-element);
             cursor: pointer;
             font-weight: 500;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -125,55 +123,60 @@
 
         .btn-primary {
             background: var(--primary-grad);
-            color: white;
+            color: white !important;
             border: none;
-            box-shadow: 0 4px 12px var(--accent-glow);
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
-        .btn.active-preset {
+        .btn-primary:hover {
+            background: var(--primary-grad) !important;
+            opacity: 0.92;
+            color: white !important;
+            border-color: transparent;
+        }
+
+        .btn.active-tab {
             background: var(--primary-solid);
-            color: white;
+            color: white !important;
             border-color: var(--primary-solid);
         }
 
-        /* Expanded Width Main Layout */
+        /* Responsive Expanded Bento Grid Layout */
         main {
             flex: 1;
-            padding: 0.75rem;
-            max-width: 1600px;
+            padding: 1rem;
+            max-width: 1650px;
             width: 100%;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 0.75rem;
+            gap: 1.25rem;
         }
 
-        @media(min-width: 1024px) {
+        @media(min-width: 1100px) {
             main {
                 grid-template-columns: 1fr 1fr;
-                padding: 1.5rem;
-                gap: 1.25rem;
+                padding: 1.75rem;
+                gap: 1.5rem;
             }
         }
 
-        /* Bento Cards optimized for compactness & width */
         .bento-card {
             background: var(--surface);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border);
             border-radius: var(--radius-card);
-            padding: 1rem;
+            padding: 1.25rem;
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 0.85rem;
+            gap: 1.15rem;
         }
 
-        @media(min-width: 1024px) {
+        @media(min-width: 768px) {
             .bento-card {
-                padding: 1.5rem;
-                gap: 1rem;
+                padding: 1.75rem;
             }
         }
 
@@ -184,34 +187,33 @@
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .card-title i {
             color: var(--primary-solid);
         }
 
-        /* Dropzone Styling */
         .dropzone {
             border: 2px dashed var(--border);
             border-radius: var(--radius-element);
-            padding: 1.75rem 1rem;
+            padding: 2.5rem 1rem;
             text-align: center;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
             background: rgba(255, 255, 255, 0.01);
             transition: all 0.2s;
         }
 
         .dropzone i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             background: var(--primary-grad);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -221,7 +223,7 @@
             position: relative;
             display: none;
             width: 100%;
-            max-height: 280px;
+            max-height: 350px;
             background: #000;
             border-radius: var(--radius-element);
             overflow: hidden;
@@ -231,7 +233,7 @@
         .preview-box img {
             width: 100%;
             height: auto;
-            max-height: 280px;
+            max-height: 350px;
             object-fit: contain;
             display: block;
             margin: 0 auto;
@@ -242,66 +244,86 @@
             gap: 0.5rem;
         }
 
-        /* Controls & Inputs */
         .controls-row {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: nowrap;
-            align-items: center;
+            gap: 0.6rem;
+            flex-direction: column;
             width: 100%;
+        }
+
+        @media(min-width: 480px) {
+            .controls-row {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        .scan-controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.6rem;
+            width: 100%;
+        }
+
+        @media(min-width: 480px) {
+            .scan-controls-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         select, input[type="text"] {
             background: var(--surface);
             color: var(--text-main);
             border: 1px solid var(--border);
-            padding: 0.6rem 0.85rem;
+            padding: 0.7rem 0.95rem;
             border-radius: var(--radius-element);
             outline: none;
-            flex: 1;
-            min-width: 0;
-            font-size: 0.9rem;
+            width: 100%;
+            font-size: 0.95rem;
             transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select option {
+            background: var(--bg-grad-2);
+            color: var(--text-main);
         }
 
         select:focus, input[type="text"]:focus, textarea:focus {
             border-color: var(--primary-solid);
-            box-shadow: 0 0 0 2px var(--accent-glow);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
-        /* Shorter Textarea to minimize excessive scrolling */
         textarea {
             width: 100%;
-            height: 160px;
+            height: 260px;
             background: var(--surface);
             color: var(--text-main);
             border: 1px solid var(--border);
             border-radius: var(--radius-element);
-            padding: 0.75rem;
+            padding: 1rem;
             resize: vertical;
             outline: none;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-size: 0.95rem;
+            line-height: 1.6;
             transition: border-color 0.2s;
         }
 
-        @media(min-width: 1024px) {
-            textarea { height: 210px; }
+        @media(min-width: 1100px) {
+            textarea { height: 340px; }
         }
 
         .stats-bar {
             display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
+            gap: 1.25rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             flex-wrap: wrap;
         }
 
-        /* AI Interactive Grid */
         .ai-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         @media(min-width: 640px) {
@@ -312,13 +334,13 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-element);
-            padding: 0.75rem 0.5rem;
+            padding: 0.85rem 0.6rem;
             text-align: center;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.4rem;
             transition: all 0.2s;
         }
 
@@ -328,21 +350,31 @@
         }
 
         .ai-card i {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             background: var(--primary-grad);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .ai-card span {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        /* Sleek Modals */
+        .workspace-section {
+            display: none;
+            flex-direction: column;
+            gap: 1.15rem;
+        }
+
+        .workspace-section.active {
+            display: flex;
+        }
+
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(10px);
             display: flex;
             justify-content: center;
@@ -351,7 +383,7 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
             z-index: 1000;
-            padding: 0.75rem;
+            padding: 1rem;
         }
 
         .modal.active {
@@ -364,7 +396,7 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-card);
             width: 100%;
-            max-width: 700px;
+            max-width: 800px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
@@ -373,7 +405,7 @@
         }
 
         .modal-header {
-            padding: 1rem 1.25rem;
+            padding: 1.15rem 1.5rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -381,30 +413,30 @@
         }
 
         .modal-body {
-            padding: 1rem;
+            padding: 0;
             overflow-y: auto;
             flex: 1;
+            background: #000;
         }
 
         .modal-footer {
-            padding: 1rem 1.25rem;
+            padding: 1.15rem 1.5rem;
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: flex-end;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .phone-editor-toolbar {
             display: flex;
-            gap: 0.4rem;
-            padding: 0.5rem 0.75rem;
+            gap: 0.5rem;
+            padding: 0.7rem 1rem;
             background: var(--surface);
             border-bottom: 1px solid var(--border);
             overflow-x: auto;
             align-items: center;
         }
 
-        /* Toast Container */
         #toast-container {
             position: fixed;
             bottom: 1.5rem;
@@ -420,21 +452,21 @@
             backdrop-filter: blur(20px);
             color: var(--text-main);
             border: 1px solid var(--border);
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.15rem;
             border-radius: var(--radius-element);
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            font-size: 0.85rem;
+            gap: 0.7rem;
+            font-size: 0.9rem;
         }
 
         .toast.success { border-left: 4px solid var(--success); }
         .toast.error { border-left: 4px solid var(--danger); }
 
         .spinner {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             border: 2px solid #ffffff;
             border-bottom-color: transparent;
             border-radius: 50%;
@@ -460,9 +492,9 @@
         </div>
     </header>
 
-    <!-- Bento Grid Main Container -->
+    <!-- Responsive Bento Layout -->
     <main>
-        <!-- Card 1: Image Input & OCR Engine -->
+        <!-- Card 1: Source Image Input -->
         <div class="bento-card">
             <div class="card-header">
                 <div class="card-title"><i class="fa-solid fa-image"></i> Source Image Input</div>
@@ -471,8 +503,8 @@
             <div id="dropzone" class="dropzone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <div>
-                    <p style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.15rem;">Drop image here or browse</p>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">Supports PNG, JPG, WEBP</span>
+                    <p style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem;">Drop image here or browse</p>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Supports PNG, JPG, WEBP</span>
                 </div>
                 <input type="file" id="file-input" accept="image/*" style="display: none;">
             </div>
@@ -486,59 +518,82 @@
                 <button id="btn-remove-image" class="btn" style="color: var(--danger);"><i class="fa-solid fa-trash"></i> Remove</button>
             </div>
 
-            <div class="controls-row" style="margin-top: auto;">
+            <div class="scan-controls-grid" style="margin-top: auto;">
                 <select id="select-lang">
-                    <option value="mya">Myanmar (မြန်မာ)</option>
                     <option value="eng">English</option>
+                    <option value="mya">Myanmar</option>
                     <option value="mya+eng">Myanmar + English</option>
                 </select>
-                <button id="btn-scan" class="btn btn-primary" style="flex: 1;">
+                <button id="btn-scan" class="btn btn-primary" style="width: 100%;">
                     <i class="fa-solid fa-bolt"></i>
                     <span id="scan-btn-text">Extract Text (OCR)</span>
                 </button>
             </div>
         </div>
 
-        <!-- Card 2: Extracted Text Editor & AI Studio -->
+        <!-- Card 2: Text Workspace & AI -->
         <div class="bento-card">
             <div class="card-header">
                 <div class="card-title"><i class="fa-solid fa-pen-nib"></i> Text Workspace & AI</div>
             </div>
 
-            <textarea id="editor-text" placeholder="Extracted text or translated output will appear here..."></textarea>
-            
-            <div class="stats-bar">
-                <span id="stat-words">Words: 0</span>
-                <span id="stat-chars">Characters: 0</span>
-                <span id="stat-mya-chars">Myanmar Chars: 0</span>
+            <!-- Tab Switcher Buttons -->
+            <div class="controls-row" style="background: rgba(0,0,0,0.15); padding: 5px; border-radius: var(--radius-element); flex-direction: row;">
+                <button id="tab-ocr" class="btn active-tab" style="flex: 1;"><i class="fa-solid fa-file-lines"></i> OCR Result</button>
+                <button id="tab-ai" class="btn" style="flex: 1;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Workspace</button>
             </div>
 
-            <div class="controls-row" style="justify-content: space-between; flex-wrap: wrap;">
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <button id="btn-copy" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
-                    <button id="btn-speak" class="btn"><i id="speaker-icon" class="fa-solid fa-volume-high"></i></button>
-                    <button id="btn-clear-text" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+            <!-- Section 1: OCR Result View -->
+            <div id="section-ocr" class="workspace-section active">
+                <textarea id="ocr-text" placeholder="Extracted OCR text will appear here..."></textarea>
+                
+                <div class="stats-bar">
+                    <span id="stat-words">Words: 0</span>
+                    <span id="stat-chars">Chars: 0</span>
+                    <span id="stat-mya-chars">Mya Chars: 0</span>
                 </div>
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                    <button id="btn-export-txt" class="btn">.TXT</button>
-                    <button id="btn-export-docx" class="btn">.DOCX</button>
-                    <button id="btn-export-pdf" class="btn">.PDF</button>
+
+                <div class="controls-row" style="justify-content: space-between; flex-direction: row; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-copy-ocr" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                        <button id="btn-speak-ocr" class="btn"><i id="speaker-icon-ocr" class="fa-solid fa-volume-high"></i></button>
+                        <button id="btn-clear-ocr" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+                    </div>
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-export-ocr-txt" class="btn">.TXT</button>
+                        <button id="btn-export-ocr-docx" class="btn">.DOCX</button>
+                        <button id="btn-export-ocr-pdf" class="btn">.PDF</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- AI Quick Tools -->
-            <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.6rem;">
-                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">AI Intelligence Actions</span>
+            <!-- Section 2: AI Workspace View -->
+            <div id="section-ai" class="workspace-section">
                 <div class="ai-grid">
                     <div class="ai-card" data-action="summarize"><i class="fa-solid fa-compress"></i><span>Summarize</span></div>
                     <div class="ai-card" data-action="translate_en"><i class="fa-solid fa-language"></i><span>To English</span></div>
                     <div class="ai-card" data-action="translate_my"><i class="fa-solid fa-globe"></i><span>To Myanmar</span></div>
                     <div class="ai-card" data-action="grammar"><i class="fa-solid fa-spell-check"></i><span>Grammar Fix</span></div>
                 </div>
-                <!-- AI Custom Prompt Row Fixed (Side-by-side without dropping button) -->
-                <div class="controls-row">
-                    <input type="text" id="ai-custom-prompt" placeholder="Ask AI anything about this text...">
-                    <button id="btn-ai-submit" class="btn btn-primary" style="padding: 0.6rem 1rem;"><i class="fa-solid fa-paper-plane"></i></button>
+
+                <div class="controls-row" style="flex-direction: row;">
+                    <input type="text" id="ai-custom-prompt" placeholder="Ask AI anything about this text..." style="flex: 1;">
+                    <button id="btn-ai-submit" class="btn btn-primary" style="padding: 0.7rem 1.2rem;"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+
+                <textarea id="ai-text" placeholder="AI processed or translated output will appear here..."></textarea>
+
+                <div class="controls-row" style="justify-content: space-between; flex-direction: row; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-copy-ai" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                        <button id="btn-speak-ai" class="btn"><i id="speaker-icon-ai" class="fa-solid fa-volume-high"></i></button>
+                        <button id="btn-clear-ai" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+                    </div>
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-export-ai-txt" class="btn">.TXT</button>
+                        <button id="btn-export-ai-docx" class="btn">.DOCX</button>
+                        <button id="btn-export-ai-pdf" class="btn">.PDF</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -546,7 +601,7 @@
 
     <!-- Phone-Style Photo Editor Modal -->
     <div id="modal-crop" class="modal">
-        <div class="modal-content" style="max-width: 750px;">
+        <div class="modal-content" style="max-width: 850px;">
             <div class="modal-header">
                 <h3><i class="fa-solid fa-sliders"></i> Phone Photo Editor</h3>
                 <button id="btn-close-crop" class="btn" style="border:none;"><i class="fa-solid fa-xmark"></i></button>
@@ -557,7 +612,7 @@
                 <button class="btn aspect-btn" data-ratio="1">1:1</button>
                 <button class="btn aspect-btn" data-ratio="1.33333">4:3</button>
                 <button class="btn aspect-btn" data-ratio="1.77777">16:9</button>
-                <div style="width: 1px; height: 20px; background: var(--border); margin: 0 0.2rem;"></div>
+                <div style="width: 1px; height: 20px; background: var(--border); margin: 0 0.3rem;"></div>
                 <button id="btn-rotate-left" class="btn"><i class="fa-solid fa-rotate-left"></i></button>
                 <button id="btn-rotate-right" class="btn"><i class="fa-solid fa-rotate-right"></i></button>
                 <button id="btn-flip-h" class="btn"><i class="fa-solid fa-arrows-left-right"></i></button>
@@ -565,7 +620,7 @@
                 <button id="btn-reset-crop" class="btn"><i class="fa-solid fa-rotate"></i></button>
             </div>
 
-            <div class="modal-body" style="padding: 0; background: #000; max-height: 50vh;">
+            <div class="modal-body">
                 <img id="cropper-image" src="" style="max-width: 100%; display: block;">
             </div>
             <div class="modal-footer">
@@ -589,7 +644,6 @@
                 imageBlob: null,
                 imageURL: null,
                 cropper: null,
-                isSpeaking: false,
                 scaleXVal: 1,
                 scaleYVal: 1
             };
@@ -607,21 +661,37 @@
                 scanBtnText: document.getElementById('scan-btn-text'),
                 selectLang: document.getElementById('select-lang'),
                 
-                editorText: document.getElementById('editor-text'),
+                // Tabs
+                tabOcr: document.getElementById('tab-ocr'),
+                tabAi: document.getElementById('tab-ai'),
+                sectionOcr: document.getElementById('section-ocr'),
+                sectionAi: document.getElementById('section-ai'),
+                
+                ocrText: document.getElementById('ocr-text'),
+                aiText: document.getElementById('ai-text'),
                 statWords: document.getElementById('stat-words'),
                 statChars: document.getElementById('stat-chars'),
                 statMyaChars: document.getElementById('stat-mya-chars'),
-                btnCopy: document.getElementById('btn-copy'),
-                btnSpeak: document.getElementById('btn-speak'),
-                speakerIcon: document.getElementById('speaker-icon'),
-                btnClearText: document.getElementById('btn-clear-text'),
-                btnExportTxt: document.getElementById('btn-export-txt'),
-                btnExportDocx: document.getElementById('btn-export-docx'),
-                btnExportPdf: document.getElementById('btn-export-pdf'),
+                
+                btnCopyOcr: document.getElementById('btn-copy-ocr'),
+                btnSpeakOcr: document.getElementById('btn-speak-ocr'),
+                speakerIconOcr: document.getElementById('speaker-icon-ocr'),
+                btnClearOcr: document.getElementById('btn-clear-ocr'),
+                btnExportOcrTxt: document.getElementById('btn-export-ocr-txt'),
+                btnExportOcrDocx: document.getElementById('btn-export-ocr-docx'),
+                btnExportOcrPdf: document.getElementById('btn-export-ocr-pdf'),
                 
                 aiCards: document.querySelectorAll('.ai-card'),
                 aiCustomPrompt: document.getElementById('ai-custom-prompt'),
                 btnAiSubmit: document.getElementById('btn-ai-submit'),
+                
+                btnCopyAi: document.getElementById('btn-copy-ai'),
+                btnSpeakAi: document.getElementById('btn-speak-ai'),
+                speakerIconAi: document.getElementById('speaker-icon-ai'),
+                btnClearAi: document.getElementById('btn-clear-ai'),
+                btnExportAiTxt: document.getElementById('btn-export-ai-txt'),
+                btnExportAiDocx: document.getElementById('btn-export-ai-docx'),
+                btnExportAiPdf: document.getElementById('btn-export-ai-pdf'),
                 
                 modalCrop: document.getElementById('modal-crop'),
                 btnCropModal: document.getElementById('btn-crop-modal'),
@@ -652,6 +722,21 @@
             function updateThemeIcon() {
                 el.btnTheme.innerHTML = state.theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
             }
+
+            // Tab Switcher Logic
+            el.tabOcr.addEventListener('click', () => {
+                el.tabOcr.classList.add('active-tab');
+                el.tabAi.classList.remove('active-tab');
+                el.sectionOcr.classList.add('active');
+                el.sectionAi.classList.remove('active');
+            });
+
+            el.tabAi.addEventListener('click', () => {
+                el.tabAi.classList.add('active-tab');
+                el.tabOcr.classList.remove('active-tab');
+                el.sectionAi.classList.add('active');
+                el.sectionOcr.classList.remove('active');
+            });
 
             function showToast(msg, type = 'success') {
                 const toast = document.createElement('div');
@@ -697,10 +782,11 @@
                 el.previewActions.style.display = 'none';
                 el.dropzone.style.display = 'flex';
                 el.fileInput.value = '';
-                el.editorText.value = '';
+                el.ocrText.value = '';
+                el.aiText.value = '';
                 updateStats();
                 if (el.aiCustomPrompt) el.aiCustomPrompt.value = '';
-                showToast('Image and workspace cleared', 'error');
+                showToast('Image and workspaces cleared', 'error');
             });
 
             el.btnCropModal.addEventListener('click', () => {
@@ -746,10 +832,15 @@
                 }, 'image/jpeg', 0.95);
             });
 
+            // OCR Extract Logic with Loading State & Language Validation
             el.btnScan.addEventListener('click', async () => {
                 if (!state.imageBlob) return showToast('Please upload an image first', 'error');
 
                 const selectedLang = el.selectLang.value;
+                
+                el.ocrText.value = 'Loading...';
+                updateStats();
+
                 setLoading(el.btnScan, el.scanBtnText, true, 'Extracting OCR...');
                 const formData = new FormData();
                 formData.append('file', state.imageBlob);
@@ -758,102 +849,107 @@
                 try {
                     const res = await fetch('/ocr', { method: 'POST', body: formData });
                     const data = await res.json();
+                    
                     if (res.ok && data.text !== undefined) {
                         const text = data.text.trim();
                         const hasMyanmar = /[\u1000-\u109F]/.test(text);
+                        const hasEnglish = /[a-zA-Z]/.test(text);
 
-                        if (selectedLang === 'mya') {
-                            if (!hasMyanmar || text === '') {
-                                showToast('Error: Selected Myanmar, but no Myanmar text found!', 'error');
-                                el.editorText.value = '';
-                                updateStats();
-                                return;
-                            }
-                        } else if (selectedLang === 'eng') {
-                            if (hasMyanmar) {
-                                showToast('Error: Selected English, but Myanmar text was detected!', 'error');
-                                el.editorText.value = '';
-                                updateStats();
-                                return;
-                            }
+                        if (selectedLang === 'eng' && hasMyanmar && !hasEnglish) {
+                            showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ ပါဝင်နေပါသည်', 'error');
+                            el.ocrText.value = '';
+                            updateStats();
+                            return;
+                        }
+                        if (selectedLang === 'mya' && !hasMyanmar && hasEnglish) {
+                            showToast('Myanmar သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ မတွေ့ရှိပါ', 'error');
+                            el.ocrText.value = '';
+                            updateStats();
+                            return;
                         }
 
-                        el.editorText.value = text;
+                        el.ocrText.value = text;
                         updateStats();
                         showToast('Text extracted successfully!');
                     } else {
+                        el.ocrText.value = '';
+                        updateStats();
                         showToast(data.error || 'OCR failed', 'error');
                     }
                 } catch {
+                    el.ocrText.value = '';
+                    updateStats();
                     showToast('Server connection error', 'error');
                 } finally {
                     setLoading(el.btnScan, el.scanBtnText, false, 'Extract Text (OCR)');
                 }
             });
 
-            el.editorText.addEventListener('input', updateStats);
+            el.ocrText.addEventListener('input', updateStats);
             function updateStats() {
-                const text = el.editorText.value;
-                el.statWords.textContent = `Words: ${text.trim() ? text.trim().split(/\s+/).length : 0}`;
-                el.statChars.textContent = `Characters: ${text.length}`;
-                el.statMyaChars.textContent = `Myanmar Chars: ${(text.match(/[\u1000-\u109F]/g) || []).length}`;
-            }
-
-            el.btnCopy.addEventListener('click', () => {
-                if (!el.editorText.value) return;
-                navigator.clipboard.writeText(el.editorText.value);
-                showToast('Copied to clipboard!');
-            });
-
-            el.btnClearText.addEventListener('click', () => {
-                el.editorText.value = '';
-                updateStats();
-                showToast('Editor cleared', 'error');
-            });
-
-            el.btnSpeak.addEventListener('click', () => {
-                if (!('speechSynthesis' in window)) return showToast('TTS not supported', 'error');
-                if (state.isSpeaking) {
-                    window.speechSynthesis.cancel();
-                    state.isSpeaking = false;
-                    el.speakerIcon.className = 'fa-solid fa-volume-high';
+                const text = el.ocrText.value;
+                if (text === 'Loading...') {
+                    el.statWords.textContent = 'Words: 0';
+                    el.statChars.textContent = 'Chars: 0';
+                    el.statMyaChars.textContent = 'Mya Chars: 0';
                     return;
                 }
-                const text = el.editorText.value;
-                if (!text) return showToast('No text available', 'error');
+                el.statWords.textContent = `Words: ${text.trim() ? text.trim().split(/\s+/).length : 0}`;
+                el.statChars.textContent = `Chars: ${text.length}`;
+                el.statMyaChars.textContent = `Mya Chars: ${(text.match(/[\u1000-\u109F]/g) || []).length}`;
+            }
 
-                const utter = new SpeechSynthesisUtterance(text);
-                utter.lang = /[\u1000-\u109F]/.test(text) ? 'my-MM' : 'en-US';
-                utter.onstart = () => { state.isSpeaking = true; el.speakerIcon.className = 'fa-solid fa-stop'; };
-                utter.onend = () => { state.isSpeaking = false; el.speakerIcon.className = 'fa-solid fa-volume-high'; };
-                window.speechSynthesis.speak(utter);
+            el.btnCopyOcr.addEventListener('click', () => {
+                if (!el.ocrText.value || el.ocrText.value === 'Loading...') return;
+                navigator.clipboard.writeText(el.ocrText.value);
+                showToast('OCR Text copied to clipboard!');
             });
 
-            el.btnExportTxt.addEventListener('click', () => {
-                const text = el.editorText.value;
-                if (!text) return showToast('No text to export', 'error');
+            el.btnClearOcr.addEventListener('click', () => {
+                el.ocrText.value = '';
+                updateStats();
+                showToast('OCR workspace cleared', 'error');
+            });
+
+            el.btnExportOcrTxt.addEventListener('click', () => downloadTxt(el.ocrText.value, 'OCR_Text'));
+            el.btnExportOcrDocx.addEventListener('click', () => exportFile('/export/docx', el.ocrText.value, 'docx'));
+            el.btnExportOcrPdf.addEventListener('click', () => exportFile('/export/pdf', el.ocrText.value, 'pdf'));
+
+            el.btnCopyAi.addEventListener('click', () => {
+                if (!el.aiText.value || el.aiText.value === 'Loading...') return;
+                navigator.clipboard.writeText(el.aiText.value);
+                showToast('AI Text copied to clipboard!');
+            });
+
+            el.btnClearAi.addEventListener('click', () => {
+                el.aiText.value = '';
+                showToast('AI workspace cleared', 'error');
+            });
+
+            el.btnExportAiTxt.addEventListener('click', () => downloadTxt(el.aiText.value, 'AI_Output'));
+            el.btnExportAiDocx.addEventListener('click', () => exportFile('/export/docx', el.aiText.value, 'docx'));
+            el.btnExportAiPdf.addEventListener('click', () => exportFile('/export/pdf', el.aiText.value, 'pdf'));
+
+            function downloadTxt(text, filenamePrefix) {
+                if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
                     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `Extracted_Text_${Date.now()}.txt`;
+                    a.download = `${filenamePrefix}_${Date.now()}.txt`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
-                    showToast('TXT downloaded');
+                    showToast('TXT downloaded successfully');
                 } catch {
                     showToast('Failed to export TXT', 'error');
                 }
-            });
+            }
 
-            el.btnExportDocx.addEventListener('click', () => exportFile('/export/docx', 'docx'));
-            el.btnExportPdf.addEventListener('click', () => exportFile('/export/pdf', 'pdf'));
-
-            async function exportFile(endpoint, ext) {
-                const text = el.editorText.value;
-                if (!text) return showToast('No text to export', 'error');
+            async function exportFile(endpoint, text, ext) {
+                if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
                     const res = await fetch(endpoint, {
                         method: 'POST',
@@ -874,6 +970,25 @@
                 }
             }
 
+            el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
+            el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
+
+            function speakText(text, iconEl) {
+                if (!('speechSynthesis' in window)) return showToast('TTS not supported', 'error');
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    iconEl.className = 'fa-solid fa-volume-high';
+                    return;
+                }
+                if (!text || text === 'Loading...') return showToast('No text available', 'error');
+
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = /[\u1000-\u109F]/.test(text) ? 'my-MM' : 'en-US';
+                utter.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
+                utter.onend = () => { iconEl.className = 'fa-solid fa-volume-high'; };
+                window.speechSynthesis.speak(utter);
+            }
+
             el.aiCards.forEach(card => {
                 card.addEventListener('click', () => triggerAI(card.getAttribute('data-action')));
             });
@@ -885,15 +1000,16 @@
             });
 
             async function triggerAI(action, customPrompt = '') {
-                const text = el.editorText.value.trim();
-                if (!text) return showToast('Please provide text first', 'error');
+                const text = el.ocrText.value.trim();
+                if (!text || text === 'Loading...') return showToast('Please extract OCR text first', 'error');
+
+                el.aiText.value = 'Loading...';
 
                 let payloadAction = action, targetLang = '', prompt = customPrompt;
                 if (action === 'translate_en') { payloadAction = 'translate'; targetLang = 'en'; }
                 else if (action === 'translate_my') { payloadAction = 'translate'; targetLang = 'my'; }
                 else if (action === 'grammar') { payloadAction = 'explain'; prompt = 'Fix spelling and grammar mistakes.'; }
 
-                showToast('AI is processing...', 'success');
                 try {
                     const res = await fetch('/ai/process', {
                         method: 'POST',
@@ -902,13 +1018,14 @@
                     });
                     const data = await res.json();
                     if (res.ok && data.result) {
-                        el.editorText.value = data.result;
-                        updateStats();
-                        showToast('AI response applied!');
+                        el.aiText.value = data.result;
+                        showToast('AI response generated!');
                     } else {
+                        el.aiText.value = '';
                         showToast(data.error || 'AI failed', 'error');
                     }
                 } catch {
+                    el.aiText.value = '';
                     showToast('AI connection error', 'error');
                 }
             }
