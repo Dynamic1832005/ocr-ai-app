@@ -246,7 +246,7 @@
 
         .controls-row {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.6rem;
             flex-direction: column;
             width: 100%;
         }
@@ -256,34 +256,6 @@
                 flex-direction: row;
                 align-items: center;
             }
-        }
-
-        /* Single Line Action Row Styling for Mobile & Desktop */
-        .action-row-single {
-            display: flex;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            gap: 0.35rem;
-            overflow-x: auto;
-            width: 100%;
-            padding-bottom: 2px;
-        }
-
-        .action-row-single::-webkit-scrollbar {
-            height: 3px;
-        }
-
-        .action-row-single::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        .action-row-single .btn {
-            flex: 1;
-            padding: 0.5rem 0.4rem;
-            font-size: 0.8rem;
-            justify-content: center;
-            min-width: 0;
         }
 
         .scan-controls-grid {
@@ -581,13 +553,17 @@
                     <span id="stat-mya-chars">Mya Chars: 0</span>
                 </div>
 
-                <div class="action-row-single">
-                    <button id="btn-copy-ocr" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
-                    <button id="btn-speak-ocr" class="btn"><i id="speaker-icon-ocr" class="fa-solid fa-volume-high"></i></button>
-                    <button id="btn-export-ocr-txt" class="btn">.TXT</button>
-                    <button id="btn-export-ocr-docx" class="btn">.DOCX</button>
-                    <button id="btn-export-ocr-pdf" class="btn">.PDF</button>
-                  
+                <div class="controls-row" style="justify-content: space-between; flex-direction: row; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-copy-ocr" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                        <button id="btn-speak-ocr" class="btn"><i id="speaker-icon-ocr" class="fa-solid fa-volume-high"></i></button>
+                        <button id="btn-clear-ocr" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+                    </div>
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-export-ocr-txt" class="btn">.TXT</button>
+                        <button id="btn-export-ocr-docx" class="btn">.DOCX</button>
+                        <button id="btn-export-ocr-pdf" class="btn">.PDF</button>
+                    </div>
                 </div>
             </div>
 
@@ -607,13 +583,17 @@
 
                 <textarea id="ai-text" placeholder="AI processed or translated output will appear here..."></textarea>
 
-                <div class="action-row-single">
-                    <button id="btn-copy-ai" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
-                    <button id="btn-speak-ai" class="btn"><i id="speaker-icon-ai" class="fa-solid fa-volume-high"></i></button>
-                    <button id="btn-export-ai-txt" class="btn">.TXT</button>
-                    <button id="btn-export-ai-docx" class="btn">.DOCX</button>
-                    <button id="btn-export-ai-pdf" class="btn">.PDF</button>
-                
+                <div class="controls-row" style="justify-content: space-between; flex-direction: row; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-copy-ai" class="btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                        <button id="btn-speak-ai" class="btn"><i id="speaker-icon-ai" class="fa-solid fa-volume-high"></i></button>
+                        <button id="btn-clear-ai" class="btn" style="color: var(--danger);"><i class="fa-solid fa-eraser"></i></button>
+                    </div>
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button id="btn-export-ai-txt" class="btn">.TXT</button>
+                        <button id="btn-export-ai-docx" class="btn">.DOCX</button>
+                        <button id="btn-export-ai-pdf" class="btn">.PDF</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -875,8 +855,8 @@
                         const hasMyanmar = /[\u1000-\u109F]/.test(text);
                         const hasEnglish = /[a-zA-Z]/.test(text);
 
-                        if (selectedLang === 'eng' && !hasEnglish && hasMyanmar) {
-                            showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် အင်္ဂလိပ်စာ မတွေ့ရှိပါ', 'error');
+                        if (selectedLang === 'eng' && hasMyanmar && !hasEnglish) {
+                            showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ ပါဝင်နေပါသည်', 'error');
                             el.ocrText.value = '';
                             updateStats();
                             return;
