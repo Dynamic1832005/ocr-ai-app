@@ -930,6 +930,7 @@
             el.btnExportAiDocx.addEventListener('click', () => exportFile('/export/docx', el.aiText.value, 'docx'));
             el.btnExportAiPdf.addEventListener('click', () => exportFile('/export/pdf', el.aiText.value, 'pdf'));
 
+            // Mobile-optimized download function for TXT
             function downloadTxt(text, filenamePrefix) {
                 if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
@@ -940,14 +941,17 @@
                     a.download = `${filenamePrefix}_${Date.now()}.txt`;
                     document.body.appendChild(a);
                     a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 2000);
                     showToast('TXT downloaded successfully');
                 } catch {
                     showToast('Failed to export TXT', 'error');
                 }
             }
 
+            // Mobile-optimized export function for DOCX and PDF
             async function exportFile(endpoint, text, ext) {
                 if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
@@ -962,8 +966,12 @@
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = `Export_${Date.now()}.${ext}`;
+                    document.body.appendChild(a);
                     a.click();
-                    URL.revokeObjectURL(url);
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 2000);
                     showToast(`Exported as ${ext.toUpperCase()}`);
                 } catch {
                     showToast(`Failed to export ${ext.toUpperCase()}`, 'error');
