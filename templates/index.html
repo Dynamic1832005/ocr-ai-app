@@ -970,23 +970,68 @@
                 }
             }
 
+            // Global variable to prevent Garbage Collection issue on Mobile Browsers
+            let activeUtterance = null;
+
+            // Pre-load voices for mobile browsers
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.getVoices();
+                };
+            }
+
             el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
             el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
 
             function speakText(text, iconEl) {
                 if (!('speechSynthesis' in window)) return showToast('TTS not supported', 'error');
+                
+                // Toggle Stop if currently speaking
                 if (window.speechSynthesis.speaking) {
                     window.speechSynthesis.cancel();
                     iconEl.className = 'fa-solid fa-volume-high';
                     return;
                 }
+
                 if (!text || text === 'Loading...') return showToast('No text available', 'error');
 
-                const utter = new SpeechSynthesisUtterance(text);
-                utter.lang = /[\u1000-\u109F]/.test(text) ? 'my-MM' : 'en-US';
-                utter.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
-                utter.onend = () => { iconEl.className = 'fa-solid fa-volume-high'; };
-                window.speechSynthesis.speak(utter);
+                // Cancel any pending speech queue for mobile stability
+                window.speechSynthesis.cancel();
+
+                const isMyanmar = /[\u1000-\u109F]/.test(text);
+                activeUtterance = new SpeechSynthesisUtterance(text);
+
+                // Check and set supported voices for Mobile / Desktop
+                const voices = window.speechSynthesis.getVoices();
+                if (isMyanmar) {
+                    const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
+                    if (myVoice) {
+                        activeUtterance.voice = myVoice;
+                        activeUtterance.lang = myVoice.lang;
+                    } else {
+                        // Fallback to default if device doesn't support my-MM voice engine
+                        activeUtterance.lang = 'en-US';
+                    }
+                } else {
+                    activeUtterance.lang = 'en-US';
+                }
+
+                activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
+                activeUtterance.onend = () => { 
+                    iconEl.className = 'fa-solid fa-volume-high'; 
+                    activeUtterance = null;
+                };
+                activeUtterance.onerror = () => { 
+                    iconEl.className = 'fa-solid fa-volume-high'; 
+                    activeUtterance = null;
+                };
+
+                window.speechSynthesis.speak(activeUtterance);
+
+                // Mobile Safari / Chrome fix: Resume synthesis if paused by browser
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
             }
 
             el.aiCards.forEach(card => {
