@@ -983,54 +983,57 @@
             el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
             el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
 
-            function speakText(text, iconEl) {
-                if (!('speechSynthesis' in window)) return showToast('TTS not supported', 'error');
-                
-                // Toggle Stop if currently speaking
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.cancel();
+            let currentAudio = null; // Audio ရပ်နိုင်ရန် Global variable ထားခြင်း
+
+            async function speakText(text, iconEl) {
+                if (!text || text === 'Loading...') return showToast('No text available', 'error');
+
+                // အသံထွက်နေတုန်း ခလုတ်ပြန်နှိပ်ပါက ရပ်ပေးရန်
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    currentAudio = null;
                     iconEl.className = 'fa-solid fa-volume-high';
                     return;
                 }
 
-                if (!text || text === 'Loading...') return showToast('No text available', 'error');
-
-                // Cancel any pending speech queue for mobile stability
-                window.speechSynthesis.cancel();
-
                 const isMyanmar = /[\u1000-\u109F]/.test(text);
-                activeUtterance = new SpeechSynthesisUtterance(text);
+                const lang = isMyanmar ? 'my' : 'en';
 
-                // Check and set supported voices for Mobile / Desktop
-                const voices = window.speechSynthesis.getVoices();
-                if (isMyanmar) {
-                    const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
-                    if (myVoice) {
-                        activeUtterance.voice = myVoice;
-                        activeUtterance.lang = myVoice.lang;
-                    } else {
-                        // Fallback to default if device doesn't support my-MM voice engine
-                        activeUtterance.lang = 'en-US';
-                    }
-                } else {
-                    activeUtterance.lang = 'en-US';
-                }
+                try {
+                    const originalIcon = 'fa-solid fa-volume-high';
+                    iconEl.className = 'fa-solid fa-spinner fa-spin';
 
-                activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
-                activeUtterance.onend = () => { 
-                    iconEl.className = 'fa-solid fa-volume-high'; 
-                    activeUtterance = null;
-                };
-                activeUtterance.onerror = () => { 
-                    iconEl.className = 'fa-solid fa-volume-high'; 
-                    activeUtterance = null;
-                };
+                    const res = await fetch('/api/tts', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: text, lang: lang })
+                    });
 
-                window.speechSynthesis.speak(activeUtterance);
+                    if (!res.ok) throw new Error('TTS server error');
 
-                // Mobile Safari / Chrome fix: Resume synthesis if paused by browser
-                if (window.speechSynthesis.paused) {
-                    window.speechSynthesis.resume();
+                    const blob = await res.blob();
+                    const audioUrl = URL.createObjectURL(blob);
+        
+                    currentAudio = new Audio(audioUrl);
+                    iconEl.className = 'fa-solid fa-stop';
+
+                    currentAudio.play();
+
+                    currentAudio.onended = () => {
+                        iconEl.className = originalIcon;
+                        URL.revokeObjectURL(audioUrl);
+                        currentAudio = null;
+                    };
+
+                    currentAudio.onerror = () => {
+                        iconEl.className = originalIcon;
+                        showToast('Failed to play audio', 'error');
+                        currentAudio = null;
+                    };
+
+                } catch (err) {
+                    iconEl.className = 'fa-solid fa-volume-high';
+                    showToast('Audio generation failed', 'error');
                 }
             }
 

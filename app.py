@@ -17,7 +17,7 @@ import pytesseract
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
-
+from gtts import gTTS
 load_dotenv()
 
 app = Flask(__name__)
@@ -437,6 +437,20 @@ def export_pdf():
         download_name="result.pdf",
     )
 
+
+
+@app.route('/api/tts', methods=['POST'])
+def tts_endpoint():
+    data = request.get_json() or {}
+    text = data.get('text', '').strip()
+    if not text:
+        return jsonify({'error': 'No text'}), 400
+    
+    tts = gTTS(text=text, lang='en')
+    audio_fp = io.BytesIO()
+    tts.write_to_fp(audio_fp)
+    audio_fp.seek(0)
+    return send_file(audio_fp, mimetype='audio/mpeg')
 
 if __name__ == "__main__":
   port = int(os.environ.get("PORT", 5000))
