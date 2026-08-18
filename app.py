@@ -1,13 +1,17 @@
+import asyncio
 import io
 import os
 import re
 import socket
 import time
 from datetime import datetime
+
 import cv2
 from docx import Document
 from dotenv import load_dotenv
+import edge_tts
 from flask import Flask, jsonify, render_template, request, send_file
+
 # Google Gemini Official SDK
 from google import genai
 from google.genai import types
@@ -17,7 +21,7 @@ import pytesseract
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
-from gtts import gTTS
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -143,10 +147,9 @@ def preprocess_image_for_tesseract(image_bytes):
 
 
 # ==========================================
-# FIXED OCR CLEANER (အင်္ဂလိပ်/မြန်မာ နှစ်မျိုးလုံး မဖျက်ဘဲ အမှိုက်သာ ဖျက်ပေးမည့် Cleaner)
+# FIXED OCR CLEANER
 # ==========================================
 def clean_tesseract_myanmar_text(text, is_myanmar_selected=True):
-  """Tesseract မှ ထွက်လာသော အမှိုက်စာလုံးများကို ရှင်းထုတ်ပြီး အင်္ဂလိပ်စာလုံးများကို မဖျက်ဘဲ ထိန်းသိမ်းပေးပါသည်"""
   if not text:
     return ""
 
@@ -158,7 +161,6 @@ def clean_tesseract_myanmar_text(text, is_myanmar_selected=True):
     if not line_str:
       continue
 
-    # ၁။ မလိုအပ်သော Symbol အမှိုက်များ ရှင်းထုတ်ခြင်း
     line_clean = re.sub(
         r"\[Geden\]?|[°¢\[\]\{\}\#\/\=\_\<\>]", "", line_str
     )
@@ -174,8 +176,6 @@ def clean_tesseract_myanmar_text(text, is_myanmar_selected=True):
     latin_chars = re.findall(r"[a-zA-Z0-9]", cleaned_no_punct)
     tokens = cleaned_no_punct.split()
 
-    # ၂။ စာလုံးအမှိုက်ဖြစ်နေသည့် စာကြောင်းများကို စစ်ဆေးဖယ်ထုတ်ခြင်း
-    # အင်္ဂလိပ်စာ သို့မဟုတ် ဂဏန်းပါနေပါက မဖျက်ဘဲ ချန်ထားပေးမည်
     if (
         len(myanmar_chars) <= 6
         and tokens
@@ -184,7 +184,6 @@ def clean_tesseract_myanmar_text(text, is_myanmar_selected=True):
       if len(latin_chars) < 3:
         continue
 
-    # ၃။ မြန်မာစာလုံး အမှိုက်တွဲများ (ဥပမာ 'ဂ ဂ ၀၈ ၀') ဖြစ်ပါက ဖက်ထုတ်မည်
     if (
         re.match(r"^(?:[\u1000\u101d\u1040-\u1049\s\(\)]){3,}$", line_clean)
         and len(latin_chars) == 0
@@ -372,85 +371,105 @@ def ai_process():
 # ==========================================
 @app.route("/export/txt", methods=["POST"])
 def export_txt():
-    data = request.get_json() or {}
-    text = data.get("text", "")
-    byte_io = io.BytesIO(text.encode("utf-8"))
-    return send_file(
-        byte_io,
-        mimetype="text/plain;charset=utf-8",
-        as_attachment=True,
-        download_name="Extracted_Text.txt",
-    )
+  data = request.get_json() or {}
+  text = data.get("text", "")
+  byte_io = io.BytesIO(text.encode("utf-8"))
+  return send_file(
+      byte_io,
+      mimetype="text/plain;charset=utf-8",
+      as_attachment=True,
+      download_name="Extracted_Text.txt",
+  )
 
 
 @app.route("/export/docx", methods=["POST"])
 def export_docx():
-    data = request.get_json() or {}
-    text = data.get("text", "")
+  data = request.get_json() or {}
+  text = data.get("text", "")
 
-    doc = Document()
-    doc.add_heading("OCR Extracted Document", level=1)
-    for line in text.split("\n"):
-        if line.strip():
-            doc.add_paragraph(line)
+  doc = Document()
+  doc.add_heading("OCR Extracted Document", level=1)
+  for line in text.split("\n"):
+    if line.strip():
+      doc.add_paragraph(line)
 
-    doc_io = io.BytesIO()
-    doc.save(doc_io)
-    doc_io.seek(0)
+  doc_io = io.BytesIO()
+  doc.save(doc_io)
+  doc_io.seek(0)
 
-    return send_file(
-        doc_io,
-        mimetype=(
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ),
-        as_attachment=True,
-        download_name="ocr_result.docx",
-    )
+  return send_file(
+      doc_io,
+      mimetype=(
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ),
+      as_attachment=True,
+      download_name="ocr_result.docx",
+  )
 
 
 @app.route("/export/pdf", methods=["POST"])
 def export_pdf():
-    data = request.get_json() or {}
-    text = data.get("text", "")
+  data = request.get_json() or {}
+  text = data.get("text", "")
 
-    pdf_io = io.BytesIO()
-    doc = SimpleDocTemplate(pdf_io, pagesize=letter)
-    styles = getSampleStyleSheet()
+  pdf_io = io.BytesIO()
+  doc = SimpleDocTemplate(pdf_io, pagesize=letter)
+  styles = getSampleStyleSheet()
 
-    story = [Paragraph("OCR Extracted Document", styles["Heading1"]), Spacer(1, 18)]
+  story = [Paragraph("OCR Extracted Document", styles["Heading1"]), Spacer(1, 18)]
 
-    for line in text.split("\n"):
-        if line.strip():
-            clean_line = (
-                line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            )
-            story.append(Paragraph(clean_line, styles["Normal"]))
-            story.append(Spacer(1, 8))
+  for line in text.split("\n"):
+    if line.strip():
+      clean_line = (
+          line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+      )
+      story.append(Paragraph(clean_line, styles["Normal"]))
+      story.append(Spacer(1, 8))
 
-    doc.build(story)
-    pdf_io.seek(0)
+  doc.build(story)
+  pdf_io.seek(0)
 
-    return send_file(
-        pdf_io,
-        mimetype="application/pdf",
-        as_attachment=True,
-        download_name="result.pdf",
-    )
+  return send_file(
+      pdf_io,
+      mimetype="application/pdf",
+      as_attachment=True,
+      download_name="result.pdf",
+  )
 
 
-
-@app.route('/api/tts', methods=['POST'])
+# ==========================================
+# FAST EDGE-TTS ENDPOINT FOR FLASK
+# ==========================================
+@app.route("/api/tts", methods=["POST"])
 def tts_endpoint():
-    data = request.get_json() or {}
-    text = data.get('text', '').strip()
-    if not text:
-        return jsonify({'error': 'No text'}), 400
-    
-    tts = gTTS(text=text, lang='en')
-    audio_fp = io.BytesIO()
-    tts.write_to_fp(audio_fp)
-    audio_fp.seek(0)
-    return send_file(audio_fp, mimetype='audio/mpeg')
+  data = request.get_json() or {}
+  text = data.get("text", "").strip()
+  lang = data.get("lang", "en")
+
+  if not text:
+    return jsonify({"error": "No text provided"}), 400
+
+  voice = "my-MM-NilarNeural" if lang == "my" else "en-US-AvaNeural"
+
+  async def generate_audio():
+    communicate = edge_tts.Communicate(text, voice)
+    audio_bytes = b""
+    async for chunk in communicate.stream():
+      if chunk["type"] == "audio":
+        audio_bytes += chunk["data"]
+    return audio_bytes
+
+  try:
+    audio_data = asyncio.run(generate_audio())
+    return send_file(
+        io.BytesIO(audio_data),
+        mimetype="audio/mpeg",
+        as_attachment=False,
+        download_name="speech.mp3",
+    )
+  except Exception as e:
+    return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
   port = int(os.environ.get("PORT", 5000))
