@@ -372,70 +372,70 @@ def ai_process():
 # ==========================================
 @app.route("/export/txt", methods=["POST"])
 def export_txt():
-  data = request.get_json() or {}
-  text = data.get("text", "")
-  byte_io = io.BytesIO(text.encode("utf-8"))
-  return send_file(
-      byte_io,
-      mimetype="text/plain",
-      as_attachment=True,
-      download_name="Extracted_Text.txt",
-  )
+    data = request.get_json() or {}
+    text = data.get("text", "")
+    byte_io = io.BytesIO(text.encode("utf-8"))
+    return send_file(
+        byte_io,
+        mimetype="text/plain;charset=utf-8",
+        as_attachment=True,
+        download_name="Extracted_Text.txt",
+    )
 
 
 @app.route("/export/docx", methods=["POST"])
 def export_docx():
-  data = request.get_json() or {}
-  text = data.get("text", "")
+    data = request.get_json() or {}
+    text = data.get("text", "")
 
-  doc = Document()
-  doc.add_heading("OCR Extracted Document", level=1)
-  for line in text.split("\n"):
-    if line.strip():
-      doc.add_paragraph(line)
+    doc = Document()
+    doc.add_heading("OCR Extracted Document", level=1)
+    for line in text.split("\n"):
+        if line.strip():
+            doc.add_paragraph(line)
 
-  doc_io = io.BytesIO()
-  doc.save(doc_io)
-  doc_io.seek(0)
+    doc_io = io.BytesIO()
+    doc.save(doc_io)
+    doc_io.seek(0)
 
-  return send_file(
-      doc_io,
-      mimetype=(
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      ),
-      as_attachment=True,
-      download_name="ocr_result.docx",
-  )
+    return send_file(
+        doc_io,
+        mimetype=(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ),
+        as_attachment=True,
+        download_name="ocr_result.docx",
+    )
 
 
 @app.route("/export/pdf", methods=["POST"])
 def export_pdf():
-  data = request.get_json() or {}
-  text = data.get("text", "")
+    data = request.get_json() or {}
+    text = data.get("text", "")
 
-  pdf_io = io.BytesIO()
-  doc = SimpleDocTemplate(pdf_io, pagesize=letter)
-  styles = getSampleStyleSheet()
+    pdf_io = io.BytesIO()
+    doc = SimpleDocTemplate(pdf_io, pagesize=letter)
+    styles = getSampleStyleSheet()
 
-  story = [Paragraph("OCR Extracted Document", styles["Heading1"]), Spacer(1, 18)]
+    story = [Paragraph("OCR Extracted Document", styles["Heading1"]), Spacer(1, 18)]
 
-  for line in text.split("\n"):
-    if line.strip():
-      clean_line = (
-          line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-      )
-      story.append(Paragraph(clean_line, styles["Normal"]))
-      story.append(Spacer(1, 8))
+    for line in text.split("\n"):
+        if line.strip():
+            clean_line = (
+                line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            )
+            story.append(Paragraph(clean_line, styles["Normal"]))
+            story.append(Spacer(1, 8))
 
-  doc.build(story)
-  pdf_io.seek(0)
+    doc.build(story)
+    pdf_io.seek(0)
 
-  return send_file(
-      pdf_io,
-      mimetype="application/pdf",
-      as_attachment=True,
-      download_name="result.pdf",
-  )
+    return send_file(
+        pdf_io,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name="result.pdf",
+    )
 
 
 if __name__ == "__main__":
