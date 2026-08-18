@@ -1044,6 +1044,13 @@
                 triggerAI('ask', prompt);
             });
 
+            el.aiCustomPrompt.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    el.btnAiSubmit.click();
+                }
+            });
+
             async function triggerAI(action, customPrompt = '') {
                 const text = el.ocrText.value.trim();
                 if (!text || text === 'Loading...') return showToast('Please extract OCR text first', 'error');
