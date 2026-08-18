@@ -603,7 +603,7 @@
     <div id="modal-crop" class="modal">
         <div class="modal-content" style="max-width: 850px;">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-sliders"></i> Photo Editor</h3>
+                <h3><i class="fa-solid fa-sliders"></i> Phone Photo Editor</h3>
                 <button id="btn-close-crop" class="btn" style="border:none;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
@@ -930,28 +930,35 @@
             el.btnExportAiDocx.addEventListener('click', () => exportFile('/export/docx', el.aiText.value, 'docx'));
             el.btnExportAiPdf.addEventListener('click', () => exportFile('/export/pdf', el.aiText.value, 'pdf'));
 
-            // Mobile-optimized download function for TXT
+            // Mobile & Laptop Cross-Platform Download Helper Function
+            function saveBlob(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Delay revocation so Mobile Browsers have time to process download
+                setTimeout(() => {
+                    if (a.parentNode) a.parentNode.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 10000);
+            }
+
             function downloadTxt(text, filenamePrefix) {
                 if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
                     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filenamePrefix}_${Date.now()}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 2000);
+                    saveBlob(blob, `${filenamePrefix}_${Date.now()}.txt`);
                     showToast('TXT downloaded successfully');
                 } catch {
                     showToast('Failed to export TXT', 'error');
                 }
             }
 
-            // Mobile-optimized export function for DOCX and PDF
             async function exportFile(endpoint, text, ext) {
                 if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
@@ -962,30 +969,11 @@
                     });
                     if (!res.ok) throw new Error();
                     const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `Export_${Date.now()}.${ext}`;
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }, 2000);
+                    saveBlob(blob, `Export_${Date.now()}.${ext}`);
                     showToast(`Exported as ${ext.toUpperCase()}`);
                 } catch {
                     showToast(`Failed to export ${ext.toUpperCase()}`, 'error');
                 }
-            }
-
-            // Global variable to prevent Garbage Collection issue on Mobile Browsers
-            let activeUtterance = null;
-
-            // Pre-load voices for mobile browsers
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.onvoiceschanged = () => {
-                    window.speechSynthesis.getVoices();
-                };
             }
 
             el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
@@ -1042,47 +1030,6 @@
                 } catch (err) {
                     iconEl.className = 'fa-solid fa-volume-high';
                     showToast('Audio generation failed', 'error');
-                }
-            }
-
-            el.aiCards.forEach(card => {
-                card.addEventListener('click', () => triggerAI(card.getAttribute('data-action')));
-            });
-
-            el.btnAiSubmit.addEventListener('click', () => {
-                const prompt = el.aiCustomPrompt.value.trim();
-                if (!prompt) return showToast('Please enter a prompt', 'error');
-                triggerAI('ask', prompt);
-            });
-
-            async function triggerAI(action, customPrompt = '') {
-                const text = el.ocrText.value.trim();
-                if (!text || text === 'Loading...') return showToast('Please extract OCR text first', 'error');
-
-                el.aiText.value = 'Loading...';
-
-                let payloadAction = action, targetLang = '', prompt = customPrompt;
-                if (action === 'translate_en') { payloadAction = 'translate'; targetLang = 'en'; }
-                else if (action === 'translate_my') { payloadAction = 'translate'; targetLang = 'my'; }
-                else if (action === 'grammar') { payloadAction = 'explain'; prompt = 'Fix spelling and grammar mistakes.'; }
-
-                try {
-                    const res = await fetch('/ai/process', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: payloadAction, text, target_lang: targetLang, prompt })
-                    });
-                    const data = await res.json();
-                    if (res.ok && data.result) {
-                        el.aiText.value = data.result;
-                        showToast('AI response generated!');
-                    } else {
-                        el.aiText.value = '';
-                        showToast(data.error || 'AI failed', 'error');
-                    }
-                } catch {
-                    el.aiText.value = '';
-                    showToast('AI connection error', 'error');
                 }
             }
 
