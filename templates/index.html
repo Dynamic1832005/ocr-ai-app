@@ -1012,13 +1012,13 @@
             }
         }
 
-        // --- Universal Mobile TTS Logic with Auto Audio Fallback ---
+        // --- Universal Mobile TTS Logic (CORS & Mobile Browser Safe) ---
         window.activeUtterance = null;
         window.currentAudio = null;
 
         if ('speechSynthesis' in window && window.speechSynthesis) {
             window.speechSynthesis.onvoiceschanged = () => {
-                window.speechSynthesis.getVoices();
+                try { window.speechSynthesis.getVoices(); } catch(e){}
             };
             try { window.speechSynthesis.getVoices(); } catch(e){}
         }
@@ -1038,6 +1038,8 @@
             }
 
             const synth = window.speechSynthesis;
+
+            // If Web Speech is active, stop it
             if (synth && (synth.speaking || synth.pending)) {
                 synth.cancel();
                 iconEl.className = 'fa-solid fa-volume-high';
@@ -1045,17 +1047,18 @@
             }
 
             const isMyanmar = /[\u1000-\u109F]/.test(text);
-            const lang = isMyanmar ? 'my' : 'en';
 
-            // Audio Fallback Player for devices without SpeechSynthesis support
-            function playAudioFallback() {
+            // Audio Stream Fallback (CORS-friendly endpoint)
+            function playFallbackAudio() {
                 try {
                     if (window.currentAudio) {
                         window.currentAudio.pause();
                         window.currentAudio = null;
                     }
-                    const cleanText = text.substring(0, 300);
-                    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encodeURIComponent(cleanText)}`;
+                    const cleanText = text.substring(0, 250);
+                    // CORS-allowed public TTS endpoint
+                    const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(cleanText)}`;
+                    
                     const audio = new Audio(audioUrl);
                     window.currentAudio = audio;
 
@@ -1068,7 +1071,7 @@
                     audio.onerror = () => {
                         iconEl.className = 'fa-solid fa-volume-high';
                         window.currentAudio = null;
-                        showToast('Audio playback failed', 'error');
+                        showToast('TTS is not supported in this browser.', 'error');
                     };
 
                     const playPromise = audio.play();
@@ -1076,7 +1079,7 @@
                         playPromise.catch(() => {
                             iconEl.className = 'fa-solid fa-volume-high';
                             window.currentAudio = null;
-                            showToast('Playback restricted by browser', 'error');
+                            showToast('Tap speaker again to play audio', 'error');
                         });
                     }
                 } catch (e) {
@@ -1086,10 +1089,12 @@
                 }
             }
 
-            // Try Web Speech API first if supported
+            // Web Speech API
             if ('speechSynthesis' in window && synth) {
                 try {
-                    synth.cancel();
+                    synth.cancel(); // Reset
+                    if (synth.paused) synth.resume(); // Unlock mobile context
+
                     const utterance = new SpeechSynthesisUtterance(text);
                     window.activeUtterance = utterance;
 
@@ -1100,9 +1105,7 @@
                             utterance.voice = myVoice;
                             utterance.lang = myVoice.lang;
                         } else {
-                            // Use Audio fallback if no native Myanmar voice is installed
-                            playAudioFallback();
-                            return;
+                            utterance.lang = 'my-MM';
                         }
                     } else {
                         utterance.lang = 'en-US';
@@ -1115,20 +1118,16 @@
                     };
                     utterance.onerror = (e) => { 
                         if (e.error !== 'interrupted') {
-                            playAudioFallback();
+                            playFallbackAudio();
                         }
                     };
 
                     synth.speak(utterance);
-
-                    if (synth.paused) {
-                        synth.resume();
-                    }
                 } catch {
-                    playAudioFallback();
+                    playFallbackAudio();
                 }
             } else {
-                playAudioFallback();
+                playFallbackAudio();
             }
         }
 
