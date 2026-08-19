@@ -1029,47 +1029,42 @@
 
                 if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
 
-                // Cancel any pending speech queue for mobile stability
-                window.speechSynthesis.cancel();
+                const isMyanmar = /[\u1000-\u109F]/.test(text);
+                window.activeUtterance = new SpeechSynthesisUtterance(text);
 
-                // iOS / Android fix: Add a tiny delay after cancel() before starting speech
-                setTimeout(() => {
-                    const isMyanmar = /[\u1000-\u109F]/.test(text);
-                    window.activeUtterance = new SpeechSynthesisUtterance(text);
-
-                    // Check and set supported voices for Mobile / Desktop
-                    const voices = window.speechSynthesis.getVoices();
-                    if (isMyanmar) {
-                        const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
-                        if (myVoice) {
-                            window.activeUtterance.voice = myVoice;
-                            window.activeUtterance.lang = myVoice.lang;
-                        } else {
-                            window.activeUtterance.lang = 'en-US'; // Fallback
-                        }
+                // Check and set supported voices for Mobile / Desktop
+                const voices = window.speechSynthesis.getVoices();
+                if (isMyanmar) {
+                    const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
+                    if (myVoice) {
+                        window.activeUtterance.voice = myVoice;
+                        window.activeUtterance.lang = myVoice.lang;
                     } else {
-                        window.activeUtterance.lang = 'en-US';
+                        window.activeUtterance.lang = 'en-US'; // Fallback
                     }
+                } else {
+                    window.activeUtterance.lang = 'en-US';
+                }
 
-                    window.activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
-                    window.activeUtterance.onend = () => { 
+                window.activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
+                window.activeUtterance.onend = () => { 
+                    iconEl.className = 'fa-solid fa-volume-high'; 
+                    window.activeUtterance = null;
+                };
+                window.activeUtterance.onerror = (e) => { 
+                    if (e.error !== 'interrupted') { // Ignore expected interrupt on cancel
                         iconEl.className = 'fa-solid fa-volume-high'; 
                         window.activeUtterance = null;
-                    };
-                    window.activeUtterance.onerror = (e) => { 
-                        if (e.error !== 'interrupted') { // Ignore expected interrupt on cancel
-                            iconEl.className = 'fa-solid fa-volume-high'; 
-                            window.activeUtterance = null;
-                        }
-                    };
-
-                    window.speechSynthesis.speak(window.activeUtterance);
-
-                    // Mobile Safari / Chrome fix: Resume synthesis if browser paused it
-                    if (window.speechSynthesis.paused) {
-                        window.speechSynthesis.resume();
                     }
-                }, 50);
+                };
+
+                // Remove setTimeout to ensure direct user interaction context for mobile
+                window.speechSynthesis.speak(window.activeUtterance);
+
+                // Mobile Safari / Chrome fix: Resume synthesis if browser paused it
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
             }
 
             el.aiCards.forEach(card => {
