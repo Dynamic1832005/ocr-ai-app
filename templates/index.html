@@ -1012,7 +1012,7 @@
             }
         }
 
-        // --- Universal Mobile TTS Logic (CORS & Mobile Browser Safe) ---
+        // --- Silent & Reliable Mobile TTS Logic ---
         window.activeUtterance = null;
         window.currentAudio = null;
 
@@ -1029,7 +1029,9 @@
         function speakText(text, iconEl) {
             if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
 
-            // If currently playing HTML5 Audio, stop it
+            const synth = window.speechSynthesis;
+
+            // Stop audio if playing
             if (window.currentAudio) {
                 window.currentAudio.pause();
                 window.currentAudio = null;
@@ -1037,76 +1039,29 @@
                 return;
             }
 
-            const synth = window.speechSynthesis;
-
-            // If Web Speech is active, stop it
-            if (synth && (synth.speaking || synth.pending)) {
+            if (synth && synth.speaking) {
                 synth.cancel();
                 iconEl.className = 'fa-solid fa-volume-high';
                 return;
             }
 
-            const isMyanmar = /[\u1000-\u109F]/.test(text);
-
-            // Audio Stream Fallback (CORS-friendly endpoint)
-            function playFallbackAudio() {
-                try {
-                    if (window.currentAudio) {
-                        window.currentAudio.pause();
-                        window.currentAudio = null;
-                    }
-                    const cleanText = text.substring(0, 250);
-                    // CORS-allowed public TTS endpoint
-                    const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(cleanText)}`;
-                    
-                    const audio = new Audio(audioUrl);
-                    window.currentAudio = audio;
-
-                    iconEl.className = 'fa-solid fa-stop';
-
-                    audio.onended = () => {
-                        iconEl.className = 'fa-solid fa-volume-high';
-                        window.currentAudio = null;
-                    };
-                    audio.onerror = () => {
-                        iconEl.className = 'fa-solid fa-volume-high';
-                        window.currentAudio = null;
-                        showToast('TTS is not supported in this browser.', 'error');
-                    };
-
-                    const playPromise = audio.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                            iconEl.className = 'fa-solid fa-volume-high';
-                            window.currentAudio = null;
-                            showToast('Tap speaker again to play audio', 'error');
-                        });
-                    }
-                } catch (e) {
-                    iconEl.className = 'fa-solid fa-volume-high';
-                    window.currentAudio = null;
-                    showToast('TTS playback failed', 'error');
-                }
-            }
+            const cleanText = text.replace(/[\r\n]+/g, ' ').trim();
+            const isMyanmar = /[\u1000-\u109F]/.test(cleanText);
 
             // Web Speech API
             if ('speechSynthesis' in window && synth) {
                 try {
-                    synth.cancel(); // Reset
-                    if (synth.paused) synth.resume(); // Unlock mobile context
+                    synth.cancel();
+                    if (synth.paused) synth.resume();
 
-                    const utterance = new SpeechSynthesisUtterance(text);
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
                     window.activeUtterance = utterance;
 
                     const voices = synth.getVoices() || [];
                     if (isMyanmar) {
                         const myVoice = voices.find(v => v.lang && (v.lang.startsWith('my') || v.lang.includes('MM')));
-                        if (myVoice) {
-                            utterance.voice = myVoice;
-                            utterance.lang = myVoice.lang;
-                        } else {
-                            utterance.lang = 'my-MM';
-                        }
+                        if (myVoice) utterance.voice = myVoice;
+                        utterance.lang = 'my-MM';
                     } else {
                         utterance.lang = 'en-US';
                     }
@@ -1116,18 +1071,55 @@
                         iconEl.className = 'fa-solid fa-volume-high'; 
                         window.activeUtterance = null;
                     };
-                    utterance.onerror = (e) => { 
-                        if (e.error !== 'interrupted') {
-                            playFallbackAudio();
-                        }
+                    utterance.onerror = () => { 
+                        iconEl.className = 'fa-solid fa-volume-high'; 
+                        window.activeUtterance = null;
+                        playFallbackAudio(cleanText, isMyanmar ? 'my' : 'en', iconEl);
                     };
 
                     synth.speak(utterance);
-                } catch {
-                    playFallbackAudio();
+                    iconEl.className = 'fa-solid fa-stop';
+                    return;
+                } catch (e) {
+                    playFallbackAudio(cleanText, isMyanmar ? 'my' : 'en', iconEl);
                 }
             } else {
-                playFallbackAudio();
+                playFallbackAudio(cleanText, isMyanmar ? 'my' : 'en', iconEl);
+            }
+        }
+
+        function playFallbackAudio(text, lang, iconEl) {
+            try {
+                if (window.currentAudio) {
+                    window.currentAudio.pause();
+                    window.currentAudio = null;
+                }
+                const chunk = encodeURIComponent(text.substring(0, 200));
+                const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${chunk}`;
+                
+                const audio = new Audio(audioUrl);
+                window.currentAudio = audio;
+
+                audio.onplay = () => { iconEl.className = 'fa-solid fa-stop'; };
+                audio.onended = () => { 
+                    iconEl.className = 'fa-solid fa-volume-high'; 
+                    window.currentAudio = null;
+                };
+                audio.onerror = () => {
+                    iconEl.className = 'fa-solid fa-volume-high';
+                    window.currentAudio = null;
+                };
+
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        iconEl.className = 'fa-solid fa-volume-high';
+                        window.currentAudio = null;
+                    });
+                }
+            } catch (e) {
+                iconEl.className = 'fa-solid fa-volume-high';
+                window.currentAudio = null;
             }
         }
 
