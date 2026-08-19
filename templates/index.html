@@ -832,6 +832,7 @@
                 }, 'image/jpeg', 0.95);
             });
 
+            // --- FIX 1: Frontend Image Compression for Faster OCR ---
             function compressImage(file, maxWidth = 1200) {
                 return new Promise((resolve) => {
                     const img = new Image();
@@ -854,22 +855,27 @@
                         canvas.toBlob((blob) => {
                             URL.revokeObjectURL(img.src);
                             resolve(blob || file);
-                        }, 'image/jpeg', 0.85);
+                        }, 'image/jpeg', 0.85); // Reduce to JPEG 85% quality to speed up network and OCR
                     };
                     img.onerror = () => resolve(file);
                 });
             }
 
+            // OCR Extract Logic with Loading State & Language Validation
             el.btnScan.addEventListener('click', async () => {
                 if (!state.imageBlob) return showToast('Please upload an image first', 'error');
 
                 const selectedLang = el.selectLang.value;
+                
                 el.ocrText.value = 'Loading...';
                 updateStats();
+
                 setLoading(el.btnScan, el.scanBtnText, true, 'Extracting OCR...');
 
                 try {
+                    // Compress image before sending to make OCR extremely fast
                     const optimizedBlob = await compressImage(state.imageBlob);
+
                     const formData = new FormData();
                     formData.append('file', optimizedBlob);
                     formData.append('lang', selectedLang);
@@ -997,116 +1003,73 @@
                 }
             }
 
-            // --- FIX 3: Ultimate TTS Fix for Any Unsupported Device ---
-            window.activeUtterance = null;
-            let fallbackAudioQueue = [];
-            let currentFallbackAudio = null;
-            let isFallbackPlaying = false;
+            // --- FIX 2: Mobile Browser TTS & Garbage Collection Fix ---
+            window.activeUtterance = null; // attach to window directly
 
-            // Pre-load voices if supported
+            // Pre-load voices for mobile browsers
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-                window.speechSynthesis.getVoices();
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.getVoices();
+                };
+                window.speechSynthesis.getVoices(); // Trigger once on load
             }
 
             el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
             el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
 
             function speakText(text, iconEl) {
-                if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
-                const isMyanmar = /[\u1000-\u109F]/.test(text);
-                const lang = isMyanmar ? 'my' : 'en';
-
-                // 1. Try Native Web Speech API First
-                if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
-                    if (window.speechSynthesis.speaking) {
-                        window.speechSynthesis.cancel();
-                        iconEl.className = 'fa-solid fa-volume-high';
-                        return;
-                    }
-
+                if (!('speechSynthesis' in window)) return showToast('TTS not supported on this browser', 'error');
+                
+                // Toggle Stop if currently speaking
+                if (window.speechSynthesis.speaking) {
                     window.speechSynthesis.cancel();
-                    setTimeout(() => {
-                        window.activeUtterance = new SpeechSynthesisUtterance(text);
-                        const voices = window.speechSynthesis.getVoices();
-                        if (isMyanmar) {
-                            const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
+                    iconEl.className = 'fa-solid fa-volume-high';
+                    return;
+                }
+
+                if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
+
+                // Cancel any pending speech queue for mobile stability
+                window.speechSynthesis.cancel();
+
+                // iOS / Android fix: Add a tiny delay after cancel() before starting speech
+                setTimeout(() => {
+                    const isMyanmar = /[\u1000-\u109F]/.test(text);
+                    window.activeUtterance = new SpeechSynthesisUtterance(text);
+
+                    // Check and set supported voices for Mobile / Desktop
+                    const voices = window.speechSynthesis.getVoices();
+                    if (isMyanmar) {
+                        const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
+                        if (myVoice) {
                             window.activeUtterance.voice = myVoice;
-                            window.activeUtterance.lang = myVoice ? myVoice.lang : 'en-US';
+                            window.activeUtterance.lang = myVoice.lang;
                         } else {
-                            window.activeUtterance.lang = 'en-US';
+                            window.activeUtterance.lang = 'en-US'; // Fallback
                         }
-
-                        window.activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
-                        window.activeUtterance.onend = () => { iconEl.className = 'fa-solid fa-volume-high'; window.activeUtterance = null; };
-                        window.activeUtterance.onerror = (e) => { 
-                            if (e.error !== 'interrupted') {
-                                iconEl.className = 'fa-solid fa-volume-high';
-                                window.activeUtterance = null;
-                            }
-                        };
-
-                        window.speechSynthesis.speak(window.activeUtterance);
-                        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-                    }, 50);
-                    return;
-                }
-
-                // 2. Online Audio Fallback (For unsupported devices/browsers)
-                if (isFallbackPlaying) {
-                    if (currentFallbackAudio) {
-                        currentFallbackAudio.pause();
-                        currentFallbackAudio.currentTime = 0;
-                    }
-                    isFallbackPlaying = false;
-                    iconEl.className = 'fa-solid fa-volume-high';
-                    return;
-                }
-
-                // Split text into chunks to avoid Google TTS url limit length
-                const words = text.split(/\s+/);
-                fallbackAudioQueue = [];
-                let currentChunk = '';
-                words.forEach(word => {
-                    if ((currentChunk + word).length > 150) {
-                        fallbackAudioQueue.push(currentChunk);
-                        currentChunk = word + ' ';
                     } else {
-                        currentChunk += word + ' ';
+                        window.activeUtterance.lang = 'en-US';
                     }
-                });
-                if (currentChunk.trim()) fallbackAudioQueue.push(currentChunk.trim());
 
-                isFallbackPlaying = true;
-                iconEl.className = 'fa-solid fa-stop';
-                showToast('Using online TTS via standard audio...', 'success');
-                playNextFallbackChunk(lang, iconEl);
-            }
+                    window.activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
+                    window.activeUtterance.onend = () => { 
+                        iconEl.className = 'fa-solid fa-volume-high'; 
+                        window.activeUtterance = null;
+                    };
+                    window.activeUtterance.onerror = (e) => { 
+                        if (e.error !== 'interrupted') { // Ignore expected interrupt on cancel
+                            iconEl.className = 'fa-solid fa-volume-high'; 
+                            window.activeUtterance = null;
+                        }
+                    };
 
-            function playNextFallbackChunk(lang, iconEl) {
-                if (!isFallbackPlaying || fallbackAudioQueue.length === 0) {
-                    isFallbackPlaying = false;
-                    iconEl.className = 'fa-solid fa-volume-high';
-                    return;
-                }
+                    window.speechSynthesis.speak(window.activeUtterance);
 
-                const chunk = fallbackAudioQueue.shift();
-                // Standard Google Translate TTS URL
-                const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encodeURIComponent(chunk)}`;
-                
-                currentFallbackAudio = new Audio(url);
-                currentFallbackAudio.onended = () => playNextFallbackChunk(lang, iconEl);
-                currentFallbackAudio.onerror = () => {
-                    showToast('Online TTS stream error', 'error');
-                    isFallbackPlaying = false;
-                    iconEl.className = 'fa-solid fa-volume-high';
-                };
-                
-                currentFallbackAudio.play().catch(e => {
-                    showToast('Browser blocked audio playback', 'error');
-                    isFallbackPlaying = false;
-                    iconEl.className = 'fa-solid fa-volume-high';
-                });
+                    // Mobile Safari / Chrome fix: Resume synthesis if browser paused it
+                    if (window.speechSynthesis.paused) {
+                        window.speechSynthesis.resume();
+                    }
+                }, 50);
             }
 
             el.aiCards.forEach(card => {
