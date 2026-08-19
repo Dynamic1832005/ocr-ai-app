@@ -1012,8 +1012,9 @@
             }
         }
 
-        // --- Mobile Friendly Speech Synthesis Logic ---
+        // --- Universal Mobile TTS Logic with Auto Audio Fallback ---
         window.activeUtterance = null;
+        window.currentAudio = null;
 
         if ('speechSynthesis' in window && window.speechSynthesis) {
             window.speechSynthesis.onvoiceschanged = () => {
@@ -1026,54 +1027,108 @@
         el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
 
         function speakText(text, iconEl) {
-            const synth = window.speechSynthesis;
-            if (!('speechSynthesis' in window) || !synth) {
-                return showToast('TTS is restricted in this app browser. Open in Chrome/Safari.', 'error');
+            if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
+
+            // If currently playing HTML5 Audio, stop it
+            if (window.currentAudio) {
+                window.currentAudio.pause();
+                window.currentAudio = null;
+                iconEl.className = 'fa-solid fa-volume-high';
+                return;
             }
-            
-            if (synth.speaking || synth.pending) {
+
+            const synth = window.speechSynthesis;
+            if (synth && (synth.speaking || synth.pending)) {
                 synth.cancel();
                 iconEl.className = 'fa-solid fa-volume-high';
                 return;
             }
 
-            if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
-
-            synth.cancel(); // Reset previous voice instances
-
             const isMyanmar = /[\u1000-\u109F]/.test(text);
-            const utterance = new SpeechSynthesisUtterance(text);
-            window.activeUtterance = utterance;
+            const lang = isMyanmar ? 'my' : 'en';
 
-            const voices = synth.getVoices() || [];
-            if (isMyanmar) {
-                const myVoice = voices.find(v => v.lang && (v.lang.startsWith('my') || v.lang.includes('MM')));
-                if (myVoice) {
-                    utterance.voice = myVoice;
-                    utterance.lang = myVoice.lang;
-                } else {
-                    utterance.lang = 'en-US';
+            // Audio Fallback Player for devices without SpeechSynthesis support
+            function playAudioFallback() {
+                try {
+                    if (window.currentAudio) {
+                        window.currentAudio.pause();
+                        window.currentAudio = null;
+                    }
+                    const cleanText = text.substring(0, 300);
+                    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encodeURIComponent(cleanText)}`;
+                    const audio = new Audio(audioUrl);
+                    window.currentAudio = audio;
+
+                    iconEl.className = 'fa-solid fa-stop';
+
+                    audio.onended = () => {
+                        iconEl.className = 'fa-solid fa-volume-high';
+                        window.currentAudio = null;
+                    };
+                    audio.onerror = () => {
+                        iconEl.className = 'fa-solid fa-volume-high';
+                        window.currentAudio = null;
+                        showToast('Audio playback failed', 'error');
+                    };
+
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            iconEl.className = 'fa-solid fa-volume-high';
+                            window.currentAudio = null;
+                            showToast('Playback restricted by browser', 'error');
+                        });
+                    }
+                } catch (e) {
+                    iconEl.className = 'fa-solid fa-volume-high';
+                    window.currentAudio = null;
+                    showToast('TTS playback failed', 'error');
                 }
-            } else {
-                utterance.lang = 'en-US';
             }
 
-            utterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
-            utterance.onend = () => { 
-                iconEl.className = 'fa-solid fa-volume-high'; 
-                window.activeUtterance = null;
-            };
-            utterance.onerror = (e) => { 
-                if (e.error !== 'interrupted') {
-                    iconEl.className = 'fa-solid fa-volume-high'; 
-                    window.activeUtterance = null;
+            // Try Web Speech API first if supported
+            if ('speechSynthesis' in window && synth) {
+                try {
+                    synth.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    window.activeUtterance = utterance;
+
+                    const voices = synth.getVoices() || [];
+                    if (isMyanmar) {
+                        const myVoice = voices.find(v => v.lang && (v.lang.startsWith('my') || v.lang.includes('MM')));
+                        if (myVoice) {
+                            utterance.voice = myVoice;
+                            utterance.lang = myVoice.lang;
+                        } else {
+                            // Use Audio fallback if no native Myanmar voice is installed
+                            playAudioFallback();
+                            return;
+                        }
+                    } else {
+                        utterance.lang = 'en-US';
+                    }
+
+                    utterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
+                    utterance.onend = () => { 
+                        iconEl.className = 'fa-solid fa-volume-high'; 
+                        window.activeUtterance = null;
+                    };
+                    utterance.onerror = (e) => { 
+                        if (e.error !== 'interrupted') {
+                            playAudioFallback();
+                        }
+                    };
+
+                    synth.speak(utterance);
+
+                    if (synth.paused) {
+                        synth.resume();
+                    }
+                } catch {
+                    playAudioFallback();
                 }
-            };
-
-            synth.speak(utterance);
-
-            if (synth.paused) {
-                synth.resume();
+            } else {
+                playAudioFallback();
             }
         }
 
