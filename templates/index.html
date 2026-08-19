@@ -637,545 +637,494 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <!-- App Logic Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const state = {
-            theme: localStorage.getItem('nexus_theme') || 'dark',
-            imageBlob: null,
-            imageURL: null,
-            cropper: null,
-            scaleXVal: 1,
-            scaleYVal: 1
-        };
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const state = {
+                theme: localStorage.getItem('nexus_theme') || 'dark',
+                imageBlob: null,
+                imageURL: null,
+                cropper: null,
+                scaleXVal: 1,
+                scaleYVal: 1
+            };
 
-        const el = {
-            html: document.documentElement,
-            btnTheme: document.getElementById('btn-theme'),
-            dropzone: document.getElementById('dropzone'),
-            fileInput: document.getElementById('file-input'),
-            previewBox: document.getElementById('preview-box'),
-            imagePreview: document.getElementById('image-preview'),
-            previewActions: document.getElementById('preview-actions'),
-            btnRemoveImage: document.getElementById('btn-remove-image'),
-            btnScan: document.getElementById('btn-scan'),
-            scanBtnText: document.getElementById('scan-btn-text'),
-            selectLang: document.getElementById('select-lang'),
-            
-            // Tabs
-            tabOcr: document.getElementById('tab-ocr'),
-            tabAi: document.getElementById('tab-ai'),
-            sectionOcr: document.getElementById('section-ocr'),
-            sectionAi: document.getElementById('section-ai'),
-            
-            ocrText: document.getElementById('ocr-text'),
-            aiText: document.getElementById('ai-text'),
-            statWords: document.getElementById('stat-words'),
-            statChars: document.getElementById('stat-chars'),
-            statMyaChars: document.getElementById('stat-mya-chars'),
-            
-            btnCopyOcr: document.getElementById('btn-copy-ocr'),
-            btnSpeakOcr: document.getElementById('btn-speak-ocr'),
-            speakerIconOcr: document.getElementById('speaker-icon-ocr'),
-            btnClearOcr: document.getElementById('btn-clear-ocr'),
-            btnExportOcrTxt: document.getElementById('btn-export-ocr-txt'),
-            btnExportOcrDocx: document.getElementById('btn-export-ocr-docx'),
-            btnExportOcrPdf: document.getElementById('btn-export-ocr-pdf'),
-            
-            aiCards: document.querySelectorAll('.ai-card'),
-            aiCustomPrompt: document.getElementById('ai-custom-prompt'),
-            btnAiSubmit: document.getElementById('btn-ai-submit'),
-            
-            btnCopyAi: document.getElementById('btn-copy-ai'),
-            btnSpeakAi: document.getElementById('btn-speak-ai'),
-            speakerIconAi: document.getElementById('speaker-icon-ai'),
-            btnClearAi: document.getElementById('btn-clear-ai'),
-            btnExportAiTxt: document.getElementById('btn-export-ai-txt'),
-            btnExportAiDocx: document.getElementById('btn-export-ai-docx'),
-            btnExportAiPdf: document.getElementById('btn-export-ai-pdf'),
-            
-            modalCrop: document.getElementById('modal-crop'),
-            btnCropModal: document.getElementById('btn-crop-modal'),
-            cropperImage: document.getElementById('cropper-image'),
-            btnCloseCrop: document.getElementById('btn-close-crop'),
-            btnCancelCrop: document.getElementById('btn-cancel-crop'),
-            aspectBtns: document.querySelectorAll('.aspect-btn'),
-            btnRotateLeft: document.getElementById('btn-rotate-left'),
-            btnRotateRight: document.getElementById('btn-rotate-right'),
-            btnFlipH: document.getElementById('btn-flip-h'),
-            btnFlipV: document.getElementById('btn-flip-v'),
-            btnResetCrop: document.getElementById('btn-reset-crop'),
-            btnApplyCrop: document.getElementById('btn-apply-crop'),
-            
-            toastContainer: document.getElementById('toast-container')
-        };
+            const el = {
+                html: document.documentElement,
+                btnTheme: document.getElementById('btn-theme'),
+                dropzone: document.getElementById('dropzone'),
+                fileInput: document.getElementById('file-input'),
+                previewBox: document.getElementById('preview-box'),
+                imagePreview: document.getElementById('image-preview'),
+                previewActions: document.getElementById('preview-actions'),
+                btnRemoveImage: document.getElementById('btn-remove-image'),
+                btnScan: document.getElementById('btn-scan'),
+                scanBtnText: document.getElementById('scan-btn-text'),
+                selectLang: document.getElementById('select-lang'),
+                
+                // Tabs
+                tabOcr: document.getElementById('tab-ocr'),
+                tabAi: document.getElementById('tab-ai'),
+                sectionOcr: document.getElementById('section-ocr'),
+                sectionAi: document.getElementById('section-ai'),
+                
+                ocrText: document.getElementById('ocr-text'),
+                aiText: document.getElementById('ai-text'),
+                statWords: document.getElementById('stat-words'),
+                statChars: document.getElementById('stat-chars'),
+                statMyaChars: document.getElementById('stat-mya-chars'),
+                
+                btnCopyOcr: document.getElementById('btn-copy-ocr'),
+                btnSpeakOcr: document.getElementById('btn-speak-ocr'),
+                speakerIconOcr: document.getElementById('speaker-icon-ocr'),
+                btnClearOcr: document.getElementById('btn-clear-ocr'),
+                btnExportOcrTxt: document.getElementById('btn-export-ocr-txt'),
+                btnExportOcrDocx: document.getElementById('btn-export-ocr-docx'),
+                btnExportOcrPdf: document.getElementById('btn-export-ocr-pdf'),
+                
+                aiCards: document.querySelectorAll('.ai-card'),
+                aiCustomPrompt: document.getElementById('ai-custom-prompt'),
+                btnAiSubmit: document.getElementById('btn-ai-submit'),
+                
+                btnCopyAi: document.getElementById('btn-copy-ai'),
+                btnSpeakAi: document.getElementById('btn-speak-ai'),
+                speakerIconAi: document.getElementById('speaker-icon-ai'),
+                btnClearAi: document.getElementById('btn-clear-ai'),
+                btnExportAiTxt: document.getElementById('btn-export-ai-txt'),
+                btnExportAiDocx: document.getElementById('btn-export-ai-docx'),
+                btnExportAiPdf: document.getElementById('btn-export-ai-pdf'),
+                
+                modalCrop: document.getElementById('modal-crop'),
+                btnCropModal: document.getElementById('btn-crop-modal'),
+                cropperImage: document.getElementById('cropper-image'),
+                btnCloseCrop: document.getElementById('btn-close-crop'),
+                btnCancelCrop: document.getElementById('btn-cancel-crop'),
+                aspectBtns: document.querySelectorAll('.aspect-btn'),
+                btnRotateLeft: document.getElementById('btn-rotate-left'),
+                btnRotateRight: document.getElementById('btn-rotate-right'),
+                btnFlipH: document.getElementById('btn-flip-h'),
+                btnFlipV: document.getElementById('btn-flip-v'),
+                btnResetCrop: document.getElementById('btn-reset-crop'),
+                btnApplyCrop: document.getElementById('btn-apply-crop'),
+                
+                toastContainer: document.getElementById('toast-container')
+            };
 
-        el.html.setAttribute('data-theme', state.theme);
-        updateThemeIcon();
-
-        el.btnTheme.addEventListener('click', () => {
-            state.theme = state.theme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('nexus_theme', state.theme);
             el.html.setAttribute('data-theme', state.theme);
             updateThemeIcon();
-        });
 
-        function updateThemeIcon() {
-            el.btnTheme.innerHTML = state.theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        }
-
-        // Tab Switcher Logic
-        el.tabOcr.addEventListener('click', () => {
-            el.tabOcr.classList.add('active-tab');
-            el.tabAi.classList.remove('active-tab');
-            el.sectionOcr.classList.add('active');
-            el.sectionAi.classList.remove('active');
-        });
-
-        el.tabAi.addEventListener('click', () => {
-            el.tabAi.classList.add('active-tab');
-            el.tabOcr.classList.remove('active-tab');
-            el.sectionAi.classList.add('active');
-            el.sectionOcr.classList.remove('active');
-        });
-
-        function showToast(msg, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i><span>${msg}</span>`;
-            el.toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        el.dropzone.addEventListener('click', () => el.fileInput.click());
-        el.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); el.dropzone.classList.add('dragover'); });
-        el.dropzone.addEventListener('dragleave', () => el.dropzone.classList.remove('dragover'));
-        el.dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            el.dropzone.classList.remove('dragover');
-            if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
-        });
-        el.fileInput.addEventListener('change', (e) => {
-            if (e.target.files?.[0]) handleFile(e.target.files[0]);
-        });
-
-        function handleFile(file) {
-            if (!file.type.startsWith('image/')) return showToast('Please select a valid image file', 'error');
-            state.imageBlob = file;
-            if (state.imageURL) URL.revokeObjectURL(state.imageURL);
-            state.imageURL = URL.createObjectURL(file);
-
-            el.imagePreview.src = state.imageURL;
-            el.dropzone.style.display = 'none';
-            el.previewBox.style.display = 'block';
-            el.previewActions.style.display = 'flex';
-            showToast('Image uploaded successfully');
-        }
-
-        el.btnRemoveImage.addEventListener('click', () => {
-            state.imageBlob = null;
-            if (state.imageURL) URL.revokeObjectURL(state.imageURL);
-            el.imagePreview.src = '';
-            el.previewBox.style.display = 'none';
-            el.previewActions.style.display = 'none';
-            el.dropzone.style.display = 'flex';
-            el.fileInput.value = '';
-            el.ocrText.value = '';
-            el.aiText.value = '';
-            updateStats();
-            if (el.aiCustomPrompt) el.aiCustomPrompt.value = '';
-            showToast('Image and workspaces cleared', 'error');
-        });
-
-        el.btnCropModal.addEventListener('click', () => {
-            if (!state.imageURL) return;
-            el.cropperImage.src = state.imageURL;
-            el.modalCrop.classList.add('active');
-            if (state.cropper) state.cropper.destroy();
-            state.scaleXVal = 1;
-            state.scaleYVal = 1;
-            state.cropper = new Cropper(el.cropperImage, { viewMode: 1, autoCropArea: 0.9 });
-        });
-
-        function closeCrop() {
-            el.modalCrop.classList.remove('active');
-            if (state.cropper) { state.cropper.destroy(); state.cropper = null; }
-        }
-        el.btnCloseCrop.addEventListener('click', closeCrop);
-        el.btnCancelCrop.addEventListener('click', closeCrop);
-
-        el.aspectBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                el.aspectBtns.forEach(b => b.classList.remove('active-preset'));
-                btn.classList.add('active-preset');
-                state.cropper?.setAspectRatio(parseFloat(btn.getAttribute('data-ratio')));
+            el.btnTheme.addEventListener('click', () => {
+                state.theme = state.theme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem('nexus_theme', state.theme);
+                el.html.setAttribute('data-theme', state.theme);
+                updateThemeIcon();
             });
-        });
 
-        el.btnRotateLeft.addEventListener('click', () => state.cropper?.rotate(-90));
-        el.btnRotateRight.addEventListener('click', () => state.cropper?.rotate(90));
-        el.btnFlipH.addEventListener('click', () => { state.scaleXVal *= -1; state.cropper?.scaleX(state.scaleXVal); });
-        el.btnFlipV.addEventListener('click', () => { state.scaleYVal *= -1; state.cropper?.scaleY(state.scaleYVal); });
-        el.btnResetCrop.addEventListener('click', () => { state.scaleXVal = 1; state.scaleYVal = 1; state.cropper?.reset(); });
+            function updateThemeIcon() {
+                el.btnTheme.innerHTML = state.theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            }
 
-        el.btnApplyCrop.addEventListener('click', () => {
-            if (!state.cropper) return;
-            state.cropper.getCroppedCanvas().toBlob((blob) => {
-                state.imageBlob = blob;
+            // Tab Switcher Logic
+            el.tabOcr.addEventListener('click', () => {
+                el.tabOcr.classList.add('active-tab');
+                el.tabAi.classList.remove('active-tab');
+                el.sectionOcr.classList.add('active');
+                el.sectionAi.classList.remove('active');
+            });
+
+            el.tabAi.addEventListener('click', () => {
+                el.tabAi.classList.add('active-tab');
+                el.tabOcr.classList.remove('active-tab');
+                el.sectionAi.classList.add('active');
+                el.sectionOcr.classList.remove('active');
+            });
+
+            function showToast(msg, type = 'success') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i><span>${msg}</span>`;
+                el.toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            el.dropzone.addEventListener('click', () => el.fileInput.click());
+            el.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); el.dropzone.classList.add('dragover'); });
+            el.dropzone.addEventListener('dragleave', () => el.dropzone.classList.remove('dragover'));
+            el.dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                el.dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
+            });
+            el.fileInput.addEventListener('change', (e) => {
+                if (e.target.files?.[0]) handleFile(e.target.files[0]);
+            });
+
+            function handleFile(file) {
+                if (!file.type.startsWith('image/')) return showToast('Please select a valid image file', 'error');
+                state.imageBlob = file;
                 if (state.imageURL) URL.revokeObjectURL(state.imageURL);
-                state.imageURL = URL.createObjectURL(blob);
+                state.imageURL = URL.createObjectURL(file);
+
                 el.imagePreview.src = state.imageURL;
-                closeCrop();
-                showToast('Photo edits applied');
-            }, 'image/jpeg', 0.95);
-        });
+                el.dropzone.style.display = 'none';
+                el.previewBox.style.display = 'block';
+                el.previewActions.style.display = 'flex';
+                showToast('Image uploaded successfully');
+            }
 
-        // Image Compression for Faster OCR
-        function compressImage(file, maxWidth = 1200) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = URL.createObjectURL(file);
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > maxWidth) {
-                        height = Math.round((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    canvas.toBlob((blob) => {
-                        URL.revokeObjectURL(img.src);
-                        resolve(blob || file);
-                    }, 'image/jpeg', 0.85);
-                };
-                img.onerror = () => resolve(file);
+            el.btnRemoveImage.addEventListener('click', () => {
+                state.imageBlob = null;
+                if (state.imageURL) URL.revokeObjectURL(state.imageURL);
+                el.imagePreview.src = '';
+                el.previewBox.style.display = 'none';
+                el.previewActions.style.display = 'none';
+                el.dropzone.style.display = 'flex';
+                el.fileInput.value = '';
+                el.ocrText.value = '';
+                el.aiText.value = '';
+                updateStats();
+                if (el.aiCustomPrompt) el.aiCustomPrompt.value = '';
+                showToast('Image and workspaces cleared', 'error');
             });
-        }
 
-        // OCR Extract Logic
-        el.btnScan.addEventListener('click', async () => {
-            if (!state.imageBlob) return showToast('Please upload an image first', 'error');
+            el.btnCropModal.addEventListener('click', () => {
+                if (!state.imageURL) return;
+                el.cropperImage.src = state.imageURL;
+                el.modalCrop.classList.add('active');
+                if (state.cropper) state.cropper.destroy();
+                state.scaleXVal = 1;
+                state.scaleYVal = 1;
+                state.cropper = new Cropper(el.cropperImage, { viewMode: 1, autoCropArea: 0.9 });
+            });
 
-            const selectedLang = el.selectLang.value;
-            
-            el.ocrText.value = 'Loading...';
-            updateStats();
+            function closeCrop() {
+                el.modalCrop.classList.remove('active');
+                if (state.cropper) { state.cropper.destroy(); state.cropper = null; }
+            }
+            el.btnCloseCrop.addEventListener('click', closeCrop);
+            el.btnCancelCrop.addEventListener('click', closeCrop);
 
-            setLoading(el.btnScan, el.scanBtnText, true, 'Extracting OCR...');
+            el.aspectBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    el.aspectBtns.forEach(b => b.classList.remove('active-preset'));
+                    btn.classList.add('active-preset');
+                    state.cropper?.setAspectRatio(parseFloat(btn.getAttribute('data-ratio')));
+                });
+            });
 
-            try {
-                const optimizedBlob = await compressImage(state.imageBlob);
+            el.btnRotateLeft.addEventListener('click', () => state.cropper?.rotate(-90));
+            el.btnRotateRight.addEventListener('click', () => state.cropper?.rotate(90));
+            el.btnFlipH.addEventListener('click', () => { state.scaleXVal *= -1; state.cropper?.scaleX(state.scaleXVal); });
+            el.btnFlipV.addEventListener('click', () => { state.scaleYVal *= -1; state.cropper?.scaleY(state.scaleYVal); });
+            el.btnResetCrop.addEventListener('click', () => { state.scaleXVal = 1; state.scaleYVal = 1; state.cropper?.reset(); });
 
-                const formData = new FormData();
-                formData.append('file', optimizedBlob);
-                formData.append('lang', selectedLang);
+            el.btnApplyCrop.addEventListener('click', () => {
+                if (!state.cropper) return;
+                state.cropper.getCroppedCanvas().toBlob((blob) => {
+                    state.imageBlob = blob;
+                    if (state.imageURL) URL.revokeObjectURL(state.imageURL);
+                    state.imageURL = URL.createObjectURL(blob);
+                    el.imagePreview.src = state.imageURL;
+                    closeCrop();
+                    showToast('Photo edits applied');
+                }, 'image/jpeg', 0.95);
+            });
 
-                const res = await fetch('/ocr', { method: 'POST', body: formData });
-                const data = await res.json();
+            // --- FIX 1: Frontend Image Compression for Faster OCR ---
+            function compressImage(file, maxWidth = 1200) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.src = URL.createObjectURL(file);
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        canvas.toBlob((blob) => {
+                            URL.revokeObjectURL(img.src);
+                            resolve(blob || file);
+                        }, 'image/jpeg', 0.85); // Reduce to JPEG 85% quality to speed up network and OCR
+                    };
+                    img.onerror = () => resolve(file);
+                });
+            }
+
+            // OCR Extract Logic with Loading State & Language Validation
+            el.btnScan.addEventListener('click', async () => {
+                if (!state.imageBlob) return showToast('Please upload an image first', 'error');
+
+                const selectedLang = el.selectLang.value;
                 
-                if (res.ok && data.text !== undefined) {
-                    const text = data.text.trim();
-                    const hasMyanmar = /[\u1000-\u109F]/.test(text);
-                    const hasEnglish = /[a-zA-Z]/.test(text);
+                el.ocrText.value = 'Loading...';
+                updateStats();
 
-                    if (selectedLang === 'eng' && hasMyanmar && !hasEnglish) {
-                        showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ ပါဝင်နေပါသည်', 'error');
+                setLoading(el.btnScan, el.scanBtnText, true, 'Extracting OCR...');
+
+                try {
+                    // Compress image before sending to make OCR extremely fast
+                    const optimizedBlob = await compressImage(state.imageBlob);
+
+                    const formData = new FormData();
+                    formData.append('file', optimizedBlob);
+                    formData.append('lang', selectedLang);
+
+                    const res = await fetch('/ocr', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    
+                    if (res.ok && data.text !== undefined) {
+                        const text = data.text.trim();
+                        const hasMyanmar = /[\u1000-\u109F]/.test(text);
+                        const hasEnglish = /[a-zA-Z]/.test(text);
+
+                        if (selectedLang === 'eng' && hasMyanmar && !hasEnglish) {
+                            showToast('English သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ ပါဝင်နေပါသည်', 'error');
+                            el.ocrText.value = '';
+                            updateStats();
+                            return;
+                        }
+                        if (selectedLang === 'mya' && !hasMyanmar && hasEnglish) {
+                            showToast('Myanmar သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ မတွေ့ရှိပါ', 'error');
+                            el.ocrText.value = '';
+                            updateStats();
+                            return;
+                        }
+
+                        el.ocrText.value = text;
+                        updateStats();
+                        showToast('Text extracted successfully!');
+                    } else {
                         el.ocrText.value = '';
                         updateStats();
-                        return;
+                        showToast(data.error || 'OCR failed', 'error');
                     }
-                    if (selectedLang === 'mya' && !hasMyanmar && hasEnglish) {
-                        showToast('Myanmar သာရွေးထားပါသည်၊ ပုံထဲတွင် မြန်မာစာ မတွေ့ရှိပါ', 'error');
-                        el.ocrText.value = '';
-                        updateStats();
-                        return;
-                    }
-
-                    el.ocrText.value = text;
-                    updateStats();
-                    showToast('Text extracted successfully!');
-                } else {
+                } catch {
                     el.ocrText.value = '';
                     updateStats();
-                    showToast(data.error || 'OCR failed', 'error');
+                    showToast('Server connection error', 'error');
+                } finally {
+                    setLoading(el.btnScan, el.scanBtnText, false, 'Extract Text (OCR)');
                 }
-            } catch {
+            });
+
+            el.ocrText.addEventListener('input', updateStats);
+            function updateStats() {
+                const text = el.ocrText.value;
+                if (text === 'Loading...') {
+                    el.statWords.textContent = 'Words: 0';
+                    el.statChars.textContent = 'Chars: 0';
+                    el.statMyaChars.textContent = 'Mya Chars: 0';
+                    return;
+                }
+                el.statWords.textContent = `Words: ${text.trim() ? text.trim().split(/\s+/).length : 0}`;
+                el.statChars.textContent = `Chars: ${text.length}`;
+                el.statMyaChars.textContent = `Mya Chars: ${(text.match(/[\u1000-\u109F]/g) || []).length}`;
+            }
+
+            el.btnCopyOcr.addEventListener('click', () => {
+                if (!el.ocrText.value || el.ocrText.value === 'Loading...') return;
+                navigator.clipboard.writeText(el.ocrText.value);
+                showToast('OCR Text copied to clipboard!');
+            });
+
+            el.btnClearOcr.addEventListener('click', () => {
                 el.ocrText.value = '';
                 updateStats();
-                showToast('Server connection error', 'error');
-            } finally {
-                setLoading(el.btnScan, el.scanBtnText, false, 'Extract Text (OCR)');
-            }
-        });
+                showToast('OCR workspace cleared', 'error');
+            });
 
-        el.ocrText.addEventListener('input', updateStats);
-        function updateStats() {
-            const text = el.ocrText.value;
-            if (text === 'Loading...') {
-                el.statWords.textContent = 'Words: 0';
-                el.statChars.textContent = 'Chars: 0';
-                el.statMyaChars.textContent = 'Mya Chars: 0';
-                return;
-            }
-            el.statWords.textContent = `Words: ${text.trim() ? text.trim().split(/\s+/).length : 0}`;
-            el.statChars.textContent = `Chars: ${text.length}`;
-            el.statMyaChars.textContent = `Mya Chars: ${(text.match(/[\u1000-\u109F]/g) || []).length}`;
-        }
+            el.btnExportOcrTxt.addEventListener('click', () => downloadTxt(el.ocrText.value, 'OCR_Text'));
+            el.btnExportOcrDocx.addEventListener('click', () => exportFile('/export/docx', el.ocrText.value, 'docx'));
+            el.btnExportOcrPdf.addEventListener('click', () => exportFile('/export/pdf', el.ocrText.value, 'pdf'));
 
-        el.btnCopyOcr.addEventListener('click', () => {
-            if (!el.ocrText.value || el.ocrText.value === 'Loading...') return;
-            navigator.clipboard.writeText(el.ocrText.value);
-            showToast('OCR Text copied to clipboard!');
-        });
+            el.btnCopyAi.addEventListener('click', () => {
+                if (!el.aiText.value || el.aiText.value === 'Loading...') return;
+                navigator.clipboard.writeText(el.aiText.value);
+                showToast('AI Text copied to clipboard!');
+            });
 
-        el.btnClearOcr.addEventListener('click', () => {
-            el.ocrText.value = '';
-            updateStats();
-            showToast('OCR workspace cleared', 'error');
-        });
+            el.btnClearAi.addEventListener('click', () => {
+                el.aiText.value = '';
+                showToast('AI workspace cleared', 'error');
+            });
 
-        el.btnExportOcrTxt.addEventListener('click', () => downloadTxt(el.ocrText.value, 'OCR_Text'));
-        el.btnExportOcrDocx.addEventListener('click', () => exportFile('/export/docx', el.ocrText.value, 'docx'));
-        el.btnExportOcrPdf.addEventListener('click', () => exportFile('/export/pdf', el.ocrText.value, 'pdf'));
+            el.btnExportAiTxt.addEventListener('click', () => downloadTxt(el.aiText.value, 'AI_Output'));
+            el.btnExportAiDocx.addEventListener('click', () => exportFile('/export/docx', el.aiText.value, 'docx'));
+            el.btnExportAiPdf.addEventListener('click', () => exportFile('/export/pdf', el.aiText.value, 'pdf'));
 
-        el.btnCopyAi.addEventListener('click', () => {
-            if (!el.aiText.value || el.aiText.value === 'Loading...') return;
-            navigator.clipboard.writeText(el.aiText.value);
-            showToast('AI Text copied to clipboard!');
-        });
-
-        el.btnClearAi.addEventListener('click', () => {
-            el.aiText.value = '';
-            showToast('AI workspace cleared', 'error');
-        });
-
-        el.btnExportAiTxt.addEventListener('click', () => downloadTxt(el.aiText.value, 'AI_Output'));
-        el.btnExportAiDocx.addEventListener('click', () => exportFile('/export/docx', el.aiText.value, 'docx'));
-        el.btnExportAiPdf.addEventListener('click', () => exportFile('/export/pdf', el.aiText.value, 'pdf'));
-
-        // --- Mobile Compatible File Download Logic ---
-        function downloadTxt(text, filenamePrefix) {
-            if (!text || text === 'Loading...') return showToast('No text to export', 'error');
-            try {
-                const filename = `${filenamePrefix}_${Date.now()}.txt`;
-                const dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-                const a = document.createElement('a');
-                a.href = dataUri;
-                a.download = filename;
-                a.target = '_blank';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => document.body.removeChild(a), 100);
-                showToast('TXT downloaded successfully');
-            } catch {
-                showToast('Failed to export TXT', 'error');
-            }
-        }
-
-        async function exportFile(endpoint, text, ext) {
-            if (!text || text === 'Loading...') return showToast('No text to export', 'error');
-            try {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-                if (!res.ok) throw new Error();
-                const blob = await res.blob();
-                const filename = `Export_${Date.now()}.${ext}`;
-
-                // Convert blob to Data URL for maximum mobile browser compatibility
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    const base64data = reader.result;
+            function downloadTxt(text, filenamePrefix) {
+                if (!text || text === 'Loading...') return showToast('No text to export', 'error');
+                try {
+                    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = base64data;
-                    a.download = filename;
-                    a.target = '_blank';
+                    a.href = url;
+                    a.download = `${filenamePrefix}_${Date.now()}.txt`;
                     document.body.appendChild(a);
                     a.click();
-                    setTimeout(() => document.body.removeChild(a), 100);
-                    showToast(`Exported as ${ext.toUpperCase()}`);
-                };
-                reader.readAsDataURL(blob);
-            } catch {
-                showToast(`Failed to export ${ext.toUpperCase()}`, 'error');
-            }
-        }
-
-        // --- Silent & Reliable Mobile TTS Logic ---
-        window.activeUtterance = null;
-        window.currentAudio = null;
-
-        if ('speechSynthesis' in window && window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                try { window.speechSynthesis.getVoices(); } catch(e){}
-            };
-            try { window.speechSynthesis.getVoices(); } catch(e){}
-        }
-
-        el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
-        el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
-
-        function speakText(text, iconEl) {
-            if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
-
-            const synth = window.speechSynthesis;
-
-            // Stop audio if playing
-            if (window.currentAudio) {
-                window.currentAudio.pause();
-                window.currentAudio = null;
-                iconEl.className = 'fa-solid fa-volume-high';
-                return;
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast('TXT downloaded successfully');
+                } catch {
+                    showToast('Failed to export TXT', 'error');
+                }
             }
 
-            if (synth && synth.speaking) {
-                synth.cancel();
-                iconEl.className = 'fa-solid fa-volume-high';
-                return;
-            }
-
-            const cleanText = text.replace(/[\r\n]+/g, ' ').trim();
-            const isMyanmar = /[\u1000-\u109F]/.test(cleanText);
-
-            // Web Speech API
-            if ('speechSynthesis' in window && synth) {
+            async function exportFile(endpoint, text, ext) {
+                if (!text || text === 'Loading...') return showToast('No text to export', 'error');
                 try {
-                    synth.cancel();
-                    if (synth.paused) synth.resume();
+                    const res = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text })
+                    });
+                    if (!res.ok) throw new Error();
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Export_${Date.now()}.${ext}`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast(`Exported as ${ext.toUpperCase()}`);
+                } catch {
+                    showToast(`Failed to export ${ext.toUpperCase()}`, 'error');
+                }
+            }
 
-                    const utterance = new SpeechSynthesisUtterance(cleanText);
-                    window.activeUtterance = utterance;
+            // --- FIX 2: Mobile Browser TTS & Garbage Collection Fix ---
+            window.activeUtterance = null; // attach to window directly
 
-                    const voices = synth.getVoices() || [];
+            // Pre-load voices for mobile browsers
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    window.speechSynthesis.getVoices();
+                };
+                window.speechSynthesis.getVoices(); // Trigger once on load
+            }
+
+            el.btnSpeakOcr.addEventListener('click', () => speakText(el.ocrText.value, el.speakerIconOcr));
+            el.btnSpeakAi.addEventListener('click', () => speakText(el.aiText.value, el.speakerIconAi));
+
+            function speakText(text, iconEl) {
+                if (!('speechSynthesis' in window)) return showToast('TTS not supported on this browser', 'error');
+                
+                // Toggle Stop if currently speaking
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    iconEl.className = 'fa-solid fa-volume-high';
+                    return;
+                }
+
+                if (!text || text === 'Loading...') return showToast('No text available to speak', 'error');
+
+                // Cancel any pending speech queue for mobile stability
+                window.speechSynthesis.cancel();
+
+                // iOS / Android fix: Add a tiny delay after cancel() before starting speech
+                setTimeout(() => {
+                    const isMyanmar = /[\u1000-\u109F]/.test(text);
+                    window.activeUtterance = new SpeechSynthesisUtterance(text);
+
+                    // Check and set supported voices for Mobile / Desktop
+                    const voices = window.speechSynthesis.getVoices();
                     if (isMyanmar) {
-                        const myVoice = voices.find(v => v.lang && (v.lang.startsWith('my') || v.lang.includes('MM')));
-                        if (myVoice) utterance.voice = myVoice;
-                        utterance.lang = 'my-MM';
+                        const myVoice = voices.find(v => v.lang.startsWith('my') || v.lang.includes('MM'));
+                        if (myVoice) {
+                            window.activeUtterance.voice = myVoice;
+                            window.activeUtterance.lang = myVoice.lang;
+                        } else {
+                            window.activeUtterance.lang = 'en-US'; // Fallback
+                        }
                     } else {
-                        utterance.lang = 'en-US';
+                        window.activeUtterance.lang = 'en-US';
                     }
 
-                    utterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
-                    utterance.onend = () => { 
+                    window.activeUtterance.onstart = () => { iconEl.className = 'fa-solid fa-stop'; };
+                    window.activeUtterance.onend = () => { 
                         iconEl.className = 'fa-solid fa-volume-high'; 
                         window.activeUtterance = null;
                     };
-                    utterance.onerror = () => { 
-                        iconEl.className = 'fa-solid fa-volume-high'; 
-                        window.activeUtterance = null;
-                        playFallbackAudio(cleanText, isMyanmar ? 'my' : 'en', iconEl);
+                    window.activeUtterance.onerror = (e) => { 
+                        if (e.error !== 'interrupted') { // Ignore expected interrupt on cancel
+                            iconEl.className = 'fa-solid fa-volume-high'; 
+                            window.activeUtterance = null;
+                        }
                     };
 
-                    synth.speak(utterance);
-                    iconEl.className = 'fa-solid fa-stop';
-                    return;
-                } catch (e) {
-                    playFallbackAudio(cleanText, isMyanmar ? 'my' : 'en', iconEl);
-                }
-            } else {
-                playFallbackAudio(cleanText, isMyanmar ? 'my' : 'en', iconEl);
+                    window.speechSynthesis.speak(window.activeUtterance);
+
+                    // Mobile Safari / Chrome fix: Resume synthesis if browser paused it
+                    if (window.speechSynthesis.paused) {
+                        window.speechSynthesis.resume();
+                    }
+                }, 50);
             }
-        }
 
-        function playFallbackAudio(text, lang, iconEl) {
-            try {
-                if (window.currentAudio) {
-                    window.currentAudio.pause();
-                    window.currentAudio = null;
-                }
-                const chunk = encodeURIComponent(text.substring(0, 200));
-                const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${chunk}`;
-                
-                const audio = new Audio(audioUrl);
-                window.currentAudio = audio;
+            el.aiCards.forEach(card => {
+                card.addEventListener('click', () => triggerAI(card.getAttribute('data-action')));
+            });
 
-                audio.onplay = () => { iconEl.className = 'fa-solid fa-stop'; };
-                audio.onended = () => { 
-                    iconEl.className = 'fa-solid fa-volume-high'; 
-                    window.currentAudio = null;
-                };
-                audio.onerror = () => {
-                    iconEl.className = 'fa-solid fa-volume-high';
-                    window.currentAudio = null;
-                };
+            el.btnAiSubmit.addEventListener('click', () => {
+                const prompt = el.aiCustomPrompt.value.trim();
+                if (!prompt) return showToast('Please enter a prompt', 'error');
+                triggerAI('ask', prompt);
+            });
 
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        iconEl.className = 'fa-solid fa-volume-high';
-                        window.currentAudio = null;
+            async function triggerAI(action, customPrompt = '') {
+                const text = el.ocrText.value.trim();
+                if (!text || text === 'Loading...') return showToast('Please extract OCR text first', 'error');
+
+                el.aiText.value = 'Loading...';
+
+                let payloadAction = action, targetLang = '', prompt = customPrompt;
+                if (action === 'translate_en') { payloadAction = 'translate'; targetLang = 'en'; }
+                else if (action === 'translate_my') { payloadAction = 'translate'; targetLang = 'my'; }
+                else if (action === 'grammar') { payloadAction = 'explain'; prompt = 'Fix spelling and grammar mistakes.'; }
+
+                try {
+                    const res = await fetch('/ai/process', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: payloadAction, text, target_lang: targetLang, prompt })
                     });
-                }
-            } catch (e) {
-                iconEl.className = 'fa-solid fa-volume-high';
-                window.currentAudio = null;
-            }
-        }
-
-        el.aiCards.forEach(card => {
-            card.addEventListener('click', () => triggerAI(card.getAttribute('data-action')));
-        });
-
-        el.btnAiSubmit.addEventListener('click', () => {
-            const prompt = el.aiCustomPrompt.value.trim();
-            if (!prompt) return showToast('Please enter a prompt', 'error');
-            triggerAI('ask', prompt);
-        });
-
-        async function triggerAI(action, customPrompt = '') {
-            const text = el.ocrText.value.trim();
-            if (!text || text === 'Loading...') return showToast('Please extract OCR text first', 'error');
-
-            el.aiText.value = 'Loading...';
-
-            let payloadAction = action, targetLang = '', prompt = customPrompt;
-            if (action === 'translate_en') { payloadAction = 'translate'; targetLang = 'en'; }
-            else if (action === 'translate_my') { payloadAction = 'translate'; targetLang = 'my'; }
-            else if (action === 'grammar') { payloadAction = 'explain'; prompt = 'Fix spelling and grammar mistakes.'; }
-
-            try {
-                const res = await fetch('/ai/process', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: payloadAction, text, target_lang: targetLang, prompt })
-                });
-                const data = await res.json();
-                if (res.ok && data.result) {
-                    el.aiText.value = data.result;
-                    showToast('AI response generated!');
-                } else {
+                    const data = await res.json();
+                    if (res.ok && data.result) {
+                        el.aiText.value = data.result;
+                        showToast('AI response generated!');
+                    } else {
+                        el.aiText.value = '';
+                        showToast(data.error || 'AI failed', 'error');
+                    }
+                } catch {
                     el.aiText.value = '';
-                    showToast(data.error || 'AI failed', 'error');
+                    showToast('AI connection error', 'error');
                 }
-            } catch {
-                el.aiText.value = '';
-                showToast('AI connection error', 'error');
             }
-        }
 
-        function setLoading(btn, labelSpan, loading, text) {
-            btn.disabled = loading;
-            labelSpan.textContent = text;
-            if (loading) {
-                const spinner = document.createElement('div');
-                spinner.className = 'spinner';
-                btn.prepend(spinner);
-            } else {
-                btn.querySelector('.spinner')?.remove();
+            function setLoading(btn, labelSpan, loading, text) {
+                btn.disabled = loading;
+                labelSpan.textContent = text;
+                if (loading) {
+                    const spinner = document.createElement('div');
+                    spinner.className = 'spinner';
+                    btn.prepend(spinner);
+                } else {
+                    btn.querySelector('.spinner')?.remove();
+                }
             }
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
